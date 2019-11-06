@@ -1,3 +1,3 @@
-# evalsmsi
+# evalSMSI
 
-Audit du SMSI selon l'ISO 27001
+Outils d'audit et de suivi du SMSI en fonction d'un référentiel paramétrable.

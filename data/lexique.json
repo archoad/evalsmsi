@@ -1,0 +1,106 @@
+[
+	{
+		"definition": "Usage systématique d'informations pour identifier les sources et pour estimer le risque.",
+		"terme": "Analyse du risque"
+	},
+	{
+		"definition": "Processus global de l'analyse du risque et de l'évaluation du risque.",
+		"terme": "Appréciation du risque"
+	},
+	{
+		"definition": "L'authentification a pour but de vérifier l'identité dont se réclame une personne ou une machine. S'identifier consiste à communiquer une identité préalablement enregistrée, s'authentifier consiste à apporter la preuve de cette identité. En pratique, la preuve de l'identité présentée lors d'une opération d'authentification peut être basée sur un ou plusieurs facteurs d'authentification parmi lesquels ont compte ce que la personne sait (ex. mot de passe), ce que la personne possède (ex. carte à puce, certificat électronique, token OTP, carte OTP, téléphone, tablette, boite aux lettres de messagerie, etc.), ce que la personne est (ex. caractéristique physique de type biométrie), l'endroit où se trouve la personne (un ordinateur dédié par exemple), ce que la personne sait faire (ex. biométrie comportementale telle que la signature manuscrite ou la manière de taper sur un clavier d'ordinateur). Plus le nombre de facteurs utilisés lors d'une opération d'authentification est grand, plus l'authentification est considérée comme fiable. On distingue deux niveaux d'authentification: l'authentification simple, lorsque celle-ci ne repose que sur un seul facteur et l'authentification forte, lorsque plusieurs facteurs de natures différentes sont combinés.",
+		"terme": "Authentification"
+	},
+	{
+		"definition": "La confidentialité est la propriété selon laquelle l'information n'est pas rendue accessible ou divulguée à des personnes, entités ou processus non autorisés. La confidentialité permet de réserver l'accès aux données aux seules personnes autorisées. Les données confidentielles sont les informations protégées par la loi, les informations relevant de la protection des données à caractère personnel, les informations relevant du secret médical, les informations relevant du secret de la défense national, les informations relevant du secret de l'instruction, les informations de toute autre nature soumises à une obligation légale ou règlementaire de confidentialité qu'elle soit temporaire et pérenne (certains contrats de commande publique, en phase de mise en concurrence, procédures restreintes, clauses de sécurité), les informations stratégiques ou opérationnelles dont la divulgation interne ou externe peut nuire à la réputation ou au fonctionnement de l'entité, le patrimoine informationnel de l'entité (travaux de recherches, brevets).",
+		"terme": "Confidentialité"
+	},
+	{
+		"definition": "Ensemble des mesures techniques et non techniques permettant à une entité de défendre dans le cyberespace ses systèmes d'information.",
+		"terme": "Cyberdéfense"
+	},
+	{
+		"definition": "Le cyberespace est un espace de communication constitué par l'interconnexion mondiale d'équipements de traitement automatisé de données numériques. Il constitue le substrat sans lequel aujourd'hui aucune activité moderne ne peut être conduite. Le cyberespace est un milieu à la fois immatériel et technologique. Il s'appuie sur des infrastructures physiques constituées de machines interdépendantes (ordinateurs, serveurs, téléphones, etc.), sur des logiciels et sur des identités virtuelles (adresse IP, pseudonymes, avatar...). Enfin, il inclut les données numériques ainsi que les systèmes d'information qui les utilisent.",
+		"terme": "Cyberespace"
+	},
+	{
+		"definition": "La cybernétique est la science constituée par l'ensemble des théories sur les processus de commande et de communication et leur régulation chez l'être vivant et dans les machines. Dans un monde centré sur l'information, elle a pour objet principal l'étude des systèmes et des processus de traitement et de transmission de l'information. Elle définit notamment le concept selon lequel les systèmes ont des entrants (input) et des sortants (output) qui sont influencés par des mécanismes de rétroaction (feed-back).",
+		"terme": "Cybernétique"
+	},
+	{
+		"definition": "Ensemble des mesures techniques et non techniques de protection permettant à un système d'information de résister à des évènements susceptibles de compromettre la disponibilité, l'intégrité ou la confidentialité des données stockées, traitées ou transmises, et des services que ces systèmes offrent ou qu'ils rendent accessibles.",
+		"terme": "Cyberprotection"
+	},
+	{
+		"definition": "Capacité d'un système d'information à résister à une panne ou à une cyberattaque et à revenir à son état initial après l'incident.",
+		"terme": "Cyberrésilience"
+	},
+	{
+		"definition": "État recherché pour un système d'information lui permettant de résister à des événements issus du cyberespace susceptibles de compromettre la disponibilité, l'intégrité ou la confidentialité des données stockées, traitées ou transmises et des services connexes que ces systèmes offrent ou qu'ils rendent accessibles. La cybersécurité couvre à la fois les aspects de cyberprotection (prévention), de cyberdéfense (réaction) et de cyberrésilience des systèmes d'information (SI).",
+		"terme": "Cybersécurité"
+	},
+	{
+		"definition": "Documents de déclaration décrivant les objectifs de sécurité et les contrôles qui sont pertinents et applicables au SMSI d'un organisme.",
+		"terme": "Déclaration d'applicabilité"
+	},
+	{
+		"definition": "La disponibilité est la propriété d'être accessible et utilisable à la demande par une entité autorisée. La disponibilité permet de garantir en permanence la communication et l'échange des données, sans défaut, dans les plages horaires fixées.",
+		"terme": "Disponibilité"
+	},
+	{
+		"definition": "Processus de comparaison du risque estimé avec des critères de risque donnés afin d'en déterminer l'importance.",
+		"terme": "Evaluation du risque"
+	},
+	{
+		"definition": "Occurence identifiée d'un état d'un système, d'un service ou d'un réseau, indiquant une possible violation de la politique de sécurité de l'information ou d'un échec des garanties, ou d'une situation inconnue précédemment qui peut relever de la sécurité.",
+		"terme": "Evénement en sécurité de l'information"
+	},
+	{
+		"definition": "Un événement ou une série d'évènements en sécurité de l'information, indésirables ou inattendues qui ont une probabilité significative de compromettre l'activité de l'entreprise et de menacer la sécurité  de l'information.",
+		"terme": "Incident en sécurité de l'information"
+	},
+	{
+		"definition": "Une infrastructure de gestion des clés (IGC) a pour objectif de créer, stocker et distribuer les certificats numériques utilisés pour vérifier qu'une clé publique particulière appartient à une identité spécifique. L'IGC crée donc des certificats numériques qui associent les clés publiques aux entités, les stocke en toute sécurité dans un référentiel central et les révoque si nécessaire. Le recours à une IGC est nécessaire pour les activités où l'authentification par mot de passe n'est pas suffisante et où une preuve plus rigoureuse est requise pour confirmer l'identité des parties impliquées.",
+		"terme": "Infrastructure de gestion des clés (IGC)"
+	},
+	{
+		"definition": "L'intégrité est la propriété de protection de la fiabilité, de l'exactitude et de l'exhaustivité des données et des traitements. Les SI doivent garantir que les informations sont identiques et inaltérables dans le temps et l'espace et certifier leur exhaustivité, leur validité et leur cohérence.",
+		"terme": "Intégrité"
+	},
+	{
+		"definition": "Activités coordonnées de direction et de contrôle d'un organisme en prenant en compte la notion de risque.",
+		"terme": "Management du risque"
+	},
+	{
+		"definition": "La preuve permet l'investigation en cas de dysfonctionnements et d'incidents. Les SI doivent pouvoir fournir la preuve d'un évènement donné et permettre la vérification du bon déroulement des traitements informatiques réalisés par les applications. Les mécanismes généralement employés sont la génération de traces informatiques et un système d'imputabilité qui permet d'associer une action à son auteur.",
+		"terme": "Preuve"
+	},
+	{
+		"definition": "Tout élément représentant de la valeur pour l'organisme.",
+		"terme": "Ressource"
+	},
+	{
+		"definition": "Décision d'accepter un risque.",
+		"terme": "Risque acceptable"
+	},
+	{
+		"definition": "Le risque restant après le traitement des risques.",
+		"terme": "Risque résiduel"
+	},
+	{
+		"definition": "La sécurité des systèmes d'information (SSI) recouvre l'ensemble des moyens techniques, organisationnels et humains qui doivent être mis en place dans le but de garantir, au juste niveau requis, la sécurité des informations d'un organisme et des systèmes qui en assurent l'élaboration, le traitement, la transmission ou le stockage. L'objectif général de la protection d'un système d'information est de garantir l'intégrité, l'authenticité, la confidentialité et la disponibilité des informations traitées par ce système. La protection d'un système d'information s'appuie sur des principes portant sur l'organisation et sur les moyens techniques, auxquels s'ajoutent des principes de défense en profondeur.",
+		"terme": "Sécurité des systèmes d'information (SSI)"
+	},
+	{
+		"definition": "Ensemble organisé de ressources (matériels, logiciels, personnel, données et procédures) permettant de traiter et de diffuser de l'information.",
+		"terme": "Système d’information (SI)"
+	},
+	{
+		"definition": "Partie de l'ensemble du système de management de l'entreprise, fondée sur l'analyse des risques, en vue d'établir, de mettre en oeuvre, d'exploiter, de surveiller, de réexaminer, de maintenir et d'améliorer la sécurité de l'information.",
+		"terme": "Système de management de la sécurité de l'information"
+	},
+	{
+		"definition": "Processus de sélection et de mise en oeuvre de mesures visant à modifier le risque.",
+		"terme": "Traitement du risque"
+	}
+]

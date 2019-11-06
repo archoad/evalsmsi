@@ -1,0 +1,89 @@
+\usepackage[a-1b]{pdfx}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{libertine}
+\usepackage{libertinust1math}
+\usepackage{sourcecodepro}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle.\enspace}
+\titleformat*{\section}{\scshape\fontseries{m}\selectfont\Large}
+\titleformat*{\subsection}{\scshape\fontseries{m}\selectfont\large}
+\titleformat*{\subsubsection}{\scshape\fontseries{m}\selectfont}
+
+\usepackage{blindtext}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr, fancyvrb}
+\usepackage{geometry}
+\usepackage{lastpage}
+\usepackage{mathtools, amsthm}
+\usepackage{listings}
+\usepackage{eurosym}
+\usepackage{multirow}
+\usepackage{textcomp} % pour la commande textcomp \textquotesingle
+\usepackage{array, colortbl}
+\usepackage{longtable,booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{positioning, backgrounds, fit}
+\pgfplotsset{compat=newest}
+
+\definecolor{myGrey}{RGB}{50,50,50}
+\definecolor{myBlue}{RGB}{30,111,158}
+\definecolor{myWaterGreen}{RGB}{30,158,111}
+\definecolor{myBrown}{RGB}{158,111,30}
+\definecolor{myPurple}{RGB}{158,30,111}
+\definecolor{myViolet}{RGB}{111,30,158}
+\definecolor{myRed}{RGB}{158,30,30}
+\definecolor{myGreen}{RGB}{30,158,30}
+\definecolor{myRose}{RGB}{240,30,128}
+\definecolor{myGold}{RGB}{224,186,72}
+\definecolor{myOrange}{RGB}{240,125,30}
+\definecolor{myBackground}{RGB}{29,30,25}
+\definecolor{myLightBackground}{RGB}{213,202,184}
+\definecolor{myBeige}{RGB}{233,228,219}
+
+\geometry{left=20mm, right=20mm, top=20mm, bottom=20mm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\headheight}{30.0pt}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+	\setlength{\itemsep}{0pt}
+	\setlength{\parskip}{0pt}
+}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{5}
+
+\newcommand{\passthrough}[1]{#1}
+
+\arrayrulecolor{myLightBackground}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\scriptsize\scshape\rightmark}
+\fancyfoot[C]{page~\thepage~sur~\pageref{LastPage}}
+
+\makeindex % On fait un index
+
+\hypersetup{%
+	hypertexnames=false,
+	pdfstartview=FitH,
+	colorlinks=true,
+	urlcolor=myBlue,
+	linkcolor=myRed,
+	citecolor=myGreen,
+	bookmarksnumbered=true,
+	bookmarksopen=true,
+	bookmarksopenlevel=2,
+	pdfborder={0 0 0}
+}

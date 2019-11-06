@@ -1,0 +1,84 @@
+\subsection{Introduction}
+
+\subsubsection{Le modèle PDCA et la roue de Deming}
+
+La roue de Deming est une illustration de la méthode qualité PDCA (Plan-Do-Check-Act). Son nom vient du statisticien William Edwards Deming. Ce dernier n'a pas inventé le principe du PDCA, mais il l'a popularisé dans les années 50 en présentant cet outil au Nippon Keidanren.
+
+La méthode comporte quatre étapes, chacune entraînant l'autre, et vise à établir un cercle vertueux. Sa mise en place doit permettre d'améliorer sans cesse la qualité d'un produit, d'une œuvre, d'un service...
+
+\begin{description}
+	\item[Plan] Préparer, Planifier (ce que l'on va réaliser);
+	\item[Do] Développer, réaliser, mettre en œuvre;
+	\item[Check] Contrôler, vérifier;
+	\item[Act] Agir, réagir
+\end{description}
+
+\subsubsection{Le modèle PDCA appliqué au SMSI}
+
+Appliqué au Système de Management de la Sécurité de l'Information, le PDCA se traduit selon le schéma suivant:
+
+\begin{figure}[ht]
+	\begin{center}
+	\begin{tikzpicture}
+		\def\dist{80pt}
+		\def\s{90pt}
+		\tikzstyle{nom} = [color=myBlue, text width=80pt, font=\bfseries, inner sep=0pt, text badly centered]
+		\tikzstyle{comment} = [color=myRed, text width=60pt, font=\footnotesize, inner sep=0pt, text badly centered]
+		\tikzstyle{myedge} = [-latex, color=myRed, line width=0.5pt, double, double distance=4pt, shorten <=24pt, shorten >=24pt]
+
+		\node (p) {\includegraphics[width=\s]{pict/plan.png}};
+		\node (a) [below left=\dist of p] {\includegraphics[width=\s]{pict/act.png}};
+		\node (d) [below right=\dist of p] {\includegraphics[width=\s]{pict/do.png}};
+		\node (c) [below right=\dist of a] {\includegraphics[width=\s]{pict/check.png}};
+
+		\node (pimg) [nom, below=-6pt of p] {Planifier (Plan)};
+		\node (dimg) [nom, below=-6pt of d] {Déployer (Do)};
+		\node (cimg) [nom, below=-6pt of c] {Contrôler (Check)};
+		\node (aimg) [nom, below=-6pt of a] {Agir (Act)};
+
+		\node [comment, below=0pt of pimg] {Etablissement de la politique SSI};
+		\node [comment, below=0pt of dimg] {Mise en oeuvre des mesures SSI};
+		\node [comment, below=0pt of cimg] {Contrôle et audit};
+		\node [comment, below=0pt of aimg] {Actions correctives};
+
+		\draw (p) edge[myedge, out=0, in=90] (d);
+		\draw (d) edge[myedge, out=270, in=0] (c);
+		\draw (c) edge[myedge, out=180, in=270] (a);
+		\draw (a) edge[myedge, out=90, in=180] (p);
+	\end{tikzpicture}
+	\end{center}
+	\caption{Le PDCA appliqué au SMSI}
+\end{figure}
+
+\begin{description}
+	\item[Planifier] \'Etablir la politique, les objectifs, les processus et les procédures du SMSI relatives à la gestion du risque et à l'amélioration de la sécurité de l'information de manière à fournir des résultats conformément aux politiques et aux objectifs globaux de l'organisme;
+	\item[Déployer] Mettre en \oe{}uvre et exploiter la politique, les mesures, les processus et les procédures du SMSI;
+	\item[Contrôler] \'Evaluer et, le cas échéant, mesurer les performances des processus par rapport à la politique, aux objectifs et à l'expérience pratique et rendre compte des résultats à la direction pour réexamen;
+	\item[Agir] Entreprendre les actions correctives et préventives, sur la base des résultats de l'audit interne du SMSI et la revue de direction, ou d'autres informations pertinentes, pour une amélioration continue dudit système.
+\end{description}
+
+\subsection{Explications préliminaires}
+
+\subsubsection{Mode de calcul des notes}
+
+Chacune des questions possède une pondération permettant de les hiérarchiser. La note de chaque thème est calculée en réalisant une moyenne pondérée de ses questions. Les thèmes sont indépendants entre eux et possèdent tous une note représentative des problématiques qu'ils abordent.
+
+Formule de calcul de la note de chaque thème:
+
+$$ N=\frac{\sum_{i=1}^{n}{\left( P_Q \times E_Q \right)}}{\sum_{i=1}^{n}{P_{Q_i}}} $$
+
+Avec, \textbf{$N$} désignant la note finale du thème, \textbf{$P_Q$} la pondération de la question \textbf{$Q$}, \textbf{$E_Q$} la valeur de l'évaluation pour la question \textbf{$Q$}.
+
+\subsubsection{Détails des cotations}
+
+Pour chaque question, une cotation est définie. Il existe sept choix possible de cotation:
+
+\begin{description}
+	\item[Non Applicable] La question est sans objet. Le choix de cette cotation doit être justifié dans les commentaires;
+	\item[Inexistant et investissement important (Inexistant pour longtemps)] La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.);
+	\item[Inexistant et investissement peu important (Inexistant)] La disposition proposée n’est pas appliquée actuellement, mais le sera rapidement, car sa mise en oeuvre est facile et/ou rapide;
+	\item[En cours et demande un ajustement (Réalisation avec difficultés non prévues)] La disposition proposée est en cours de réalisation, mais quelques problèmes sont rencontrés et les plans prévus de réalisation doivent être modifiés;
+	\item[En cours (Réalisation sans encombre)] La disposition proposée est en cours de réalisation et se déroule sans encombre;
+	\item[Existant et demande un ajustement (Opérationnel 90\%)] La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle;
+	\item[Existant (Totalement opérationnel) / oui (100\%)] La disposition est opérationnelle et remplit entièrement les besoins demandés.
+ \end{description}

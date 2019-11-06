@@ -1,0 +1,7 @@
+{
+    "require": {
+        "phpoffice/phpword": "dev-master",
+        "phpoffice/phpspreadsheet": "dev-master",
+		"dompdf/dompdf": "dev-master"
+    }
+}
