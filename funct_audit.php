@@ -116,8 +116,7 @@ function writeAudit() {
 	$assessment = getAssessment($id_etab, $annee);
 	$base = evalsmsiConnect();
 	$record = mysqli_real_escape_string($base, serialize($_POST));
-	$comment = isset($_POST['final_comment']) ? traiteStringToBDD($_POST['final_comment']) : NULL;
-	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $id_etab, $annee);
+	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
 	if (mysqli_query($base, $request)) {
 		return $id_etab;
 	} else {
