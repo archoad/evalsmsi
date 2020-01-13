@@ -45,7 +45,6 @@ function about() {
 	printf("<td><img src='pict/html5.png' alt='valid html5' /></td>\n");
 	printf("<td><img src='pict/css3.png' alt='valid css3' /></td>\n</tr>\n");
 	printf("<tr style='background:none;'>\n");
-	printf("<td><a href='https://github.com/ckeditor'><img src='pict/ckeditor.png' alt='logo ckeditor' /></a></td>\n");
 	printf("<td><a href='https://jpgraph.net'><img src='pict/jpgraph.png' alt='logo jpgraph' /></a></td>\n");
 	printf("<td><a href='https://github.com/PHPOffice'><img src='pict/phpoffice.png' alt='logo phpoffice' /></a></td>\n");
 	printf("</tr>\n</table>\n</div>\n</div>\n");

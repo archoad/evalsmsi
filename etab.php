@@ -113,7 +113,10 @@ if (isset($_GET['action'])) {
 
 ?>
 
-<script type='text/javascript' src='ckeditor/ckeditor.js'></script>
+
+
+
+
 <script type='text/javascript' src='js/chart.min.js'></script>
 <script type='text/javascript' src='js/evalsmsi.js'></script>
 <script type='text/javascript' src='js/graphs.js'></script>

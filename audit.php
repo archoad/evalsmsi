@@ -84,7 +84,6 @@ if (isset($_GET['action'])) {
 		if (isRegroupEtab($_SESSION['etab_audit'])) {
 			if (isAssessGroupValidate()) {
 				if (isThereAssessForEtab($_SESSION['etab_audit'])) {
-					printf("<script type='text/javascript'>window.onload = function() { textEditor(); }</script>\n");
 					displayAuditRegroup();
 				} else {
 					if (createAssessmentRegroup()) {
@@ -97,7 +96,6 @@ if (isset($_GET['action'])) {
 
 			}
 		} else {
-			printf("<script type='text/javascript'>window.onload = function() { textEditor(); }</script>\n");
 			displayAudit($_SESSION['etab_audit']);
 		}
 		footPage();
@@ -217,8 +215,6 @@ if (isset($_GET['action'])) {
 
 
 
-
-<script type='text/javascript' src='ckeditor/ckeditor.js'></script>
 <script type='text/javascript' src='js/chart.min.js'></script>
 <script type='text/javascript' src='js/vis.min.js'></script>
 <script type='text/javascript' src='js/evalsmsi.js'></script>

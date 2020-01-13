@@ -234,32 +234,6 @@ function password_ok(form) {
 }
 
 
-function textEditor() {
-	for(i=0; i<self.document.forms[0].elements.length; i++) {
-		elt = self.document.forms[0].elements[i];
-		if (elt.type == 'textarea') {
-			if ((elt.id == 'final_comment') || (elt.id == 'comments')) {
-				CKEDITOR.replace( elt.name,
-					{
-						toolbar :
-						[
-							['Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Preview', 'Print']
-						],
-						uiColor : '#2E7CC3',
-						language : 'fr',
-						resize_enabled : false,
-						toolbarCanCollapse : false,
-						disableNativeSpellChecker : true,
-						removePlugins : 'elementspath,save,font,file,scayt,wsc,dialog',
-						height : '250px',
-						width : '98%'
-					} );
-			}
-		}
-	}
-}
-
-
 function champs_na(form) {
 	var tmp_elt = document.getElementById('nbr_questions');
 	var nbr_quests = tmp_elt.value;
@@ -338,7 +312,6 @@ function progresse() {
 	if (nbr_quests == num_quest_ok) {
 		var par = document.getElementById('final_comment');
 		par.style.display = 'block';
-		textEditor();
 		if (document.getElementById("final_comment").value == '' ) {
 			alert("Questionnaire complété à 100%\nVEUILLEZ COMPLETER LE COMMENTAIRE FINAL EN FIN DE FORMULAIRE");
 		}
