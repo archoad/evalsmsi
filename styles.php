@@ -461,6 +461,33 @@ textarea {
 	color: var(--textClearColor);
 }
 
+.captcha {
+	vertical-align: middle;
+}
+
+.captcha img {
+	display: block;
+	float: left;
+	width: 50%;
+	margin: 0;
+	padding: 10px 5px 5px 5px;
+}
+
+.captcha input {
+	float: right;
+	background: var(--bg0Color);
+	outline: 0;
+	width: 50%;
+	border: 0;
+	padding: 15px 5px 15px 5px;
+	font-size: 14px;
+	color: var(--textDarkColor);
+}
+
+.captcha input[type=text] {
+	background-image: none;
+}
+
 .btnValid {
 	border: none;
 	text-align: center;

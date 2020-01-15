@@ -53,6 +53,10 @@ function menuAuth($msg='') {
 	printf("<form method='post' id='auth' action='evalsmsi.php?action=connect' onsubmit='return champs_ok(this)'>\n");
 	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' />\n");
 	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' />\n");
+	printf("<div class='captcha'>\n");
+	printf("<img src='captcha.php' alt='captcha'/>\n");
+	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' />\n");
+	printf("</div>");
 	printf("<input type='submit' id='valid' value='Connexion' />\n");
 	if ($msg<>'') {
 		printf("<img src='pict/help.png' alt='Aide' style='width:30px;' />");
@@ -113,6 +117,15 @@ function initiateNullSession() {
 }
 
 
+function validateCaptcha($captcha) {
+	if (strncmp($_SESSION['sess_captcha'], $captcha, 6) === 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 function redirectUser($data) {
 	global $appli_titre;
 	initiateSession($data);
@@ -148,18 +161,26 @@ session_start();
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 		case 'connect':
-			$data = authentification($_POST['login'], $_POST['password']);
-			if ($data) {
-				redirectUser($data);
+			if (validateCaptcha($_POST['captcha'])) {
+				$data = authentification($_POST['login'], $_POST['password']);
+				if ($data) {
+					redirectUser($data);
+				} else {
+					menuAuth("Erreur d'authentification");
+					exit();
+				}
 			} else {
-				menuAuth("Erreur d'authentification");
-				exit();
+				destroySession();
+				header("Location: evalsmsi.php");
 			}
 			break;
 		case 'disconnect':
-			menuAuth();
+			destroySession();
+			header("Location: evalsmsi.php");
 			break;
 		default:
+			destroySession();
+			header("Location: evalsmsi.php");
 			break;
 	}
 } else {

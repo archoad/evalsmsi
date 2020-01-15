@@ -165,13 +165,13 @@ function evalsmsiDisconnect($dbh){
 function destroySession() {
 	session_destroy();
 	unset($_SESSION);
+	header('Location: evalsmsi.php');
 }
 
 
 function isSessionValid($role) {
 	if (!isset($_SESSION['uid']) OR (!in_array($_SESSION['role'], $role))) {
 		destroySession();
-		header('Location: evalsmsi.php');
 		exit();
 	}
 }
