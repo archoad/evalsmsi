@@ -104,8 +104,12 @@ function initiateSession($data) {
 	$_SESSION['prenom'] = $data->prenom;
 	$_SESSION['role'] = $data->role;
 	$_SESSION['login'] = $data->login;
-	$_SESSION['etablissement'] = $data->etablissement;
 	$_SESSION['annee'] = $annee;
+	if ($data->role === '2') {
+		$_SESSION['audit_etab']  = $data->etablissement;
+	} else {
+		$_SESSION['id_etab'] = $data->etablissement;
+	}
 }
 
 
@@ -131,6 +135,9 @@ function validateCaptcha($captcha) {
 function redirectUser($data) {
 	global $appli_titre;
 	initiateSession($data);
+	if(isset($_SESSION['sess_captcha'])) {
+		unset($_SESSION['sess_captcha']);
+	}
 	switch ($_SESSION['role']) {
 		case '1': // Administrateur
 			headPage($appli_titre, "Administration");

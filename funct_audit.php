@@ -20,6 +20,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
+
+function isEtabLegitimate($id_etab) {
+	if(isset($_SESSION['id_etab'])) {
+		unset($_SESSION['id_etab']);
+	}
+	$tmp = explode(',', $_SESSION['audit_etab']);
+	if (in_array($id_etab, $tmp)) {
+		$_SESSION['id_etab'] = $id_etab;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 function createAssessmentRegroup() {
 	$base = evalsmsiConnect();
 	$id_etab = $_SESSION['etablissement'];
@@ -114,7 +129,7 @@ function getAssessment($id_etab=0, $annee=0) {
 
 function writeAudit() {
 	recordLog();
-	$id_etab = intval($_SESSION['etab_audit']);
+	$id_etab = intval($_SESSION['id_etab']);
 	$annee = $_SESSION['annee'];
 	$assessment = getAssessment($id_etab, $annee);
 	$base = evalsmsiConnect();
@@ -130,7 +145,7 @@ function writeAudit() {
 
 
 function objectifs() {
-	$id_etab = intval($_SESSION['etab_audit']);
+	$id_etab = intval($_SESSION['id_etab']);
 	$base = evalsmsiConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
@@ -158,7 +173,7 @@ function objectifs() {
 
 
 function recordObjectifs() {
-	$id_etab = $_SESSION['etab_audit'];
+	$id_etab = $_SESSION['id_etab'];
 	$base = evalsmsiConnect();
 	$objectifs = mysqli_real_escape_string($base, serialize($_POST));
 	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectifs, $id_etab);
@@ -173,7 +188,7 @@ function recordObjectifs() {
 
 function journalisation() {
 	printf("<div class='onecolumn' id='graphs'>\n");
-	$msg = sprintf("Journal des opérations - %s", uidToEtbs($_SESSION['etab_audit']));
+	$msg = sprintf("Journal des opérations - %s", uidToEtbs($_SESSION['id_etab']));
 	printf("<div class='visualization' id='visualization'><p>%s</p></div>", $msg);
 	printf("<p>&nbsp;</p>");
 	printf("<textarea name='visdata' id='visdata' rows='15' cols='100' placeholder='Détails des opérations' readonly></textarea>");
@@ -198,7 +213,7 @@ function recordCommentGraph() {
 
 
 function isAssessGroupValidate() {
-	$id_etab = $_SESSION['etab_audit'];
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$isOk = true;
 	$base = evalsmsiConnect();
@@ -226,7 +241,8 @@ function isAssessGroupValidate() {
 }
 
 
-function displayAudit($id_etab) {
+function displayAudit() {
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$nom = getEtablissement($id_etab);
 	printf("<h1>%s - %s</h1>\n", $nom, $annee);
@@ -307,7 +323,7 @@ function displayAudit($id_etab) {
 
 
 function displayAuditRegroup() {
-	$id_etab = $_SESSION['etab_audit'];
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$nom = getEtablissement($id_etab);
 	printf("<h1>%s - %s</h1>\n", $nom, $annee);
@@ -445,7 +461,7 @@ function displayAuditRegroup() {
 
 
 function getCommentGraphPar() {
-	$id_etab = $_SESSION['etab_audit'];
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$base = evalsmsiConnect();
 	$request = sprintf("SELECT * FROM assess WHERE(etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
@@ -475,7 +491,7 @@ function getCommentGraphPar() {
 					$result = mysqli_query($base, $request);
 					$record = mysqli_fetch_object($result);
 					printf("<div class='onecolumn'>\n");
-					if (isRegroupEtab($id_etab)) {
+					if (isRegroupEtab()) {
 						graphBilan($id_etab, 0);
 						printf("<p><img src='%s' alt='' /></p>\n", 'pict/generated/result_bilan_par.png');
 					} else {
@@ -519,7 +535,7 @@ function graphSynthese() {
 
 	$base = evalsmsiConnect();
 	// on récupère la liste des établissements composant l'établissement de regroupement.
-	$req_regroup = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['etab_audit']);
+	$req_regroup = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$res_regroup = mysqli_query($base, $req_regroup);
 	$row_regroup = mysqli_fetch_object($res_regroup);
 	// on récupère la liste des réponses pondérée par le poids de chaque question.
@@ -626,7 +642,7 @@ function graphSynthese() {
 
 
 function confirmDeleteAssessment($script) {
-	$msg = sprintf("Cliquer pour effacer l'évaluation<br />réalisée en <b>%d</b> par <b>%s</b>", $_SESSION['annee'], getEtablissement($_SESSION['etab_audit']));
+	$msg = sprintf("Cliquer pour effacer l'évaluation<br />réalisée en <b>%d</b> par <b>%s</b>", $_SESSION['annee'], getEtablissement($_SESSION['id_etab']));
 	linkMsg($script."?action=do_delete", $msg, "alert.png");
 	linkMsg($script, "Annuler et revenir à la page d'acueil", "ok.png");
 	printf("<div class='onecolumn' id='graphs'>\n");
@@ -637,9 +653,9 @@ function confirmDeleteAssessment($script) {
 
 function deleteAssessment() {
 	$base = evalsmsiConnect();
-	$request = sprintf("DELETE FROM assess WHERE etablissement='%d' AND annee='%d'", $_SESSION['etab_audit'], $_SESSION['annee']);
+	$request = sprintf("DELETE FROM assess WHERE etablissement='%d' AND annee='%d'", $_SESSION['id_etab'], $_SESSION['annee']);
 	if (mysqli_query($base, $request)) {
-		$request = sprintf("DELETE FROM journal WHERE etablissement='%d' AND YEAR(timestamp)='%d'", $_SESSION['etab_audit'], $_SESSION['annee']);
+		$request = sprintf("DELETE FROM journal WHERE etablissement='%d' AND YEAR(timestamp)='%d'", $_SESSION['id_etab'], $_SESSION['annee']);
 		if (mysqli_query($base, $request)) {
 			linkMsg("audit.php", "Evaluation supprimée de la base.", "ok.png");
 		}

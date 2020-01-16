@@ -28,13 +28,12 @@ $authorizedRole = array('3', '4');
 isSessionValid($authorizedRole);
 headPage($appli_titre);
 $script = basename($_SERVER['PHP_SELF']);
-$_SESSION['etab_graph'] = $_SESSION['etablissement'];
 
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'continue_assess':
-		if (isThereAssessForEtab($_SESSION['etablissement'])) {
+		if (isThereAssessForEtab()) {
 			printf("<script type='text/javascript'>window.onload = function() { progresse(); }</script>");
 			displayAssessment();
 		} else {
@@ -58,7 +57,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'graph':
-		if (isThereAssessForEtab($_SESSION['etablissement'])) {
+		if (isThereAssessForEtab()) {
 			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 			displayEtablissmentGraphs();
 			footPage($script, "Accueil");
@@ -80,7 +79,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'office':
-		exportEval($script, $_SESSION['etablissement']);
+		exportEval($script);
 		footPage($script, "Accueil");
 		break;
 

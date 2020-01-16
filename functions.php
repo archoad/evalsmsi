@@ -320,16 +320,6 @@ function footPage($link='', $msg=''){
 }
 
 
-function isEtabLegitimate($id_etab) {
-	$tmp = explode(',', $_SESSION['etablissement']);
-	if (in_array($id_etab, $tmp)) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
 function validForms($msg, $url, $back=True) {
 	printf("<fieldset>\n<legend>Validation</legend>\n");
 	printf("<table><tr><td>\n");
@@ -356,7 +346,7 @@ function linkMsg($link, $msg, $img, $class='msg') {
 
 function recordLog() {
 	$base = evalsmsiConnect();
-	$etablissement = $_SESSION['etablissement'];
+	$etablissement = $_SESSION['id_etab'];
 	$request = sprintf("SELECT reponses FROM assess WHERE (annee='%s' AND etablissement='%d') LIMIT 1", $_SESSION['annee'], $etablissement);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -395,7 +385,7 @@ function traiteStringFromBDD($str){
 
 function uidToEtbs() {
 	$base = evalsmsiConnect();
-	$request = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", intval($_SESSION['etablissement']));
+	$request = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", intval($_SESSION['id_etab']));
 	$result = mysqli_query($base, $request);
 	evalsmsiDisconnect($base);
 	if ($result->num_rows) {
@@ -478,10 +468,10 @@ function getEtablissement($id_etab=0, $abrege=0) {
 			return traiteStringFromBDD($row->nom);
 		}
 	} else {
-		if (intval($_SESSION['role']) == 1) {
-			$request = "SELECT * FROM etablissement";
+		if (intval($_SESSION['role']) == 2) {
+			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s)", $_SESSION['audit_etab']);
 		} else {
-			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s)", $_SESSION['etablissement']);
+			$request = "SELECT * FROM etablissement";
 		}
 		$result = mysqli_query($base, $request);
 		evalsmsiDisconnect($base);
@@ -490,7 +480,8 @@ function getEtablissement($id_etab=0, $abrege=0) {
 }
 
 
-function isRegroupEtab($id_etab) {
+function isRegroupEtab() {
+	$id_etab = $_SESSION['id_etab'];
 	$base = evalsmsiConnect();
 	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
@@ -557,8 +548,9 @@ function getAuditor($id_etab) {
 }
 
 
-function isThereAssessForEtab($id_etab) {
+function isThereAssessForEtab() {
 	$base = evalsmsiConnect();
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' LIMIT 1", $id_etab, $annee);
 	$result=mysqli_query($base, $request);
@@ -976,7 +968,7 @@ function cumulatedGraph($id_etab, $reponses) {
 
 function displayEtablissmentGraphs() {
 	$annee = $_SESSION['annee'];
-	$id_etab = $_SESSION['etab_graph'];
+	$id_etab = $_SESSION['id_etab'];
 	$reponses = getAnswers($id_etab);
 	if (sizeof(array_keys($reponses))) {
 		if (isAssessComplete($reponses[$annee])) {
@@ -985,7 +977,7 @@ function displayEtablissmentGraphs() {
 			linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
 		}
 		printf("<div class='onecolumn' id='graphs'>\n");
-		assessSynthese($id_etab);
+		assessSynthese();
 		printf("<canvas id='currentYearGraphBar'></canvas>\n");
 		printf("<a id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
 		printf("<p class='separation'>&nbsp;</p>\n");
@@ -1022,7 +1014,8 @@ function doEtablissementGraphs($id_etab, $annee=0) {
 }
 
 
-function assessSynthese($id_etab) {
+function assessSynthese() {
+	$id_etab = $_SESSION['id_etab'];
 	$annee_encours = $_SESSION['annee'];
 	$titles_par = getAllParAbrege();
 
@@ -1062,8 +1055,9 @@ function assessSynthese($id_etab) {
 }
 
 
-function graphBilan($id_etab_regroup, $print=1) {
+function graphBilan($print=1) {
 	global $cheminIMG, $colors, $hauteur;
+	$id_etab_regroup = $_SESSION['id_etab'];
 	@unlink($cheminIMG."result_bilan_par_min.png");
 	@unlink($cheminIMG."result_bilan_par_moy.png");
 	@unlink($cheminIMG."result_bilan_par.png");
@@ -1568,7 +1562,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
 
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\\subsection{Liste des établissements évalués}\n\n";
 		$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 		$result = mysqli_query($base, $request);
@@ -1612,7 +1606,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	$notes = calculNotes($reponses[$id_etab]);
 	$noteSum = 0;
 
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\\subsection{Cotations de l'évaluation}\n\n";
 	} else {
 		$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
@@ -1620,7 +1614,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	$text .= "\\begin{center}\n";
 	$text .= "\\begin{tabular}{ | >{\\centering}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\$\\quad\\rightarrow\\quad\$} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
 	$text .= "\\hline\n";
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\\multicolumn{4}{| c |}{Bilan global des établissements}\\tabularnewline\n\\hline\n";
 		$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes (notes minimales obtenues)}} & Note finale \\tabularnewline\n";
 	} else {
@@ -1644,7 +1638,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	$text .= "\\end{tabular}\n";
 	$text .= "\\end{center}\n\n";
 
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\n\n\\bigskip\n\n";
 		$text .= "\\begin{center}\n";
 		$text .= "\\begin{tabular}{ | >{\\centering\\textbf}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\\quad \$\\rightarrow\$ \\quad} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
@@ -1669,13 +1663,13 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 		$text .= "\\end{tabular}\n";
 		$text .= "\\end{center}\n\n";
 	}
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\\subsection{Graphes de synthèses}\n\n";
 		$text .= "Voir figures \\ref{figminimal}, \\ref{figmoyenne} et \\ref{figfinal} pages \\pageref{figminimal}, \\pageref{figmoyenne} et \\pageref{figfinal}\n\n";
 	} else {
 		$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
 	}
-	if (isRegroupEtab($id_etab)) {
+	if (isRegroupEtab()) {
 		$text .= "\\begin{figure}[ht]\n";
 		$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_bilan_par_min.png");
 		$text .= "\\caption{Résultats par thèmes à partir des notes minimales}\n";
@@ -1863,9 +1857,10 @@ function createWordDoc() {
 }
 
 
-function exportEval($script, $id_etab) {
+function exportEval($script) {
 	global $appli_titre, $appli_titre_short;
 	$dir = dirname($_SERVER['PHP_SELF']);
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$abrege = getEtablissement(intval($id_etab), $abrege=1);
 	$fileDoc = sprintf("rapports/evaluation_%s_%s.docx", $annee, $abrege);
@@ -2008,7 +2003,7 @@ function exportEval($script, $id_etab) {
 
 
 function generateExcellRapport($annee) {
-	$id_etab = $_SESSION['etablissement'];
+	$id_etab = $_SESSION['id_etab'];
 	$fileXlsx = sprintf("rapports/plan_actions_%d_%d.xlsx", $annee, $id_etab);
 
 	$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();

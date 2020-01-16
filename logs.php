@@ -46,7 +46,7 @@ function processAction($action) {
 
 
 $base = evalsmsiConnect();
-$request = sprintf("SELECT * FROM journal WHERE (YEAR(timestamp)='%d' AND etablissement='%d')", $_SESSION['annee'], $_SESSION['etab_audit']);
+$request = sprintf("SELECT * FROM journal WHERE (YEAR(timestamp)='%d' AND etablissement='%d')", $_SESSION['annee'], $_SESSION['id_etab']);
 $result = mysqli_query($base, $request);
 $rawdata = [];
 $cpt = 0;

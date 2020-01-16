@@ -27,7 +27,7 @@ $authorizedRole = array('2');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Audit");
 $script = basename($_SERVER['PHP_SELF']);
-print_r($_SESSION);
+
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
@@ -38,7 +38,7 @@ if (isset($_GET['action'])) {
 
 	case 'do_office':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			exportEval($script, $_POST['id_etab']);
+			exportEval($script);
 			footPage($script, "Accueil");
 		} else {
 			linkMsg($script, "Etablissement invalide", "alert.png");
@@ -53,10 +53,8 @@ if (isset($_GET['action'])) {
 
 	case 'do_graph':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
-			$_SESSION['etab_graph'] = $_POST['id_etab'];
-			if (isThereAssessForEtab($_SESSION['etab_audit'])) {
-				if (isRegroupEtab($_SESSION['etab_audit'])) {
+			if (isThereAssessForEtab()) {
+				if (isRegroupEtab()) {
 					menu_synthese();
 					footPage($script, "Accueil");
 				} else {
@@ -81,7 +79,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'bilan':
-		graphBilan($_SESSION['etab_audit']);
+		graphBilan();
 		footPage($script, "Accueil");
 		break;
 
@@ -92,10 +90,9 @@ if (isset($_GET['action'])) {
 
 	case 'display_audit':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
-			if (isRegroupEtab($_SESSION['etab_audit'])) {
+			if (isRegroupEtab()) {
 				if (isAssessGroupValidate()) {
-					if (isThereAssessForEtab($_SESSION['etab_audit'])) {
+					if (isThereAssessForEtab()) {
 						displayAuditRegroup();
 					} else {
 						if (createAssessmentRegroup()) {
@@ -108,7 +105,7 @@ if (isset($_GET['action'])) {
 
 				}
 			} else {
-				displayAudit($_SESSION['etab_audit']);
+				displayAudit();
 			}
 		} else {
 			linkMsg($script, "Etablissement invalide", "alert.png");
@@ -132,8 +129,6 @@ if (isset($_GET['action'])) {
 
 	case 'prepare_rapport':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
-			$_SESSION['etab_graph'] = $_POST['id_etab'];
 			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 			getCommentGraphPar();
 		} else {
@@ -158,7 +153,6 @@ if (isset($_GET['action'])) {
 
 	case 'display_journal':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
 			printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
 			journalisation();
 			footPage($script, "Accueil");
@@ -188,7 +182,6 @@ if (isset($_GET['action'])) {
 
 	case 'display_objectif':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
 			objectifs();
 			footPage($script, "Accueil");
 		} else {
@@ -213,9 +206,7 @@ if (isset($_GET['action'])) {
 
 	case 'valid_delete':
 		if (isEtabLegitimate($_POST['id_etab'])) {
-			$_SESSION['etab_audit'] = $_POST['id_etab'];
-			$_SESSION['etab_graph'] = $_POST['id_etab'];
-			if (isThereAssessForEtab($_SESSION['etab_audit'])) {
+			if (isThereAssessForEtab()) {
 				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 				confirmDeleteAssessment($script);
 				footPage();

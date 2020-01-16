@@ -766,35 +766,24 @@ textarea {
 }
 
 .project {
-	width: 80%;
+	width: 90%;
 	margin: auto;
 }
 
-.project p {
-	padding: 2px;
-	text-align: justify;
-}
-
-.project h2 {
-	font-size: 16pt;
-	font-weight: bold;
-	letter-spacing: 4px;
-	color:var(--myOrangeLight);
-}
-
 .project h3 {
-	padding: 10px;
+	margin: 0 5%;
+	padding: 8px;
 	text-align:left;
 	font-size:10pt;
 	font-weight: normal;
 	letter-spacing: 2px;
 	color:var(--textDarkColor);
-	background: var(--bg1Color);
+	background: var(--bg2Color);
 }
 
 .project table {
 	padding: 5px;
-	border: 1px solid var(--textDarkColor);;
+	border: 1px solid var(--textDarkColor);
 	border-radius: 4px;
 }
 
@@ -803,7 +792,7 @@ textarea {
 }
 
 .project tr:nth-child(odd) {
-	background-color: var(--bg3Color);
+	background-color: var(--bg1Color);
 }
 
 .project tr:nth-child(even):hover,
@@ -813,11 +802,14 @@ textarea {
 	background-color: var(--myOrangeLight);
 }
 
-.project th {
-	padding: 5px
+.project td {
+	padding: 2px 5px;
+	text-align: left;
 }
 
-.project td {
-	padding: 5px;
-	text-align: left;
+.project textarea {
+	padding: 20px;
+	border: none;
+	background: var(--bg0Color);
+	box-shadow: none;
 }

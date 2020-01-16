@@ -27,7 +27,7 @@ $authorizedRole = array('2', '3', '4');
 isSessionValid($authorizedRole);
 header('Content-Type: application/json');
 
-$id_etab = $_SESSION['etab_graph'];
+$id_etab = $_SESSION['id_etab'];
 $annee = $_SESSION['annee'];
 $nom_etab = getEtablissement($id_etab);
 $labels = getAllParAbrege();

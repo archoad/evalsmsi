@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 function createAssessment() {
 	$base = evalsmsiConnect();
-	$id_etab = $_SESSION['etablissement'];
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $id_etab, $annee);
 	if (mysqli_query($base, $request)){
@@ -39,7 +39,7 @@ function displayAssessment() {
 	$annee = $_SESSION['annee'];
 	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
 	$base = evalsmsiConnect();
-	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['etablissement'], $annee);
+	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['id_etab'], $annee);
 	$result = mysqli_query($base, $request);
 	// un enregistrement a déjà été fait
 	if ($result->num_rows) {
@@ -124,7 +124,7 @@ function displayAssessment() {
 
 function writeAssessment(){
 	recordLog();
-	$etablissement = $_SESSION['etablissement'];
+	$etablissement = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$base = evalsmsiConnect();
 	$record = mysqli_real_escape_string($base, serialize($_POST));
@@ -144,7 +144,7 @@ function exportRapport($script, $annee) {
 	$msg = sprintf("Télécharger le plan d'actions %s (Excel)", $annee);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	generateRapport($script, $_SESSION['etablissement'], $annee);
+	generateRapport($script, $_SESSION['id_etab'], $annee);
 	printf("</div>\n");
 	printf("<div class='column right'>\n");
 	linkMsg($xlsFile, $msg, "xlsx.png", 'menu');
@@ -154,7 +154,7 @@ function exportRapport($script, $annee) {
 
 function selectYearRapport() {
 	$base = evalsmsiConnect();
-	$id_etab = $_SESSION['etablissement'];
+	$id_etab = $_SESSION['id_etab'];
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d'", $id_etab);
 	$result = mysqli_query($base, $request);
 	evalsmsiDisconnect($base);
