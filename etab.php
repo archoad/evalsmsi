@@ -30,6 +30,7 @@ headPage($appli_titre);
 $script = basename($_SERVER['PHP_SELF']);
 $_SESSION['etab_graph'] = $_SESSION['etablissement'];
 
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'continue_assess':

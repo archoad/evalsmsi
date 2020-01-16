@@ -26,26 +26,57 @@ if(isset($_SESSION['sess_captcha'])) {
 	unset($_SESSION['sess_captcha']);
 }
 
-header('Content-Type: image/png');
 
-$imgWidth = 80;
+$imgWidth = 85;
 $imgHeight = 25;
-$nbrLines = 5;
 
+
+function generateLines($image, $nbr) {
+	global $imgWidth, $imgHeight;
+	for($i=0; $i<=$nbr; $i++) {
+		$lineColor = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
+		imageline($image, rand(1, $imgWidth-$imgHeight), rand(1, $imgHeight), rand(1, $imgWidth+$imgHeight), rand(1, $imgHeight), $lineColor);
+	}
+}
+
+
+function txtCaptcha($image) {
+	$captchaString = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+	$captchaString = str_shuffle($captchaString);
+	$_SESSION['sess_captcha'] = substr($captchaString, 0, 6);
+	$textColor = imagecolorallocate($image, 40, 45, 50);
+	imagestring($image, 5, 10, 4, $_SESSION['sess_captcha'], $textColor);
+}
+
+
+function numCaptcha($image) {
+	$captchaNumber = ["un", "deux", "trois", "quatre", "cinq"];
+	$val1 = rand(1, 5);
+	$val2 = rand(1, 5);
+	$_SESSION['sess_captcha'] = $val1 * $val2;
+	$captchaString = $captchaNumber[$val1-1].'*'.$captchaNumber[$val2-1];
+	$textColor = imagecolorallocate($image, 40, 45, 50);
+	imagestring($image, 3, 0, 4, $captchaString, $textColor);
+}
+
+
+header('Content-Type: image/png');
 $img = imagecreatetruecolor($imgWidth, $imgHeight);
 $bg = imagecolorallocate($img, 0, 0, 0);
 imagecolortransparent($img, $bg);
+generateLines($img, 5);
 
-for($i=0; $i<=$nbrLines; $i++) {
-	$lineColor = imagecolorallocate($img, rand(0,255), rand(0,255), rand(0,255));
-	imageline($img, rand(1, $imgWidth-$imgHeight), rand(1, $imgHeight), rand(1, $imgWidth+$imgHeight), rand(1, $imgHeight), $lineColor);
+switch ($_SESSION['captchaMode']) {
+	case 'txt':
+		txtCaptcha($img);
+		break;
+	case 'num':
+		numCaptcha($img);
+		break;
+	default:
+		numCaptcha($img);
+		break;
 }
-
-$captchaString = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
-$captchaString = str_shuffle($captchaString);
-$_SESSION['sess_captcha'] = substr($captchaString, 0, 6);
-$textColor = imagecolorallocate($img, 40, 45, 50);
-imagestring($img, 5, 10, 4, $_SESSION['sess_captcha'], $textColor);
 
 imagepng($img);
 imagedestroy($img);

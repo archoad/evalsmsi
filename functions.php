@@ -38,9 +38,11 @@ $passwd = 'webphpsql';
 $appli_titre = ("Evaluation du SMSI");
 $appli_titre_short = ("EvalSMSI");
 // Thème CSS
-$mode = 'standard'; // 'laposte' , 'standard'
+$cssTheme = 'standard'; // 'laposte' , 'standard'
 // Image accueil
 $auhtPict = 'pict/accueil.png'; // 'pict/accueil.png', ''pict/auditics.png';'
+// Mode captcha
+$captchaMode = 'num'; // 'txt' or 'num'
 // --------------------
 
 
@@ -136,7 +138,7 @@ function menuAudit() {
 	printf("<div class='column left'>\n");
 	linkMsg("audit.php?action=office", "Exporter une évaluation", "docx.png", 'menu');
 	linkMsg("audit.php?action=graph", "Graphes par établissement", "piechart.png", 'menu');
-	linkMsg("audit.php?action=objectifs", "Gestion des objectifs", "objectifs.png", 'menu');
+	linkMsg("audit.php?action=objectif", "Gestion des objectifs", "objectifs.png", 'menu');
 	linkMsg("audit.php?action=journal", "Journalisation", "journal.png", 'menu');
 	printf("</div><div class='column right'>\n");
 	linkMsg("audit.php?action=audit", "Evaluation auditeur", "audit.png", 'menu');
@@ -314,6 +316,16 @@ function footPage($link='', $msg=''){
 		printf("%s\n", infoSession());
 		printf("</div>\n");
 		printf("</body>\n</html>\n");
+	}
+}
+
+
+function isEtabLegitimate($id_etab) {
+	$tmp = explode(',', $_SESSION['etablissement']);
+	if (in_array($id_etab, $tmp)) {
+		return true;
+	} else {
+		return false;
 	}
 }
 

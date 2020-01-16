@@ -27,6 +27,7 @@ $authorizedRole = array('2');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Audit");
 $script = basename($_SERVER['PHP_SELF']);
+print_r($_SESSION);
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
@@ -36,8 +37,13 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'do_office':
-		exportEval($script, $_POST['id_etab']);
-		footPage($script, "Accueil");
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			exportEval($script, $_POST['id_etab']);
+			footPage($script, "Accueil");
+		} else {
+			linkMsg($script, "Etablissement invalide", "alert.png");
+			footPage();
+		}
 		break;
 
 	case 'graph':
@@ -46,20 +52,25 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'do_graph':
-		$_SESSION['etab_audit'] = $_POST['id_etab'];
-		$_SESSION['etab_graph'] = $_POST['id_etab'];
-		if (isThereAssessForEtab($_SESSION['etab_audit'])) {
-			if (isRegroupEtab($_SESSION['etab_audit'])) {
-				menu_synthese();
-				footPage($script, "Accueil");
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			$_SESSION['etab_graph'] = $_POST['id_etab'];
+			if (isThereAssessForEtab($_SESSION['etab_audit'])) {
+				if (isRegroupEtab($_SESSION['etab_audit'])) {
+					menu_synthese();
+					footPage($script, "Accueil");
+				} else {
+					printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+					displayEtablissmentGraphs();
+					footPage($script, "Accueil");
+				}
 			} else {
-				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
-				displayEtablissmentGraphs();
-				footPage($script, "Accueil");
+				$msg = sprintf("L'évaluation pour %d n'a pas été créée.", $_SESSION['annee']);
+				linkMsg($script, $msg, "alert.png");
+				footPage();
 			}
 		} else {
-			$msg = sprintf("L'évaluation pour %d n'a pas été créée.", $_SESSION['annee']);
-			linkMsg($script, $msg, "alert.png");
+			linkMsg($script, "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
@@ -80,23 +91,27 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'display_audit':
-		$_SESSION['etab_audit'] = $_POST['id_etab'];
-		if (isRegroupEtab($_SESSION['etab_audit'])) {
-			if (isAssessGroupValidate()) {
-				if (isThereAssessForEtab($_SESSION['etab_audit'])) {
-					displayAuditRegroup();
-				} else {
-					if (createAssessmentRegroup()) {
-						$msg = sprintf("L'évaluation pour %s a été crée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
-						linkMsg($script, $msg, "ok.png");
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			if (isRegroupEtab($_SESSION['etab_audit'])) {
+				if (isAssessGroupValidate()) {
+					if (isThereAssessForEtab($_SESSION['etab_audit'])) {
+						displayAuditRegroup();
 					} else {
-						linkMsg($script, "Aucune évaluation disponible.", "alert.png");
+						if (createAssessmentRegroup()) {
+							$msg = sprintf("L'évaluation pour %s a été crée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
+							linkMsg($script, $msg, "ok.png");
+						} else {
+							linkMsg($script, "Aucune évaluation disponible.", "alert.png");
+						}
 					}
-				}
 
+				}
+			} else {
+				displayAudit($_SESSION['etab_audit']);
 			}
 		} else {
-			displayAudit($_SESSION['etab_audit']);
+			linkMsg($script, "Etablissement invalide", "alert.png");
 		}
 		footPage();
 		break;
@@ -116,10 +131,14 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'prepare_rapport':
-		$_SESSION['etab_audit'] = $_POST['id_etab'];
-		$_SESSION['etab_graph'] = $_POST['id_etab'];
-		printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
-		getCommentGraphPar();
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			$_SESSION['etab_graph'] = $_POST['id_etab'];
+			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+			getCommentGraphPar();
+		} else {
+			linkMsg($script, "Etablissement invalide", "alert.png");
+		}
 		footPage();
 		break;
 
@@ -138,10 +157,15 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'display_journal':
-		$_SESSION['etab_audit'] = $_POST['id_etab'];
-		printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
-		journalisation();
-		footPage($script, "Accueil");
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
+			journalisation();
+			footPage($script, "Accueil");
+		} else {
+			linkMsg($script, "Etablissement invalide", "alert.png");
+			footPage();
+		}
 		break;
 
 	case 'password':
@@ -157,13 +181,20 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
-	case 'objectifs':
-		if (isset($_POST['etablissement'])) {
-			objectifs(intval($_POST['etablissement']));
-		} else {
-			objectifs();
-		}
+	case 'objectif':
+		selectEtablissementAudit();
 		footPage();
+		break;
+
+	case 'display_objectif':
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			objectifs();
+			footPage($script, "Accueil");
+		} else {
+			linkMsg($script, "Etablissement invalide", "alert.png");
+			footPage();
+		}
 		break;
 
 	case 'write_objectifs':
@@ -181,15 +212,20 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'valid_delete':
-		$_SESSION['etab_audit'] = $_POST['id_etab'];
-		$_SESSION['etab_graph'] = $_POST['id_etab'];
-		if (isThereAssessForEtab($_SESSION['etab_audit'])) {
-			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
-			confirmDeleteAssessment($script);
-			footPage();
+		if (isEtabLegitimate($_POST['id_etab'])) {
+			$_SESSION['etab_audit'] = $_POST['id_etab'];
+			$_SESSION['etab_graph'] = $_POST['id_etab'];
+			if (isThereAssessForEtab($_SESSION['etab_audit'])) {
+				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+				confirmDeleteAssessment($script);
+				footPage();
+			} else {
+				linkMsg($script, "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
+				footpage();
+			}
 		} else {
-			linkMsg($script, "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
-			footpage();
+			linkMsg($script, "Etablissement invalide", "alert.png");
+			footPage();
 		}
 		break;
 

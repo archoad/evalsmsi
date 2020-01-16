@@ -28,7 +28,7 @@ ob_start('ob_gzhandler');
 header('Cache-Control: max-age=31536000, must-revalidate');
 session_start();
 
-switch ($_SESSION['mode']) {
+switch ($_SESSION['theme']) {
 	case 'standard':
 		$bg0Color = '#eae7dc';
 		$bg1Color = '#d8c3a5';
@@ -468,7 +468,7 @@ textarea {
 .captcha img {
 	display: block;
 	float: left;
-	width: 50%;
+	width: 60%;
 	margin: 0;
 	padding: 10px 5px 5px 5px;
 }
@@ -477,7 +477,7 @@ textarea {
 	float: right;
 	background: var(--bg0Color);
 	outline: 0;
-	width: 50%;
+	width: 40%;
 	border: 0;
 	padding: 15px 5px 15px 5px;
 	font-size: 14px;

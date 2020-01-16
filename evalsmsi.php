@@ -87,12 +87,13 @@ function authentification($login, $password) {
 
 
 function initiateSession($data) {
-	global $mode;
+	global $cssTheme, $captchaMode;
 	session_regenerate_id();
 	date_default_timezone_set('Europe/Paris');
 	$date = getdate();
 	$annee = $date['year'];
-	$_SESSION['mode'] = $mode;
+	$_SESSION['theme'] = $cssTheme;
+	$_SESSION['captchaMode'] = $captchaMode;
 	$_SESSION['day'] = mb_strtolower(strftime("%A %d %B %Y", time()));
 	$_SESSION['hour'] = mb_strtolower(strftime("%H:%M", time()));
 	$_SESSION['os'] = detectOS();
@@ -109,9 +110,10 @@ function initiateSession($data) {
 
 
 function initiateNullSession() {
-	global $mode;
+	global $cssTheme, $captchaMode;
 	session_regenerate_id();
-	$_SESSION['mode'] = $mode;
+	$_SESSION['theme'] = $cssTheme;
+	$_SESSION['captchaMode'] = $captchaMode;
 	$_SESSION['role'] = '100';
 	$_SESSION['uid'] = 'null';
 }

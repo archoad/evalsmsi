@@ -67,6 +67,9 @@ function selectEtablissementAudit() {
 		case 'journal':
 			$act = 'display_journal';
 			break;
+		case 'objectif':
+			$act = 'display_objectif';
+			break;
 		case 'delete':
 			$act = 'valid_delete';
 			break;
@@ -126,52 +129,31 @@ function writeAudit() {
 }
 
 
-function objectifs($id_etab=0) {
-	$id_etab = intval($id_etab);
-	if ($id_etab<>0) {
-		$_SESSION['etab_audit'] = $id_etab;
-		$base = evalsmsiConnect();
-		$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
-		$result = mysqli_query($base, $request);
-		$row = mysqli_fetch_object($result);
-		$obj = unserialize($row->objectifs);
-		$req_par = "SELECT * FROM paragraphe ORDER BY numero";
-		$res_par = mysqli_query($base, $req_par);
-		evalsmsiDisconnect($base);
-		printf("<div class='row'>\n");
-		printf("<div class='column largeleft'>\n");
-		printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' onsubmit='return champs_ok(this)'>\n");
-		printf("<fieldset>\n<legend>Gestion des objectifs pour <b>%s</b></legend>\n", $row->nom);
-		printf("<table>\n");
-		printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>\n");
-		while ($row_par=mysqli_fetch_object($res_par)) {
-			$objCurr = sprintf("obj_%d", $row_par->id);
-			printf("<tr><td>%d</td><td style='text-align:left'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $row_par->numero, $row_par->libelle, $row_par->id, $row_par->id, $obj[$objCurr]);
-		}
-		printf("</table>\n</fieldset>\n");
-		validForms('Enregistrer', 'audit.php', $back=False);
-		printf("</form>\n</div>\n");
-		afficheNotesExplanation();
-		printf("</div>\n");
-	} else {
-		$result=getEtablissement();
-		printf("<form method='post' id='objectifs' action='audit.php?action=objectifs' onsubmit='return champs_ok(this)'>\n");
-		printf("<fieldset>\n<legend>Gestion des objectifs</legend>\n");
-		printf("<table>\n<tr><td>\n");
-		printf("Etablissement:&nbsp;\n<select name='etablissement' id='etablissement'>\n");
-		printf("<option selected='selected' value=''>&nbsp;</option>\n");
-		while($row=mysqli_fetch_object($result)) {
-			if (stripos($row->abrege, "_TEAM") === false) {
-				printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);
-			} else {
-				printf("<option value='%s'>%s</option>\n", $row->id, $row->nom." (regroupement)");
-			}
-		}
-		printf("</select>\n");
-		printf("</td>\n</tr>\n</table>\n</fieldset>\n");
-		validForms('Valider', 'audit.php');
-		printf("</form>\n");
+function objectifs() {
+	$id_etab = intval($_SESSION['etab_audit']);
+	$base = evalsmsiConnect();
+	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	$obj = unserialize($row->objectifs);
+	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
+	$res_par = mysqli_query($base, $req_par);
+	evalsmsiDisconnect($base);
+	printf("<div class='row'>\n");
+	printf("<div class='column largeleft'>\n");
+	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' onsubmit='return champs_ok(this)'>\n");
+	printf("<fieldset>\n<legend>Gestion des objectifs pour <b>%s</b></legend>\n", $row->nom);
+	printf("<table>\n");
+	printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>\n");
+	while ($row_par=mysqli_fetch_object($res_par)) {
+		$objCurr = sprintf("obj_%d", $row_par->id);
+		printf("<tr><td>%d</td><td style='text-align:left'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $row_par->numero, $row_par->libelle, $row_par->id, $row_par->id, $obj[$objCurr]);
 	}
+	printf("</table>\n</fieldset>\n");
+	validForms('Enregistrer', 'audit.php', $back=False);
+	printf("</form>\n</div>\n");
+	afficheNotesExplanation();
+	printf("</div>\n");
 }
 
 

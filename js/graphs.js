@@ -65,7 +65,7 @@ function loadGraphYear() {
 			displayYearGraphBar(this.responseText);
 			displayYearGraphPolar(this.responseText);
 			displayYearGraphScatter(this.responseText);
-			displayDetailGraph(this.responseText);
+			//displayDetailGraph(this.responseText);
 		}
 	};
 	xhttp.open('POST', 'graphs.php', true);
