@@ -51,8 +51,8 @@ function menuAuth($msg='') {
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
 	printf("</div>\n<div class='auth'>\n");
 	printf("<form method='post' id='auth' action='evalsmsi.php?action=connect' onsubmit='return champs_ok(this)'>\n");
-	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' />\n");
-	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' />\n");
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' />\n");
+	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' />\n");
 	printf("<div class='captcha'>\n");
 	printf("<img src='captcha.php' alt='captcha'/>\n");
 	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' />\n");
@@ -69,11 +69,11 @@ function menuAuth($msg='') {
 
 
 function authentification($login, $password) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $login);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if (isset($row)) {
 		if (($login === $row->login) and (password_verify($password, $row->password))) {
 			return $row;

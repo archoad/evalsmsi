@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 function maintenanceBDD() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "select table_name from information_schema.tables
 where table_schema='evalsmsi' ";
 	$result = mysqli_query($base, $request);
@@ -46,16 +46,16 @@ where table_schema='evalsmsi' ";
 		}
 	}
 	printf("</div>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function addParagraphs() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT MAX(numero) FROM paragraphe";
 	$result=mysqli_query($base, $request);
 	$row=mysqli_fetch_array($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("<form method='post' id='new_par' action='admin.php?action=new_par' onsubmit='return champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Saisie d'un nouveau domaine</legend>\n");
 	printf("<table>\n<tr><td>\n");
@@ -71,11 +71,11 @@ function addParagraphs() {
 
 function modifParagraphs($id_par) {
 	$id_par = intval($id_par);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM paragraphe WHERE id='%d' LIMIT 1", $id_par);
 	$result=mysqli_query($base, $request);
 	$row=mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("<form method='post' id='modif_par' action='modif.php?action=record_modif_par' onsubmit='return champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification de domaine</legend>\n");
 	printf("<table>\n<tr><td>\n");
@@ -92,7 +92,7 @@ function modifParagraphs($id_par) {
 
 function supprParagraphs($id_par) {
 	$id_par = intval($id_par);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d'", $id_par);
 	$result = mysqli_query($base, $request);
 	if (mysqli_num_rows($result)) {
@@ -105,7 +105,7 @@ function supprParagraphs($id_par) {
 			linkMsg("#", "Echec de la suppression du domaine.", "alert.png");
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -114,7 +114,7 @@ function recordParagraph($tab, $action) {
 	$libelle = isset($tab['lib_par']) ? ucfirst(traiteStringToBDD($tab['lib_par'])) : NULL;
 	$abrege = isset($tab['abre_par']) ? ucfirst(traiteStringToBDD($tab['abre_par'])) : NULL;
 	$id = isset($tab['id_par']) ? intval(trim($tab['id_par'])) : NULL;
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($action=='add') {
 		$request = sprintf("INSERT INTO paragraphe (numero, libelle, abrege) VALUES ('%d', '%s', '%s')", $numero, $libelle, $abrege);
 	} elseif ($action=='modif') {
@@ -125,7 +125,7 @@ function recordParagraph($tab, $action) {
 	} else {
 		linkMsg('admin.png', "Erreur d'enregistrement", 'alert.png');
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($action=='modif') {
 		linkMsg('admin.php?action=modifications', 'Réaliser une autre modification', 'ok.png');
 	}
@@ -133,10 +133,10 @@ function recordParagraph($tab, $action) {
 
 
 function addSubParagraphs() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT * FROM paragraphe";
 	$result=mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if (mysqli_num_rows($result)) { // au moins un domain doit exister pour un sous-domaine
 		printf("<form method='post' id='new_sub_par' action='admin.php?action=new_sub_par' onsubmit='return champs_ok(this)'>\n");
 		printf("<fieldset>\n<legend>Saisie d'un nouveau sous-domaine</legend>\n");
@@ -161,7 +161,7 @@ function addSubParagraphs() {
 
 function modifSubParagraphs($id_sub_par) {
 	$id_sub_par = intval($id_sub_par);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM sub_paragraphe WHERE id='%d' LIMIT 1", $id_sub_par);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -169,7 +169,7 @@ function modifSubParagraphs($id_sub_par) {
 	$req_par = sprintf("SELECT * FROM paragraphe WHERE id='%d' LIMIT 1", $id_par);
 	$res_par = mysqli_query($base, $req_par);
 	$row_par = mysqli_fetch_array($res_par);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("<form method='post' id='modif_sub_par' action='modif.php?action=record_modif_sub_par' onsubmit='return champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification de sous-domaine</legend>\n");
 	printf("<table>\n<tr><td>\n");
@@ -188,7 +188,7 @@ function modifSubParagraphs($id_sub_par) {
 
 function supprSubParagraphs($id_sub_par) {
 	$id_sub_par = intval($id_sub_par);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM question WHERE id_sub_paragraphe='%d'", $id_sub_par);
 	$result = mysqli_query($base, $request);
 	if (mysqli_num_rows($result)) {
@@ -201,7 +201,7 @@ function supprSubParagraphs($id_sub_par) {
 			linkMsg("#", "Echec de la suppression du sous-domaine.", "alert.png");
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -211,7 +211,7 @@ function recordSubParagraph($tab, $action) {
 	$numero = isset($tab['num_sub_par']) ? intval(trim($tab['num_sub_par'])) : NULL;
 	$libelle = isset($tab['lib_sub_par']) ? ucfirst(mb_strtolower(traiteStringToBDD($tab['lib_sub_par']))) : NULL;
 	$comment = isset($tab['comment']) ? ucfirst(mb_strtolower(traiteStringToBDD($tab['comment']))) : NULL;
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($action === 'add') {
 		$request = sprintf("INSERT INTO sub_paragraphe (id_paragraphe, numero, libelle, comment) VALUES ('%d', '%d', '%s', '%s')", $id_par, $numero, $libelle, $comment);
 	} elseif ($action === 'modif') {
@@ -222,7 +222,7 @@ function recordSubParagraph($tab, $action) {
 	} else {
 		linkMsg('admin.png', "Erreur d'enregistrement", 'alert.png');
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($action === 'modif') {
 		linkMsg('admin.php?action=modifications', 'Réaliser une autre modification', 'ok.png');
 	}
@@ -230,10 +230,10 @@ function recordSubParagraph($tab, $action) {
 
 
 function addQuestion() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT * FROM paragraphe";
 	$result=mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	// au moins un domaine et un sous-domaine doit exister pour une question
 	if (mysqli_num_rows($result)) {
 		printf("<form method='post' id='new_question' action='admin.php?action=new_question' onsubmit='return champs_ok(this)'>\n");
@@ -263,7 +263,7 @@ function addQuestion() {
 
 
 function modifQuestion($id_ques) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM question WHERE id='%d' LIMIT 1", intval($id_ques));
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -277,7 +277,7 @@ function modifQuestion($id_ques) {
 	$res_sub_par = mysqli_query($base, $req_sub_par);
 	$row_sub_par = mysqli_fetch_object($res_sub_par);
 	$lib_sub_par = $row_sub_par->libelle;
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("<form method='post' id='modif_question' action='modif.php?action=record_modif_question' onsubmit='return champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification de question</legend>\n");
 	printf("<table>\n<tr><td>\n");
@@ -299,7 +299,7 @@ function modifQuestion($id_ques) {
 
 function supprQuestion($id_ques) {
 	$id_ques = intval($id_ques);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$req_assess = "SELECT assess.annee, assess.reponses, etablissement.nom FROM assess JOIN etablissement ON assess.etablissement=etablissement.id";
 	$res_assess = mysqli_query($base, $req_assess);
 	$req_quest = sprintf("SELECT question.numero AS 'num_quest', sub_paragraphe.numero AS 'num_sub_par', paragraphe.numero AS 'num_par' FROM question JOIN sub_paragraphe ON question.id_sub_paragraphe=sub_paragraphe.id JOIN paragraphe ON question.id_paragraphe=paragraphe.id WHERE question.id='%d' LIMIT 1", $id_ques);
@@ -330,7 +330,7 @@ function supprQuestion($id_ques) {
 	} else {
 		linkMsg("#", "Suppression impossible.", "alert.png");
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -342,7 +342,7 @@ function recordQuestion($tab, $action) {
 	$libelle = isset($tab['libelle']) ? traiteStringToBDD($tab['libelle']) : NULL;
 	$mesure = isset($tab['quest_action']) ? traiteStringToBDD($tab['quest_action']) : NULL;
 	$poids = isset($tab['poids']) ? intval(trim($tab['poids'])) : NULL;
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($action === 'add') {
 		$request = sprintf("INSERT INTO question (id_paragraphe, id_sub_paragraphe, numero, libelle, mesure, poids) VALUES ('%d', '%d', '%d', '%s', '%s', '%d')", $id_paragraphe, $id_sub_paragraphe, $numero, $libelle, $mesure, $poids);
 	} elseif ($action === 'modif') {
@@ -353,55 +353,76 @@ function recordQuestion($tab, $action) {
 	} else {
 		linkMsg('admin.png', "Erreur d'enregistrement", 'alert.png');
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($action === 'modif') {
 		linkMsg('admin.php?action=modifications', 'Réaliser une autre modification', 'ok.png');
 	}
 }
 
 
-function createUser() {
-	$base = evalsmsiConnect();
-	$req_etbs = "SELECT id,nom FROM etablissement";
+function chooseEtablissement($record) {
+	$base = dbConnect();
+	if (isset($record)) {
+		$req_etbs = sprintf("SELECT id,nom FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
+		$listetbs = explode(',', $record->etablissement);
+	} else {
+		$req_etbs = "SELECT id,nom FROM etablissement";
+	}
 	$res_etbs = mysqli_query($base, $req_etbs);
+	dbDisconnect($base);
+	printf("<div class='grid'>\n");
+
+	printf("<select id='result[]' name='result[]' multiple hidden></select>\n");
+
+	printf("<div id='source' class='dropper'>\n");
+	printf("<div class='grid_title'>Etablissements existants</div>\n");
+	while ($row=mysqli_fetch_object($res_etbs)) {
+		printf("<div id='%d' class='draggable'>%s</div>\n", $row->id, $row->nom);
+	}
+	printf("</div>\n");
+
+	printf("<div id='destination' class='dropper'>\n");
+	printf("<div class='grid_title'>Etablissements sélectionnés</div>");
+	if (isset($record)) {
+		foreach ($listetbs as $id_etab) {
+			printf("<div id='%d' class='draggable'>%s</div>\n", intval($id_etab), getEtablissement(intval($id_etab)));
+		}
+	}
+	printf("</div>\n");
+
+	printf("</div>\n");
+}
+
+
+function createUser() {
+	$base = dbConnect();
 	$req_role = "SELECT id,intitule FROM role WHERE id<>'1'";
 	$res_role = mysqli_query($base, $req_role);
+	dbDisconnect($base);
 	printf("<form method='post' id='new_user' action='admin.php?action=record_user' onsubmit='return user_champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Ajout d'un utilisateur</legend>\n");
 	printf("<table>\n<tr><td colspan='3'>\n");
 	printf("<input type='text' size='20' maxlength='20' name='prenom' id='prenom' placeholder='Prénom de l&apos;utilisateur' />\n");
 	printf("<input type='text' size='20' maxlength='20' name='nom' id='nom' placeholder='Nom de l&apos;utilisateur' />\n");
-	printf("Fonction:&nbsp;<select name='role' id='role' onchange='cleanEtbs()'>\n");
+	printf("Fonction:&nbsp;<select name='role' id='role' >\n");
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row=mysqli_fetch_object($res_role)) {
 		printf("<option value='%d'>%s</option>\n", $row->id, $row->intitule);
 	}
 	printf("</select>\n");
 	printf("</td></tr>\n<tr><td colspan='3'>\n");
-	printf("<input type='text' size='50' maxlength='50' name='login' id='login' placeholder='Identifiant (prenom.nom)' />\n");
-	printf("<input type='password' size='20' maxlength='20' name='passwd' id='passwd' placeholder='Mot de passe' />\n");
-	printf("</td></tr>\n<tr><td style='width: 40%%;'>\n");
-	printf("<select name='listetbs' id='listetbs' style='width:95%%;' size=15>\n");
-	while ($row=mysqli_fetch_object($res_etbs)) {
-		printf("<option value='%d'>%s</option>\n", $row->id, $row->nom);
-	}
-	printf("</select>\n");
-	printf("</td><td style='width: 20%%;'>\n");
-	printf("Etablissement<br />");
-	printf("<input type='button' id='btnRight' value=' > ' onclick='left2right()' /><br />\n");
-	printf("<input type='button' id='btnLeft' value=' < ' onclick='right2left()' /><br />\n");
-	printf("</td><td style='width: 40%%;'>\n");
-	printf("<select name='chosenetbs[]' id='chosenetbs[]' style='width:95%%' size=15 multiple>\n");
-	printf("</select>\n");
-	printf("</td></tr>\n</table>\n</fieldset>\n");
+	printf("<input type='text' size='50' maxlength='50' name='login' id='login' placeholder='Identifiant (prenom.nom)' autocomplete='username' />\n");
+	printf("<input type='password' size='20' maxlength='20' name='passwd' id='passwd' placeholder='Mot de passe' autocomplete='current-password' />\n");
+	printf("</td></tr>\n</table>\n");
+	chooseEtablissement();
+	printf("</fieldset>\n");
 	validForms('Enregistrer', 'admin.php');
 	printf("</form>\n");
-	evalsmsiDisconnect($base);
 }
 
 
 function selectUserModif() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT * FROM users WHERE role<>'1'";
 	$result = mysqli_query($base, $request);
 	printf("<form method='post' id='modif_user' action='admin.php?action=modif_user' onsubmit='return champs_ok(this)'>\n");
@@ -421,15 +442,13 @@ function selectUserModif() {
 
 function modifUser($id) {
 	$id = intval($id);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE id='%d' LIMIT 1", $id);
 	$result = mysqli_query($base, $request);
 	$record = mysqli_fetch_object($result);
 	$listetbs = explode(',', $record->etablissement);
 	$req_role = "SELECT id,intitule FROM role WHERE id<>'1'";
 	$res_role = mysqli_query($base, $req_role);
-	$req_etbs = sprintf("SELECT id,nom FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
-	$res_etbs = mysqli_query($base, $req_etbs);
 
 	printf("<form method='post' id='modif_user' action='admin.php?action=update_user' onsubmit='return user_champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification d'un utilisateur</legend>\n");
@@ -437,7 +456,7 @@ function modifUser($id) {
 	printf("<input type='hidden' size='3' maxlength='3' name='id_user' id='id_user' value='%s'/>\n", $id);
 	printf("Prénom:&nbsp;<input type='text' size='20' maxlength='20' name='prenom' id='prenom' value=\"%s\" />\n", traiteStringFromBDD($record->prenom));
 	printf("Nom:&nbsp;<input type='text' size='20' maxlength='20' name='nom' id='nom' value=\"%s\" />\n", traiteStringFromBDD($record->nom));
-	printf("Fonction:&nbsp;<select name='role' id='role' onchange='cleanEtbs()'>\n");
+	printf("Fonction:&nbsp;<select name='role' id='role'>\n");
 	printf("<option selected='selected' value='%d'>%s</option>\n", intval($record->role), getRole(intval($record->role)));
 	while($row=mysqli_fetch_object($res_role)) {
 		printf("<option value='%d'>%s</option>\n", $row->id, $row->intitule);
@@ -445,31 +464,17 @@ function modifUser($id) {
 	printf("</select>\n");
 	printf("</td></tr>\n<tr><td colspan='3'>\n");
 	printf("Identifiant&nbsp;<input type='text' size='50' maxlength='50' name='login' id='login' value=\"%s\" />\n", traiteStringFromBDD($record->login));
-	printf("</td></tr>\n<tr><td style='width: 40%%;'>\n");
-	printf("<select name='listetbs' id='listetbs' style='width:95%%;' size=15>\n");
-	while ($row=mysqli_fetch_object($res_etbs)) {
-		printf("<option value='%d'>%s</option>\n", $row->id, $row->nom);
-	}
-	printf("</select>\n");
-	printf("</td><td style='width: 20%%;'>\n");
-	printf("Etablissement<br />");
-	printf("<input type='button' id='btnRight' value=' > ' onclick='left2right()' /><br />\n");
-	printf("<input type='button' id='btnLeft' value=' < ' onclick='right2left()' /><br />\n");
-	printf("</td><td style='width: 40%%;'>\n");
-	printf("<select name='chosenetbs[]' id='chosenetbs[]' style='width:95%%' size=15 multiple>\n");
-	foreach ($listetbs as $id_etab) {
-		printf("<option selected='selected' value='%d'>%s</option>\n", intval($id_etab), getEtablissement(intval($id_etab)));
-	}
-	printf("</select>\n");
-	printf("</td></tr>\n</table>\n</fieldset>\n");
+	printf("</td></tr>\n</table>\n");
+	chooseEtablissement($record);
+	printf("</fieldset>\n");
 	validForms('Modifier', 'admin.php', $back=False);
 	printf("</form>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function recordUser($action) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($action === 'update') {
 		$id = isset($_POST['id_user']) ? intval(trim($_POST['id_user'])) : NULL;
 	}
@@ -477,7 +482,7 @@ function recordUser($action) {
 	$nom = isset($_POST['nom']) ? traiteStringToBDD($_POST['nom']) : NULL;
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
 	$login = isset($_POST['login']) ? traiteStringToBDD($_POST['login']) : NULL;
-	$etbs = isset($_POST['chosenetbs']) ?  implode(",", $_POST['chosenetbs']) : NULL;
+	$etbs = isset($_POST['result']) ?  implode(",", $_POST['result']) : NULL;
 	switch ($action) {
 		case 'add':
 			$passwd = isset($_POST['passwd']) ?  traiteStringToBDD($_POST['passwd']) : NULL;
@@ -500,12 +505,12 @@ function recordUser($action) {
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function createEtablissement($action='') {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($action === 'regroup') {
 		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_regroup' onsubmit='return champs_ok(this)'>\n");
 		printf("<fieldset>\n<legend>Création d'un établissement de regroupement</legend>\n");
@@ -536,7 +541,7 @@ function createEtablissement($action='') {
 	}
 	validForms('Enregistrer', 'admin.php');
 	printf("</form>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -563,7 +568,7 @@ function selectEtablissementModif() {
 
 function modifEtablissement($id) {
 	$id = intval($id);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id);
 	$result = mysqli_query($base, $request);
 	$record = mysqli_fetch_object($result);
@@ -608,12 +613,12 @@ function modifEtablissement($id) {
 	}
 	validForms('Modifier', 'admin.php', $back=False);
 	printf("</form>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function recordEtablissement($action) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if (($action === 'update') || ($action === 'update_regroup')) {
 		$id = isset($_POST['id_etab']) ? intval(trim($_POST['id_etab'])) : NULL;
 	}
@@ -657,12 +662,12 @@ function recordEtablissement($action) {
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function modifications() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
 	$res_par = mysqli_query($base, $req_par);
 	printf("<form action='%s' method='post' id='form_mod_sup'>", $_SERVER['PHP_SELF']);
@@ -670,21 +675,21 @@ function modifications() {
 	printf("<tr><th style='width:12%%'>Domaine</th><th style='width:12%%'>Sous-domaine</th><th>Question</th><th>Poids</th><th colspan='2'>&nbsp;</th></tr>\n");
 	while ($row_par=mysqli_fetch_object($res_par)) {
 		printf("<tr>\n<td>%s %s</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>\n", $row_par->numero, traiteStringFromBDD($row_par->libelle));
-		printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' /></a></td>\n", 'modif_par', $row_par->id);
+		printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' width='24px' /></a></td>\n", 'modif_par', $row_par->id);
 		printf("<td><input type='button' class='btn_suppr' onclick='valid_suppr(\"%s\",%s)' /></td>\n", 'suppr_par', $row_par->id);
 		printf("</tr>\n");
 		$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
 		$res_sub_par = mysqli_query($base, $req_sub_par);
 		while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
 			printf("<tr>\n<td>&nbsp;</td><td>%s.%s %s</td><td>&nbsp;</td><td>&nbsp;</td>\n", $row_par->numero, $row_sub_par->numero, traiteStringFromBDD($row_sub_par->libelle));
-			printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' /></a></td>\n", 'modif_sub_par', $row_sub_par->id);
+			printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' width='24px' /></a></td>\n", 'modif_sub_par', $row_sub_par->id);
 			printf("<td><input type='button' class='btn_suppr' onclick='valid_suppr(\"%s\",%s)' /></td>\n", 'suppr_sub_par', $row_sub_par->id);
 			printf("</tr>\n");
 			$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
 			$res_quest = mysqli_query($base, $req_quest);
 			while ($row_quest=mysqli_fetch_object($res_quest)) {
 				printf("<tr>\n<td>&nbsp;</td><td>&nbsp;</td><td style='text-align:left;'>%s.%s.%s %s</td><td>%s</td>\n", $row_par->numero, $row_sub_par->numero, $row_quest->numero, traiteStringFromBDD($row_quest->libelle), $row_quest->poids);
-				printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' /></a></td>\n", 'modif_question', $row_quest->id);
+				printf("<td><a href='modif.php?action=%s&amp;value=%s'><img src='pict/edit.png' alt='modif' title='Modifier' width='24px' /></a></td>\n", 'modif_question', $row_quest->id);
 				printf("<td><input type='button' class='btn_suppr' onclick='valid_suppr(\"%s\",%s)' /></td>\n", 'suppr_question', $row_quest->id);
 				printf("</tr>\n");
 			}
@@ -692,7 +697,7 @@ function modifications() {
 	}
 	printf("</table>\n");
 	printf("</form>");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 

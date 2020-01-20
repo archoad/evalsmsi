@@ -29,7 +29,7 @@ header("Content-type: text/html; charset=utf-8");
 $id = $_GET['query'];
 $action = $_GET['action'];
 
-$base = evalsmsiConnect();
+$base = dbConnect();
 switch ($action) {
 	case 'sub_par':
 		$request = sprintf("SELECT MAX(numero) FROM sub_paragraphe WHERE id_paragraphe='%d'", intval($id));
@@ -44,7 +44,7 @@ switch ($action) {
 		break;
 }
 $result=mysqli_query($base, $request);
-evalsmsiDisconnect($base);
+dbDisconnect($base);
 
 
 switch ($action) {

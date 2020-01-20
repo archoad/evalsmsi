@@ -414,14 +414,14 @@ textarea {
 	background-image: url('pict/user.png');
 	background-position: 5px 10px;
 	background-repeat: no-repeat;
-	background-size: 25px Auto;
+	background-size: 25px auto;
 }
 
 .auth input[type=password] {
 	background-image: url('pict/cadenas.png');
 	background-position: 5px 10px;
 	background-repeat: no-repeat;
-	background-size: 25px Auto;
+	background-size: 25px auto;
 }
 
 .auth input[type=submit] {
@@ -534,27 +534,6 @@ textarea {
 	background-color: var(--myOrangeDark);
 }
 
-.btnDanger {
-	border: none;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 10px;
-	cursor:pointer;
-	padding: 2px;
-	border-radius: 2px;
-	color: var(--textClearColor);
-	background-color: var(--myRedLight);
-}
-
-.btnDanger.focus,
-.btnDanger:focus,
-.btnDanger:hover,
-.btnDanger.active {
-	color: var(--textClearColor);
-	background-color: var(--myRedDark);
-}
-
 .valid {
 	padding: 6px;
 	margin: 6px;
@@ -594,51 +573,16 @@ textarea {
 }
 
 .btn_suppr {
-	width:32px;
-	height:32px;
+	width: 24px;
+	height: 24px;
 	border:0px;
 	margin:0px;
 	padding:0px;
 	background-color: transparent;
-	background-image:url(pict/delete.png);
-}
-
-.alertbackground {
-	background-color: rgba(65, 70, 75, 0.9);
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-}
-
-
-.alert {
-	position: absolute;
-	top: 40%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 20%;
-	background-color: rgba(120, 125, 130, 1.0);
-	border-left-style: solid;
-	border-left-width: 30px;
-	border-left-color: var(--myRedDark);
-	border-radius: 4px;
-	padding: 20px 40px 20px 10px;
-	color: var(--textClearColor);
-	text-align: center;
-	box-shadow: var(--shadowAuth);
-}
-
-.alert p {
-	text-align: center;
-	font-size: 14px;
-}
-
-.alert a {
-	text-align: center;
-	font-size: 14px;
-	padding: 5px 20px 5px 20px;
+	background-image: url(pict/delete.png);
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	background-size: 24px auto;
 }
 
 #a {
@@ -812,4 +756,117 @@ textarea {
 	border: none;
 	background: var(--bg0Color);
 	box-shadow: none;
+}
+
+.grid {
+	display: grid;
+	width:60%;
+	margin: 20px auto;
+	grid-template-columns: repeat(2, 1fr);
+	grid-column-gap: 10px;
+}
+
+.grid_title {
+	width:95%;
+	margin: 5px auto;
+	padding: 4px;
+	border-radius: 5px;
+	background: var(--bg1Color);
+	text-align: center;
+	color: var(--textDarkColor);
+}
+
+.dropper {
+	width:100%;
+	height:200px;
+	border-radius: 4px;
+	overflow-y: auto;
+	border: 1px solid var(--bg1Color);
+	background-color: var(--bg1Color);
+	transition: all 200ms linear;
+}
+
+.drop_hover {
+	box-shadow: var(--shadowHover);
+}
+
+.draggable {
+	width:90%;
+	margin: 5px auto;
+	padding: 4px;
+	border-radius: 5px;
+	font-size: 11px;
+	border: 1px solid transparent;
+	background: var(--myBlueLight);
+	user-select: none;
+	transition: all 200ms linear;
+	cursor: move;
+}
+
+.draggable-active {
+	opacity: 0.4;
+}
+
+.draggable:focus,
+.draggable:hover,
+.draggable:active {
+	border: 1px solid transparent;
+	background: var(--myBlueDark);
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding-top: 100px;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	background-color: rgba(65, 70, 75, 0.6);
+}
+
+.modal-content {
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 20%;
+	background-color: rgba(120, 125, 130, 1.0);
+	border-left-style: solid;
+	border-left-width: 30px;
+	border-left-color: var(--myRedDark);
+	border-radius: 4px;
+	padding: 20px 40px 20px 10px;
+	color: var(--textClearColor);
+	box-shadow: var(--shadowAuth);
+	text-align: center;
+	font-size: 14px;
+}
+
+
+.modal-content p {
+	width: 100%;
+	text-align: center;
+	font-size: 14px;
+}
+
+.modal-content a {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 5px 20px 5px 20px;
+	border: none;
+	text-decoration: none;
+	cursor: pointer;
+	border-radius: 2px;
+	background-color: var(--myRedLight);
+}
+
+.modal-content a:focus,
+.modal-content a:hover,
+.modal-content a.active {
+	color: var(--textClearColor);
+	background-color: var(--myRedDark);
 }

@@ -113,7 +113,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=modif_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
-	linkMsg("admin.php?action=modif_user", "Modifier un utilisateur", "modif_user.png", 'menu');
+	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
 	printf("</div>\n</div>");
 }
 
@@ -149,7 +149,7 @@ function menuAudit() {
 }
 
 
-function evalsmsiConnect(){
+function dbConnect(){
 	global $servername, $dbname, $login, $passwd;
 	$dbh = mysqli_connect($servername, $login, $passwd) or die("Problème de connexion");
 	mysqli_select_db($dbh, $dbname) or die("problème avec la table");
@@ -158,7 +158,7 @@ function evalsmsiConnect(){
 }
 
 
-function evalsmsiDisconnect($dbh){
+function dbDisconnect($dbh){
 	mysqli_close($dbh);
 	$dbh=0;
 }
@@ -345,7 +345,7 @@ function linkMsg($link, $msg, $img, $class='msg') {
 
 
 function recordLog() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$etablissement = $_SESSION['id_etab'];
 	$request = sprintf("SELECT reponses FROM assess WHERE (annee='%s' AND etablissement='%d') LIMIT 1", $_SESSION['annee'], $etablissement);
 	$result = mysqli_query($base, $request);
@@ -363,7 +363,7 @@ function recordLog() {
 	$tabstr = mysqli_real_escape_string($base, serialize($tabdiff));
 	$request=sprintf("INSERT INTO journal (ip, etablissement, navigateur, os, user, action) VALUES ('%s', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $etablissement, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
 	mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -384,10 +384,10 @@ function traiteStringFromBDD($str){
 
 
 function uidToEtbs() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", intval($_SESSION['id_etab']));
 	$result = mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($result->num_rows) {
 		$row = mysqli_fetch_object($result);
 		return $row->nom;
@@ -398,66 +398,66 @@ function uidToEtbs() {
 
 
 function getRole($id) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT intitule FROM role WHERE id='%d' LIMIT 1", intval($id));
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $row->intitule;
 }
 
 
 function getOneParAbrege($id_par) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT paragraphe.abrege FROM paragraphe WHERE (paragraphe.id='%d') LIMIT 1", $id_par);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return traiteStringFromBDD($row->abrege);
 }
 
 
 function getAllParAbrege() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT abrege FROM paragraphe";
 	$result = mysqli_query($base, $request);
 	$par = array();
 	while ($row = mysqli_fetch_object($result)) {
 		$par[] = traiteStringFromBDD($row->abrege);
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $par;
 }
 
 
 function getSubParNum() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT paragraphe.numero AS 'par', sub_paragraphe.numero AS 'subpar' FROM sub_paragraphe JOIN paragraphe ON sub_paragraphe.id_paragraphe=paragraphe.id";
 	$result = mysqli_query($base, $request);
 	$subpar = array();
 	while ($row = mysqli_fetch_object($result)) {
 		$subpar[] = $row->par.$row->subpar;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $subpar;
 }
 
 
 function getSubParLibelle($id_par) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT sub_paragraphe.libelle FROM sub_paragraphe WHERE (sub_paragraphe.id_paragraphe='%d') ", $id_par);
 	$result = mysqli_query($base, $request);
 	$titles_subpar = array();
 	while ($row = mysqli_fetch_object($result)) {
 		$titles_subpar[] = traiteStringFromBDD($row->libelle);
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $titles_subpar;
 }
 
 
 function getEtablissement($id_etab=0, $abrege=0) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if ($id_etab<>0) {
 		$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 		$result=mysqli_query($base, $request);
@@ -474,7 +474,7 @@ function getEtablissement($id_etab=0, $abrege=0) {
 			$request = "SELECT * FROM etablissement";
 		}
 		$result = mysqli_query($base, $request);
-		evalsmsiDisconnect($base);
+		dbDisconnect($base);
 		return $result;
 	}
 }
@@ -482,10 +482,10 @@ function getEtablissement($id_etab=0, $abrege=0) {
 
 function isRegroupEtab() {
 	$id_etab = $_SESSION['id_etab'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	$row = mysqli_fetch_object($result);
 	if (stripos($row->abrege, "_TEAM") === false) {
 		return false;
@@ -496,10 +496,10 @@ function isRegroupEtab() {
 
 
 function changePassword($script) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
 	$result=mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if (mysqli_num_rows($result)) {
 		$row = mysqli_fetch_array($result);
 		printf("<form method='post' id='chg_password' action='%s?action=chg_password' onsubmit='return password_ok(this)'>\n", $script);
@@ -520,7 +520,7 @@ function changePassword($script) {
 
 
 function recordNewPassword($passwd) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$passwd = password_hash($passwd, PASSWORD_BCRYPT);
 	$request = sprintf("UPDATE users SET password='%s' WHERE login='%s'", $passwd, $_SESSION['login']);
 	if (mysqli_query($base, $request)) {
@@ -528,13 +528,13 @@ function recordNewPassword($passwd) {
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function getAuditor($id_etab) {
 	$auditor = '';
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT nom, prenom, etablissement FROM users WHERE role='2'");
 	$result = mysqli_query($base, $request);
 	while($row=mysqli_fetch_object($result)) {
@@ -543,18 +543,18 @@ function getAuditor($id_etab) {
 			$auditor = sprintf("%s %s", htmlLatexParser($row->prenom), htmlLatexParser($row->nom));
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $auditor;
 }
 
 
 function isThereAssessForEtab() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' LIMIT 1", $id_etab, $annee);
 	$result=mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($result->num_rows) {
 		return true;
 	} else {
@@ -594,11 +594,11 @@ function textItem($num){
 
 
 function paragraphCount() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT COUNT(id) FROM paragraphe";
 	$result=mysqli_query($base, $request);
 	$num = mysqli_fetch_array($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $num[0];
 }
 
@@ -612,11 +612,11 @@ function subParagraphCount($id_par, $base) {
 
 
 function questionsCount() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT COUNT(id) FROM question";
 	$result=mysqli_query($base, $request);
 	$num = mysqli_fetch_array($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $num[0];
 }
 
@@ -741,7 +741,7 @@ function extractSubParRep($id_par, $table) {
 
 
 function calculNotes($table) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$mem = 1; // numéro du premier paragraphe
 	$sumEval = 0;
 	$sumPoids = 0;
@@ -760,7 +760,7 @@ function calculNotes($table) {
 			$sumPoids = $poids;
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	$noteFinale[$mem] = round($sumEval / $sumPoids, 2);
 	return $noteFinale;
 }
@@ -768,7 +768,7 @@ function calculNotes($table) {
 
 function calculNotesDetail($table, $mem=11) {
 	//$mem = 11 -> numéro du premier sous-paragraphe
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$sumEval = 0;
 	$sumPoids = 0;
 	$noteFinale = array();
@@ -786,7 +786,7 @@ function calculNotesDetail($table, $mem=11) {
 			$sumPoids = $poids;
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	$noteFinale[$mem] = round($sumEval / $sumPoids, 2);
 	return $noteFinale;
 }
@@ -823,11 +823,11 @@ function createRadarGraph($plusL=0, $plusH=0) {
 
 
 function getObjectives($id_etab) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return array_values(unserialize($row->objectifs));
 }
 
@@ -837,13 +837,13 @@ function createTargetPlot($table, $id_etab) {
 	if ($table == "paragraphe") {
 		$plot= new RadarPlot($objectifs);
 	} else {
-		$base = evalsmsiConnect();
+		$base = dbConnect();
 		$req = "SELECT id, id_paragraphe FROM $table";
 		$res = mysqli_query($base, $req);
 		while ($r = mysqli_fetch_object($res)) {
 			$values[] = $objectifs[$r->id_paragraphe - 1];
 		}
-		evalsmsiDisconnect($base);
+		dbDisconnect($base);
 		$plot= new RadarPlot($values);
 	}
 	$plot->SetLineWeight(2);
@@ -855,7 +855,7 @@ function createTargetPlot($table, $id_etab) {
 
 
 function createAveragePlot($id_etab) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -867,7 +867,7 @@ function createAveragePlot($id_etab) {
 	$plot->SetLegend("Moyenne");
 	$plot->SetColor('orange');
 	$plot->SetFill(false);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $plot;
 }
 
@@ -882,7 +882,7 @@ function isAssessComplete($table) {
 
 
 function getAnswers($id_etab) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee", $id_etab);
 	$result = mysqli_query($base, $request);
 	$answers = array();
@@ -896,7 +896,7 @@ function getAnswers($id_etab) {
 			}
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $answers;
 }
 
@@ -1019,7 +1019,7 @@ function assessSynthese() {
 	$annee_encours = $_SESSION['annee'];
 	$titles_par = getAllParAbrege();
 
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%s'", $annee_encours, $id_etab);
 	$result = mysqli_query($base, $request);
 	$reponses = array();
@@ -1050,7 +1050,7 @@ function assessSynthese() {
 	}
 	$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
 	printf("<tr>\n<td style='width:120px;'><b>%s</b></td><td><ul>%s</ul></td><td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("</table>\n");
 }
 
@@ -1065,7 +1065,7 @@ function graphBilan($print=1) {
 	$titles_par = getAllParAbrege();
 	$titles_subpar = getSubParNum();
 
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	// on récupère la liste des établissements composant l'établissement de regroupement.
 	$req_regroup = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab_regroup);
 	$res_regroup = mysqli_query($base, $req_regroup);
@@ -1187,7 +1187,7 @@ function graphBilan($print=1) {
 	$graph->Add($plot);
 	$graph-> Stroke($cheminIMG."result_bilan_par.png");
 
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 
 	if($print) {
 		printf("<div class='onecolumn'>\n");
@@ -1327,7 +1327,7 @@ function getNavigateurName($str) {
 
 
 function isValidateRapport($id_etab, $annee=0) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = intval($id_etab);
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
@@ -1335,7 +1335,7 @@ function isValidateRapport($id_etab, $annee=0) {
 	$request = sprintf("SELECT valide FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if ($row->valide == 1) {
 		return true;
 	} else {
@@ -1409,7 +1409,7 @@ function latexHead($id_etab, $annee=0) {
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row =mysqli_fetch_object($result);
@@ -1420,7 +1420,7 @@ function latexHead($id_etab, $annee=0) {
 	$req_rssi = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='4') LIMIT 1", $id_etab);
 	$res_rssi = mysqli_query($base, $req_rssi);
 	$row_rssi = mysqli_fetch_object($res_rssi);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 
 	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n\\Subject{Evaluation du SMSI}\n\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
 	$en_tete .= "\\documentclass[a4paper,10pt]{article}\n\n\\input{header}\n\n";
@@ -1462,7 +1462,7 @@ function printAssessment($etablissement, $assessment, $annee=0) {
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $etablissement);
 	$result = mysqli_query($base, $request);
 	$row_regroup = mysqli_fetch_object($result);
@@ -1543,7 +1543,7 @@ function printAssessment($etablissement, $assessment, $annee=0) {
 			}
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	return $text."\\clearpage\n\n";
 }
 
@@ -1558,7 +1558,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	}
 	$nbr_par = paragraphCount();
 	$titles_par = getAllParAbrege();
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
 
@@ -1700,7 +1700,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	$text .= "\\subsection{Commentaires et conclusion}\n\n";
 	$text .= "\\subsubsection{Commentaires de l'établissement}\n\n";
 	$commEtab = htmlLatexParser(traiteStringFromBDD($row->comments));
@@ -1713,7 +1713,7 @@ function printGraphsAndNotes($id_etab, $annee=0) {
 
 
 function printAnnexes() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = "SELECT paragraphe.numero AS 'num_par', sub_paragraphe.numero AS 'num_subpar', sub_paragraphe.libelle AS 'libelle' FROM sub_paragraphe JOIN paragraphe ON sub_paragraphe.id_paragraphe=paragraphe.id";
 	$result = mysqli_query($base, $request);
 	$tab_subpar = array();
@@ -1721,7 +1721,7 @@ function printAnnexes() {
 		$num = $row->num_par.$row->num_subpar;
 		$tab_subpar[$num] = $row->libelle;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 
 	$text = "\\appendix\n";
 	$text .= "\\input{methode}\n\n";
@@ -1792,10 +1792,10 @@ function generateRapport($script, $id_etab, $annee=0) {
 	$name_etab = getEtablissement($id_etab);
 	$abrege_etab = mb_strtolower(getEtablissement($id_etab, $abrege=1));
 
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	// Il existe une évaluation pour cet établissement
 	if (mysqli_num_rows($result)) {
 		$row = mysqli_fetch_object($result);
@@ -1908,7 +1908,7 @@ function exportEval($script) {
 
 	$eval = array();
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Mesure', 'Note', 'Commentaire'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result=mysqli_query($base, $request);
 	$row=mysqli_fetch_object($result);
@@ -1976,7 +1976,7 @@ function exportEval($script) {
 				}
 			}
 			$sheet->fromArray($eval, NULL, 'A1');
-			evalsmsiDisconnect($base);
+			dbDisconnect($base);
 
 			printf("<div class='row'>\n");
 			printf("<div class='column left'>\n");
@@ -2024,7 +2024,7 @@ function generateExcellRapport($annee) {
 
 	$eval = array();
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Note', 'Commentaire', 'Commentaire évaluateur', 'Mesure'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$nom = getEtablissement($id_etab);
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
@@ -2085,7 +2085,7 @@ function generateExcellRapport($annee) {
 	} else {
 		linkMsg("etab.php", "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 
 	foreach ($sheet->getRowIterator() as $row) {
 		$cellIterator = $row->getCellIterator();
@@ -2138,7 +2138,7 @@ function exportRules() {
 	$footer->addPreserveText('Page {PAGE}/{NUMPAGES}', null, array('spaceBefore' => 400, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER));
 	$section->addText($appli_titre, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
 
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$req_par="SELECT * FROM paragraphe ORDER BY numero";
 	$res_par=mysqli_query($base, $req_par);
 	while ($row_par=mysqli_fetch_object($res_par)) {
@@ -2159,7 +2159,7 @@ function exportRules() {
 			}
 		}
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");

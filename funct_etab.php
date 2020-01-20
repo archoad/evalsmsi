@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 function createAssessment() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $id_etab, $annee);
@@ -30,7 +30,7 @@ function createAssessment() {
 	} else {
 		return false; // Erreur de création
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -38,7 +38,7 @@ function displayAssessment() {
 	$numQuestion = questionsCount();
 	$annee = $_SESSION['annee'];
 	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['id_etab'], $annee);
 	$result = mysqli_query($base, $request);
 	// un enregistrement a déjà été fait
@@ -118,7 +118,7 @@ function displayAssessment() {
 		afficheNotesExplanation();
 		printf("</div>\n");
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -126,7 +126,7 @@ function writeAssessment(){
 	recordLog();
 	$etablissement = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$record = mysqli_real_escape_string($base, serialize($_POST));
 	$comment = isset($_POST['final_comment']) ? traiteStringToBDD($_POST['final_comment']) : NULL;
 	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $etablissement, $annee);
@@ -135,7 +135,7 @@ function writeAssessment(){
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -153,11 +153,11 @@ function exportRapport($script, $annee) {
 
 
 function selectYearRapport() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = $_SESSION['id_etab'];
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d'", $id_etab);
 	$result = mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	$list = array();
 	while($row=mysqli_fetch_object($result)) {
 		if ($row->valide) {

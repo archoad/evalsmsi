@@ -36,7 +36,7 @@ function isEtabLegitimate($id_etab) {
 
 
 function createAssessmentRegroup() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = $_SESSION['etablissement'];
 	$annee = $_SESSION['annee'];
 	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $id_etab, $annee);
@@ -45,7 +45,7 @@ function createAssessmentRegroup() {
 	} else {
 		return 0; // Erreur de création
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -111,14 +111,14 @@ function selectEtablissementAudit() {
 
 
 function getAssessment($id_etab=0, $annee=0) {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	if (($id_etab<>0) && ($annee<>0)) {
 		$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", intval($id_etab), intval($annee));
 	} else {
 		$request = "SELECT * FROM assess";
 	}
 	$result=mysqli_query($base, $request);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	if (mysqli_num_rows($result)) {
 		return $result;
 	} else {
@@ -132,7 +132,7 @@ function writeAudit() {
 	$id_etab = intval($_SESSION['id_etab']);
 	$annee = $_SESSION['annee'];
 	$assessment = getAssessment($id_etab, $annee);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$record = mysqli_real_escape_string($base, serialize($_POST));
 	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
 	if (mysqli_query($base, $request)) {
@@ -140,20 +140,20 @@ function writeAudit() {
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function objectifs() {
 	$id_etab = intval($_SESSION['id_etab']);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	$obj = unserialize($row->objectifs);
 	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
 	$res_par = mysqli_query($base, $req_par);
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 	printf("<div class='row'>\n");
 	printf("<div class='column largeleft'>\n");
 	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' onsubmit='return champs_ok(this)'>\n");
@@ -174,7 +174,7 @@ function objectifs() {
 
 function recordObjectifs() {
 	$id_etab = $_SESSION['id_etab'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$objectifs = mysqli_real_escape_string($base, serialize($_POST));
 	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectifs, $id_etab);
 	if (mysqli_query($base, $request)){
@@ -182,7 +182,7 @@ function recordObjectifs() {
 	} else {
 		return false;
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -197,16 +197,16 @@ function journalisation() {
 
 
 function recordCommentGraph() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$id_etab = isset($_POST['id_etab']) ? intval(trim($_POST['id_etab'])) : NULL;
 	$id_assess = isset($_POST['id_assess']) ? intval(trim($_POST['id_assess'])) : NULL;
 	$comment = isset($_POST['comments']) ? traiteStringToBDD($_POST['comments']) : NULL;
 	$request = sprintf("UPDATE assess SET comment_graph_par='%s' WHERE id='%d'", $comment, $id_assess);
 	if (mysqli_query($base, $request)){
-		evalsmsiDisconnect($base);
+		dbDisconnect($base);
 		return $id_etab;
 	} else {
-		evalsmsiDisconnect($base);
+		dbDisconnect($base);
 		return false;
 	}
 }
@@ -216,7 +216,7 @@ function isAssessGroupValidate() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$isOk = true;
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row=mysqli_fetch_object($result);
@@ -246,7 +246,7 @@ function displayAudit() {
 	$annee = $_SESSION['annee'];
 	$nom = getEtablissement($id_etab);
 	printf("<h1>%s - %s</h1>\n", $nom, $annee);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
 	// un enregistrement a déjà été fait
@@ -311,7 +311,7 @@ function displayAudit() {
 			printf("</div>\n");
 			afficheNotesExplanation();
 			printf("</div>\n");
-			evalsmsiDisconnect($base);
+			dbDisconnect($base);
 		} else {
 			linkMsg("audit.php", "L'évaluation pour ".$annee." est incomplète.", "alert.png");
 		}
@@ -327,7 +327,7 @@ function displayAuditRegroup() {
 	$annee = $_SESSION['annee'];
 	$nom = getEtablissement($id_etab);
 	printf("<h1>%s - %s</h1>\n", $nom, $annee);
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -456,14 +456,14 @@ function displayAuditRegroup() {
 	printf("</div>\n");
 	afficheNotesExplanation();
 	printf("</div>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
 function getCommentGraphPar() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE(etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
 	// Il existe une évaluation pour cet établissement
@@ -523,7 +523,7 @@ function getCommentGraphPar() {
 		$msg = sprintf("Il n'y a pas d'évaluation créée pour cet établissement pour l'année %d", $annee);
 		linkMsg("audit.php", $msg, "alert.png");
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -533,7 +533,7 @@ function graphSynthese() {
 	$titles_par = getAllParAbrege();
 	$titles_subpar = getSubParNum();
 
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	// on récupère la liste des établissements composant l'établissement de regroupement.
 	$req_regroup = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$res_regroup = mysqli_query($base, $req_regroup);
@@ -637,7 +637,7 @@ function graphSynthese() {
 	$graph-> Stroke($cheminIMG."result_global_subpar.png");
 	printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_global_subpar.png');
 	printf("</table>\n</div>\n");
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 
@@ -652,7 +652,7 @@ function confirmDeleteAssessment($script) {
 
 
 function deleteAssessment() {
-	$base = evalsmsiConnect();
+	$base = dbConnect();
 	$request = sprintf("DELETE FROM assess WHERE etablissement='%d' AND annee='%d'", $_SESSION['id_etab'], $_SESSION['annee']);
 	if (mysqli_query($base, $request)) {
 		$request = sprintf("DELETE FROM journal WHERE etablissement='%d' AND YEAR(timestamp)='%d'", $_SESSION['id_etab'], $_SESSION['annee']);
@@ -662,7 +662,7 @@ function deleteAssessment() {
 	} else {
 		linkMsg("audit.php", "Echec de la suppression de l'évaluation.", "alert.png");
 	}
-	evalsmsiDisconnect($base);
+	dbDisconnect($base);
 }
 
 

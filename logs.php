@@ -45,7 +45,7 @@ function processAction($action) {
 }
 
 
-$base = evalsmsiConnect();
+$base = dbConnect();
 $request = sprintf("SELECT * FROM journal WHERE (YEAR(timestamp)='%d' AND etablissement='%d')", $_SESSION['annee'], $_SESSION['id_etab']);
 $result = mysqli_query($base, $request);
 $rawdata = [];
@@ -68,7 +68,7 @@ while($row = mysqli_fetch_object($result)) {
 		$temp[$currDate]['actions'] = array_merge($temp[$currDate]['actions'], $detailActions);
 	}
 }
-evalsmsiDisconnect($base);
+dbDisconnect($base);
 
 foreach ($temp as $key => $value) {
 	$value['content'] = strval($value['content']);

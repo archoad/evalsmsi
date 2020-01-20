@@ -1,30 +1,37 @@
-function myAlert(txt, elt=null) {
+function createAlertBox(txt) {
 	var msg = document.createElement('p');
 	msg.appendChild(document.createTextNode(txt));
 
-	var btnAlert = document.createElement('a')
-	btnAlert.setAttribute('class', 'btnDanger');
-	btnAlert.appendChild(document.createTextNode('OK'));
-	btnAlert.href = '#';
-	btnAlert.onclick = function() { removeAlert(elt); }
+	var btnClose = document.createElement('a')
+	btnClose.setAttribute('id', 'closeAlert');
+	btnClose.appendChild(document.createTextNode('OK'));
+	btnClose.href = '#';
+
+	var divContent = document.createElement('div');
+	divContent.setAttribute('class', 'modal-content');
+	divContent.appendChild(msg);
+	divContent.appendChild(btnClose);
 
 	var divAlert = document.createElement('div');
-	divAlert.setAttribute('class', 'alert');
-	divAlert.appendChild(msg);
-	divAlert.appendChild(btnAlert);
+	divAlert.setAttribute('class', 'modal');
+	divAlert.setAttribute('id', 'modalAlert');
+	divAlert.appendChild(divContent);
 
-	var divBackground = document.createElement('div');
-	divBackground.setAttribute('class', 'alertbackground');
-	divBackground.id = 'caution';
-	divBackground.appendChild(divAlert);
-
-	document.body.appendChild(divBackground);
+	document.body.appendChild(divAlert);
 }
 
 
-function removeAlert(elt) {
-	divAlert = document.getElementById('caution');
-	document.body.removeChild(divAlert);
+function myAlert(txt, elt=null) {
+	createAlertBox(txt);
+	var modal = document.getElementById('modalAlert');
+	var btn = document.getElementById('closeAlert');
+	btn.onclick = function() { modal.style.display = 'none'; }
+	modal.style.display = 'block';
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = 'none';
+		}
+	}
 	if (elt != null) {
 		elt.focus();
 		elt.style.backgroundColor='#FFC7C7';
@@ -110,83 +117,33 @@ function stateNumQuestChanged() {
 }
 
 
-function cleanEtbs() {
-	var l1 = document.getElementById('listetbs');
-	var l2 = document.getElementById('chosenetbs[]');
-	var l2len = l2.length;
-	for (i=(l2len -1); i>=0; i--) {
-		l1.add(l2.options[i]);
-		l2.options[i] = null;
-	}
-}
-
-
 function user_champs_ok(form) {
-	var l1 = document.getElementById('listetbs');
-	var l2 = document.getElementById('chosenetbs[]');
-	l1.options[0].selected = true;
-	for (i=0; i<l2.length; i++) {
-		l2.options[i].selected = true;
+	var l1 = document.getElementById('destination');
+	var result = document.getElementById('result[]');
+	var role = document.getElementById('role');
+	if (result.options.length > 0) {
+		var i = result.options.length;
+		while (i--) {
+			result.remove(i);
+		}
+	}
+	for (var i=1; i<l1.children.length; i++) {
+		var option = document.createElement('option');
+		option.value = l1.children[i].id;
+		option.id = 'etab'+l1.children[i].id;
+		option.selected = true;
+		result.add(option);
 	}
 	if (champs_ok(form)) {
+		if (((role.value=='3') || (role.value=='4')) && (result.options.length>=2)) {
+			myAlert('Veuillez sélectionner un seul établissement');
+			return false;
+		}
 		return true;
 	} else {
 		return false;
 	}
-}
-
-
-function left2right() {
-	var role = document.getElementById('role');
-	if (role.value === '') {
-		myAlert('Saisisez un rôle avant de choisir un établissement', role);
-	} else {
-		var l1 = document.getElementById('listetbs');
-		var l2 = document.getElementById('chosenetbs[]');
-		var l1len = l1.length;
-		var l2len = l2.length;
-		var doit =  false;
-		if (((role.value==='3') || (role.value==='4')) && (l2len==0)) { doit = true; }
-		if (role.value==='2') { doit = true; }
-		if (doit) {
-			for (i=0; i<l1len ; i++) {
-				if (l1.options[i].selected == true) {
-					var option = document.createElement('option');
-					option.text = l1.options[i].text;
-					option.value = l1.options[i].value;
-					l2.add(option);
-				}
-			}
-			for (i=(l1len -1); i>=0; i--) {
-				if (l1.options[i].selected == true) {
-					l1.options[i] = null;
-				}
-			}
-			l1.options[0].selected = true;
-			l2.options[0].selected = true;
-		}
-	}
-}
-
-
-function right2left() {
-	var l1 = document.getElementById('listetbs');
-	var l2 = document.getElementById('chosenetbs[]');
-	var l2len = l2.length;
-	for (i=0; i<l2len ; i++) {
-		if (l2.options[i].selected == true) {
-			var l1len = l1.length;
-			var option = document.createElement('option');
-			option.text = l2.options[i].text;
-			option.value = l2.options[i].value;
-			l1.add(option);
-		}
-	}
-	for (i=(l2len -1); i>=0; i--) {
-		if (l2.options[i].selected == true) {
-			l2.options[i] = null;
-		}
-	}
+	return true;
 }
 
 
@@ -343,3 +300,56 @@ function getURLParam(strParamName){
 	}
 	return unescape(strReturn);
 }
+
+
+(function() {
+	var dndHandler = {
+		draggedElement: null,
+
+		applyDragEvents: function(element) {
+			element.draggable = true;
+			var dndHandler = this;
+			element.addEventListener('dragstart', function(e) {
+				dndHandler.draggedElement = e.target;
+				this.classList.add('draggable-active');
+				e.dataTransfer.setData('text/plain', e.target.id);
+			}, false);
+		},
+
+		applyDropEvents: function(dropper) {
+			dropper.addEventListener('dragover', function(e) {
+				e.preventDefault();
+				this.classList.add('drop_hover');
+			}, false);
+			dropper.addEventListener('dragleave', function(e) {
+				this.classList.remove('drop_hover');
+			}, false);
+			var dndHandler = this;
+			dropper.addEventListener('drop', function(e) {
+				e.preventDefault();
+				var target = e.target;
+				draggedElement = dndHandler.draggedElement;
+				clonedElement = draggedElement.cloneNode(true);
+				while(target.className.indexOf('dropper') == -1) {
+					target = target.parentNode;
+				}
+				target.classList.remove('drop_hover');
+				clonedElement.classList.remove('draggable-active');
+				clonedElement = target.appendChild(clonedElement);
+				dndHandler.applyDragEvents(clonedElement);
+				draggedElement.parentNode.removeChild(draggedElement);
+			}, false);
+		}
+	};
+
+	var elements = document.querySelectorAll('.draggable');
+	var elementsLen = elements.length;
+	for(var i = 0 ; i < elementsLen ; i++) {
+		dndHandler.applyDragEvents(elements[i]);
+	}
+	var droppers = document.querySelectorAll('.dropper');
+	var droppersLen = droppers.length;
+	for(var i = 0 ; i < droppersLen ; i++) {
+		dndHandler.applyDropEvents(droppers[i]);
+	}
+})();

@@ -45,12 +45,13 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
+	case 'select_user':
+		selectUserModif();
+		footPage();
+		break;
+
 	case 'modif_user':
-		if (empty($_POST['user'])) {
-			selectUserModif();
-		} else {
-			modifUser($_POST['user']);
-		}
+		modifUser($_POST['user']);
 		footPage();
 		break;
 
