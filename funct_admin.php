@@ -360,9 +360,9 @@ function recordQuestion($tab, $action) {
 }
 
 
-function chooseEtablissement($record) {
+function chooseEtablissement($record=0) {
 	$base = dbConnect();
-	if (isset($record)) {
+	if ($record) {
 		$req_etbs = sprintf("SELECT id,nom FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
 		$listetbs = explode(',', $record->etablissement);
 	} else {
@@ -383,7 +383,7 @@ function chooseEtablissement($record) {
 
 	printf("<div id='destination' class='dropper'>\n");
 	printf("<div class='grid_title'>Etablissements sélectionnés</div>");
-	if (isset($record)) {
+	if ($record) {
 		foreach ($listetbs as $id_etab) {
 			printf("<div id='%d' class='draggable'>%s</div>\n", intval($id_etab), getEtablissement(intval($id_etab)));
 		}
