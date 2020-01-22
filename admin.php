@@ -37,7 +37,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'record_user':
-		if ($id=recordUser('add')) {
+		if (recordUser('add')) {
 			linkMsg($script, "Utilisateur ajouté dans la base", "ok.png");
 		} else {
 			linkMsg($script, "Erreur d'enregistrement", "alert.png");
@@ -51,18 +51,19 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'modif_user':
-		modifUser($_POST['user']);
+		$_SESSION['current_user'] = $_POST['user'];
+		modifUser();
 		footPage();
 		break;
 
 	case 'update_user':
-		if ($id=recordUser('update')) {
-		linkMsg($script, "Utilisateur modifié dans la base", "ok.png");
-	} else {
-		linkMsg($script, "Erreur de modification", "alert.png");
-	}
-	footPage();
-	break;
+		if (recordUser('update')) {
+			linkMsg($script, "Utilisateur modifié dans la base", "ok.png");
+		} else {
+			linkMsg($script, "Erreur de modification", "alert.png");
+		}
+		footPage();
+		break;
 
 	case 'new_regroup':
 		createEtablissement('regroup');
@@ -74,17 +75,19 @@ if (isset($_GET['action'])) {
 		footPage($script, "Accueil");
 		break;
 
+	case 'select_etab':
+		selectEtablissementModif();
+		footPage();
+		break;
+
 	case 'modif_etab':
-		if (empty($_POST['etablissement'])) {
-			selectEtablissementModif();
-		} else {
-			modifEtablissement($_POST['etablissement']);
-		}
+		$_SESSION['current_etab'] = $_POST['etablissement'];
+		modifEtablissement();
 		footPage();
 		break;
 
 	case 'update_etab':
-		if ($id=recordEtablissement('update')) {
+		if (recordEtablissement('update')) {
 			linkMsg($script, "Etablissement modifié dans la base", "ok.png");
 		} else {
 			linkMsg($script, "Erreur de modification", "alert.png");
@@ -93,7 +96,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'update_regroup':
-		if ($id=recordEtablissement('update_regroup')) {
+		if (recordEtablissement('update_regroup')) {
 			linkMsg($script, "Etablissement modifié dans la base", "ok.png");
 		} else {
 			linkMsg($script, "Erreur de modification", "alert.png");
@@ -107,7 +110,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'record_etab':
-		if ($id=recordEtablissement('add')) {
+		if (recordEtablissement('add')) {
 			linkMsg($script, "Etablissement créé dans la base", "ok.png");
 		} else {
 			linkMsg($script, "Erreur d'enregistrement", "alert.png");

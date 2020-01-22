@@ -363,10 +363,10 @@ function recordQuestion($tab, $action) {
 function chooseEtablissement($record=0) {
 	$base = dbConnect();
 	if ($record) {
-		$req_etbs = sprintf("SELECT id,nom FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
+		$req_etbs = sprintf("SELECT id,nom,abrege FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
 		$listetbs = explode(',', $record->etablissement);
 	} else {
-		$req_etbs = "SELECT id,nom FROM etablissement";
+		$req_etbs = "SELECT id,nom,abrege FROM etablissement";
 	}
 	$res_etbs = mysqli_query($base, $req_etbs);
 	dbDisconnect($base);
@@ -377,7 +377,11 @@ function chooseEtablissement($record=0) {
 	printf("<div id='source' class='dropper'>\n");
 	printf("<div class='grid_title'>Etablissements existants</div>\n");
 	while ($row=mysqli_fetch_object($res_etbs)) {
-		printf("<div id='%d' class='draggable'>%s</div>\n", $row->id, $row->nom);
+		if (stripos($row->abrege, "_TEAM") !== false) {
+			printf("<div id='%d' class='draggable'>%s (regroupement)</div>\n", $row->id, $row->nom);
+		} else {
+			printf("<div id='%d' class='draggable'>%s</div>\n", $row->id, $row->nom);
+		}
 	}
 	printf("</div>\n");
 
@@ -440,10 +444,9 @@ function selectUserModif() {
 }
 
 
-function modifUser($id) {
-	$id = intval($id);
+function modifUser() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM users WHERE id='%d' LIMIT 1", $id);
+	$request = sprintf("SELECT * FROM users WHERE id='%d' LIMIT 1", $_SESSION['current_user']);
 	$result = mysqli_query($base, $request);
 	$record = mysqli_fetch_object($result);
 	$listetbs = explode(',', $record->etablissement);
@@ -453,7 +456,6 @@ function modifUser($id) {
 	printf("<form method='post' id='modif_user' action='admin.php?action=update_user' onsubmit='return user_champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification d'un utilisateur</legend>\n");
 	printf("<table>\n<tr><td colspan='3'>\n");
-	printf("<input type='hidden' size='3' maxlength='3' name='id_user' id='id_user' value='%s'/>\n", $id);
 	printf("Prénom:&nbsp;<input type='text' size='20' maxlength='20' name='prenom' id='prenom' value=\"%s\" />\n", traiteStringFromBDD($record->prenom));
 	printf("Nom:&nbsp;<input type='text' size='20' maxlength='20' name='nom' id='nom' value=\"%s\" />\n", traiteStringFromBDD($record->nom));
 	printf("Fonction:&nbsp;<select name='role' id='role'>\n");
@@ -475,9 +477,7 @@ function modifUser($id) {
 
 function recordUser($action) {
 	$base = dbConnect();
-	if ($action === 'update') {
-		$id = isset($_POST['id_user']) ? intval(trim($_POST['id_user'])) : NULL;
-	}
+	$id = intval($_SESSION['current_user']);
 	$prenom = isset($_POST['prenom']) ? traiteStringToBDD($_POST['prenom']) : NULL;
 	$nom = isset($_POST['nom']) ? traiteStringToBDD($_POST['nom']) : NULL;
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
@@ -499,7 +499,8 @@ function recordUser($action) {
 				return mysqli_insert_id($base);
 				break;
 			case 'update':
-				return $id;
+				unset($_SESSION['current_user']);
+				return true;
 				break;
 		}
 	} else {
@@ -566,10 +567,9 @@ function selectEtablissementModif() {
 }
 
 
-function modifEtablissement($id) {
-	$id = intval($id);
+function modifEtablissement() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id);
+	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['current_etab']);
 	$result = mysqli_query($base, $request);
 	$record = mysqli_fetch_object($result);
 
@@ -580,7 +580,6 @@ function modifEtablissement($id) {
 	}
 	printf("<fieldset>\n<legend>Modification d'un établissement</legend>\n");
 	printf("<table>\n<tr><td>\n");
-	printf("<input type='hidden' size='3' maxlength='3' name='id_etab' id='id_etab' value='%s'/>\n", $id);
 	printf("Nom:&nbsp;<input type='text' size='65' maxlength='65' name='nom' id='nom' value=\"%s\" />\n", traiteStringFromBDD($record->nom));
 	printf("</td></tr>\n<tr><td>\n");
 	if (stripos($record->abrege, "_TEAM") === false) {
@@ -619,9 +618,6 @@ function modifEtablissement($id) {
 
 function recordEtablissement($action) {
 	$base = dbConnect();
-	if (($action === 'update') || ($action === 'update_regroup')) {
-		$id = isset($_POST['id_etab']) ? intval(trim($_POST['id_etab'])) : NULL;
-	}
 	$nom = isset($_POST['nom']) ? traiteStringToBDD($_POST['nom']) : NULL;
 	$abrege = isset($_POST['abrege']) ? mb_strtoupper(traiteStringToBDD($_POST['abrege'])) : NULL;
 	$adresse = isset($_POST['adresse']) ? traiteStringToBDD($_POST['adresse']) : NULL;
@@ -638,10 +634,10 @@ function recordEtablissement($action) {
 			$request = sprintf("INSERT INTO etablissement (nom, abrege, adresse, ville, code_postal, regroupement, objectifs) VALUES ('%s', '%s', '%s', '%s', '%d', '%s', '%s')", $nom, $abrege, $adresse, $ville, $code_postal, $regroup, $objectifs);
 			break;
 		case 'update':
-			$request = sprintf("UPDATE etablissement SET nom='%s', abrege='%s', adresse='%s', ville='%s', code_postal='%d' WHERE id='%d'", $nom, $abrege, $adresse, $ville, $code_postal, $id);
+			$request = sprintf("UPDATE etablissement SET nom='%s', abrege='%s', adresse='%s', ville='%s', code_postal='%d' WHERE id='%d'", $nom, $abrege, $adresse, $ville, $code_postal, $_SESSION['current_etab']);
 			break;
 		case 'update_regroup':
-			$request = sprintf("UPDATE etablissement SET nom='%s', abrege='%s', adresse='%s', ville='%s', code_postal='%d', regroupement='%s' WHERE id='%d'", $nom, $abrege, $adresse, $ville, $code_postal, $regroup, $id);
+			$request = sprintf("UPDATE etablissement SET nom='%s', abrege='%s', adresse='%s', ville='%s', code_postal='%d', regroupement='%s' WHERE id='%d'", $nom, $abrege, $adresse, $ville, $code_postal, $regroup, $_SESSION['current_etab']);
 			break;
 	}
 	if (mysqli_query($base, $request)) {
@@ -653,10 +649,12 @@ function recordEtablissement($action) {
 				return mysqli_insert_id($base);
 				break;
 			case 'update':
-				return $id;
+				unset($_SESSION['current_etab']);
+				return true;
 				break;
 			case 'update_regroup':
-				return $id;
+				unset($_SESSION['current_etab']);
+				return true;
 				break;
 		}
 	} else {

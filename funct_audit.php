@@ -128,15 +128,21 @@ function getAssessment($id_etab=0, $annee=0) {
 
 
 function writeAudit() {
+	foreach ($_POST as $key => $value){
+		if (substr($key, 0, 7) === 'comment') {
+			$_POST[$key] = traiteStringToBDD($value);
+		}
+	}
 	recordLog();
 	$id_etab = intval($_SESSION['id_etab']);
 	$annee = $_SESSION['annee'];
 	$assessment = getAssessment($id_etab, $annee);
 	$base = dbConnect();
+	mysqli_set_charset($base , 'utf8');
 	$record = mysqli_real_escape_string($base, serialize($_POST));
 	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
 	if (mysqli_query($base, $request)) {
-		return $id_etab;
+		return true;
 	} else {
 		return false;
 	}

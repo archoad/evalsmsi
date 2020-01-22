@@ -54,8 +54,9 @@ $captchaMode = 'num'; // 'txt' or 'num'
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
 
-ini_set('display_errors', 0);
-ini_set('error_reporting', 0);
+//ini_set('display_errors', 0);
+//ini_set('error_reporting', 0);
+ini_set('error_reporting', E_ALL);
 ini_set('session.use_trans_sid', 0);
 ini_set('session.use_cookie', 1);
 //ini_set('session.cookie_secure', 1);
@@ -110,7 +111,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div>\n<div class='column right'>\n");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
-	linkMsg("admin.php?action=modif_etab", "Modifier un établissement", "modif_etab.png", 'menu');
+	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
 	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
@@ -285,6 +286,7 @@ function headPage($titre, $sousTitre=''){
 	header("Content-type: text/html; charset=utf-8");
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
+	printf("<meta name='author' content='Michel Dubois' />\n");
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
 	printf("<link href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />\n");
 	printf("<link href='js/vis.min.css' rel='stylesheet' type='text/css' media='all' />\n");
@@ -368,18 +370,32 @@ function recordLog() {
 
 
 function traiteStringToBDD($str) {
-	$str = trim($str);
-	if (!get_magic_quotes_gpc()) {
-		$str = addslashes($str);
+	$output = '';
+	$str = str_split($str);
+	for($i=0; $i<count($str); $i++) {
+		if (isset($str[$i+1])) {
+			$chrNum = sprintf("%d%d", ord($str[$i]), ord($str[$i+1]));
+			switch ($chrNum) {
+				case '4039': // remove ('
+				case '3941': // remove ')
+					$output .= ' ';
+					$i += 1;
+					break;
+				default:
+					$output .= $str[$i];
+					break;
+			}
+		} else {
+			$output .= $str[$i];
+		}
 	}
-	return htmlentities($str, ENT_QUOTES, 'UTF-8');
+	$output = strip_tags($output);
+	return htmlspecialchars($output, ENT_QUOTES, 'UTF-8');;
 }
 
 
 function traiteStringFromBDD($str){
-	$str = trim($str);
-	$str = stripslashes($str);
-	return html_entity_decode($str, ENT_QUOTES, 'UTF-8');
+	return htmlspecialchars_decode($str, ENT_QUOTES);
 }
 
 
