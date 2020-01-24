@@ -102,7 +102,18 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
+	case 'rm_token':
+		if (isset($_SESSION['token'])) {
+			unset($_SESSION['token']);
+		}
+		menuEtab();
+		footPage();
+		break;
+
 	default:
+		if (isset($_SESSION['token'])) {
+			unset($_SESSION['token']);
+		}
 		menuEtab();
 		footPage();
 	}
@@ -112,7 +123,6 @@ if (isset($_GET['action'])) {
 }
 
 ?>
-
 
 
 

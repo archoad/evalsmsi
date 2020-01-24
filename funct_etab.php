@@ -123,25 +123,20 @@ function displayAssessment() {
 
 
 function writeAssessment(){
-	foreach ($_POST as $key => $value){
-		if (substr($key, 0, 7) === 'comment') {
-			$_POST[$key] = traiteStringToBDD($value);
-		}
-	}
 	recordLog();
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$base = dbConnect();
-	mysqli_set_charset($base , 'utf8');
-	$record = mysqli_real_escape_string($base, serialize($_POST));
-	$comment = isset($_POST['final_comment']) ? traiteStringToBDD($_POST['final_comment']) : NULL;
+	$comment = isset($answer['final_comment']) ? traiteStringToBDD($answer['final_comment']) : NULL;
+	$record = controlAssessment($_POST);
 	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $id_etab, $annee);
+	$base = dbConnect();
 	if (mysqli_query($base, $request)){
+		dbDisconnect($base);
 		return true;
 	} else {
+		dbDisconnect($base);
 		return false;
 	}
-	dbDisconnect($base);
 }
 
 

@@ -29,6 +29,7 @@ isSessionValid($authorizedRole);
 headPage($appli_titre, "Administration");
 $script = basename($_SERVER['PHP_SELF']);
 
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'new_user':
@@ -132,9 +133,27 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
+	case 'modif_par':
+		$_SESSION['modif_par'] = intval($_GET['value']);
+		modifParagraphs();
+		break;
+
+	case 'update_par':
+		if (recordParagraph($_POST, 'modif')) {
+			linkMsg($script."?action=modifications", "Domaine modifié avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
+		break;
+
 	case 'new_par':
-		recordParagraph($_POST, 'add');
-		footPage($script, "Accueil");
+		if (recordParagraph($_POST, 'add')) {
+			linkMsg($script, "Domaine ajouté avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
 		break;
 
 	case 'add_sub_par':
@@ -143,8 +162,26 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'new_sub_par':
-		recordSubParagraph($_POST, 'add');
-		footPage($script, "Accueil");
+		if (recordSubParagraph($_POST, 'add')) {
+			linkMsg($script, "Sous-domaine ajouté avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
+		break;
+
+	case 'modif_sub_par':
+		$_SESSION['modif_subpar'] = intval($_GET['value']);
+		modifSubParagraphs();
+		break;
+
+	case 'update_subpar':
+		if (recordSubParagraph($_POST, 'modif')) {
+			linkMsg($script."?action=modifications", "Sous-domaine modifié avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
 		break;
 
 	case 'add_quest':
@@ -153,8 +190,26 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'new_question':
-		recordQuestion($_POST, 'add');
-		footPage($script, "Accueil");
+		if (recordQuestion($_POST, 'add')) {
+			linkMsg($script, "Question ajoutée avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
+		break;
+
+	case 'modif_question':
+		$_SESSION['modif_quest'] = intval($_GET['value']);
+		modifQuestion();
+		break;
+
+	case 'update_question':
+		if (recordQuestion($_POST, 'modif')) {
+			linkMsg($script."?action=modifications", "Question modifiée avec succès", "ok.png");
+		} else {
+			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+		}
+		footPage();
 		break;
 
 	case 'modifications':
@@ -162,7 +217,18 @@ if (isset($_GET['action'])) {
 		footPage($script, "Accueil");
 		break;
 
+	case 'rm_token':
+		if (isset($_SESSION['token'])) {
+			unset($_SESSION['token']);
+		}
+		menuAdmin();
+		footPage();
+		break;
+
 	default:
+		if (isset($_SESSION['token'])) {
+			unset($_SESSION['token']);
+		}
 		menuAdmin();
 		footPage();
 		break;
@@ -173,5 +239,8 @@ if (isset($_GET['action'])) {
 }
 
 ?>
+
+
+
 
 <script type='text/javascript' src='js/evalsmsi.js'></script>

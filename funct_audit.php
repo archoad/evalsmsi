@@ -128,25 +128,20 @@ function getAssessment($id_etab=0, $annee=0) {
 
 
 function writeAudit() {
-	foreach ($_POST as $key => $value){
-		if (substr($key, 0, 7) === 'comment') {
-			$_POST[$key] = traiteStringToBDD($value);
-		}
-	}
 	recordLog();
-	$id_etab = intval($_SESSION['id_etab']);
+	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$assessment = getAssessment($id_etab, $annee);
-	$base = dbConnect();
-	mysqli_set_charset($base , 'utf8');
-	$record = mysqli_real_escape_string($base, serialize($_POST));
+	$record = controlAssessment($_POST);
 	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
+	$base = dbConnect();
 	if (mysqli_query($base, $request)) {
+		dbDisconnect($base);
 		return true;
 	} else {
+		dbDisconnect($base);
 		return false;
 	}
-	dbDisconnect($base);
 }
 
 
@@ -180,15 +175,22 @@ function objectifs() {
 
 function recordObjectifs() {
 	$id_etab = $_SESSION['id_etab'];
+	$objectifs = controlObjectifs($_POST);
 	$base = dbConnect();
-	$objectifs = mysqli_real_escape_string($base, serialize($_POST));
 	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectifs, $id_etab);
-	if (mysqli_query($base, $request)){
-		return $id_etab;
+	if (isset($_SESSION['token'])) {
+		unset($_SESSION['token']);
+		if (mysqli_query($base, $request)) {
+			dbDisconnect($base);
+			return true;
+		} else {
+			dbDisconnect($base);
+			return false;
+		}
 	} else {
+		dbDisconnect($base);
 		return false;
 	}
-	dbDisconnect($base);
 }
 
 

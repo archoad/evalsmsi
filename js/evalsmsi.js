@@ -25,11 +25,15 @@ function myAlert(txt, elt=null) {
 	createAlertBox(txt);
 	var modal = document.getElementById('modalAlert');
 	var btn = document.getElementById('closeAlert');
-	btn.onclick = function() { modal.style.display = 'none'; }
+	btn.onclick = function() {
+		modal.style.display = 'none';
+		document.body.removeChild(modal);
+	}
 	modal.style.display = 'block';
 	window.onclick = function(event) {
 		if (event.target == modal) {
 			modal.style.display = 'none';
+			document.body.removeChild(modal);
 		}
 	}
 	if (elt != null) {
@@ -53,10 +57,10 @@ function champs_ok(form) {
 function valideObj(elt) {
 	if (elt.value != "") {
 		if (isNaN(elt.value)) {
-			alert("Vous devez saisir un chiffre.");
+			myAlert("Vous devez saisir un chiffre.", elt);
 		} else {
 			if ((elt.value > 7) || (elt.value < 1)) {
-				alert("Vous devez saisir un objectif entre 1 et 7.");
+				myAlert("Vous devez saisir un objectif entre 1 et 7.", elt);
 			}
 		}
 	}
@@ -159,18 +163,6 @@ function createObject() {
 		}
 	}
 	return xhr;
-}
-
-
-function valid_suppr(item, id) {
-	var cible;
-	check = confirm("Voulez vous vraiment supprimer cet item ?");
-	if(check == true) {
-		cible = "suppr.php?action="+item+"&value="+id;
-	} else {
-		cible = "admin.php?action=modifications";
-	}
-	window.location.href=cible;
 }
 
 

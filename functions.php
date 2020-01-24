@@ -70,6 +70,8 @@ ini_set('session.entropy_length', 32);
 ini_set('session.entropy_file', '/dev/urandom');
 ini_set('session.hash_function', 'sha256');
 
+$noteMax = 7;
+
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminIMG = sprintf("%s/pict/generated/", $server_path);
 $cheminTTF = sprintf("%s/jpgraph/fonts/", $server_path);
@@ -107,7 +109,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=add_par", "Ajouter un domaine", "add_par.png", 'menu');
 	linkMsg("admin.php?action=add_sub_par", "Ajouter un sous-domaine", "add_sub_par.png", 'menu');
 	linkMsg("admin.php?action=add_quest", "Ajouter une question", "add_question.png", 'menu');
-	linkMsg("admin.php?action=modifications", "Modifications / Suppressions questionnaires", "eval_continue.png", 'menu');
+	linkMsg("admin.php?action=modifications", "Modifications du questionnaire", "eval_continue.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div>\n<div class='column right'>\n");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
@@ -154,7 +156,7 @@ function dbConnect(){
 	global $servername, $dbname, $login, $passwd;
 	$dbh = mysqli_connect($servername, $login, $passwd) or die("Problème de connexion");
 	mysqli_select_db($dbh, $dbname) or die("problème avec la table");
-	mysqli_query($dbh, "SET NAMES 'utf8'");
+	mysqli_set_charset($dbh , 'utf8');
 	return $dbh;
 }
 
@@ -323,13 +325,14 @@ function footPage($link='', $msg=''){
 
 
 function validForms($msg, $url, $back=True) {
+	$_SESSION['token'] = generateToken();
 	printf("<fieldset>\n<legend>Validation</legend>\n");
 	printf("<table><tr><td>\n");
 	printf("<input type='submit' value='%s' />\n", $msg);
 	if ($back) {
 		printf("<input type='reset' value='Effacer' />\n");
 	}
-	printf("<a class='valid' href='%s'>Revenir</a>\n", $url);
+	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>\n", $url);
 	printf("</td></tr>\n</table>\n</fieldset>\n");
 }
 
@@ -370,32 +373,91 @@ function recordLog() {
 
 
 function traiteStringToBDD($str) {
-	$output = '';
 	$str = str_split($str);
+	$temp = '';
 	for($i=0; $i<count($str); $i++) {
-		if (isset($str[$i+1])) {
-			$chrNum = sprintf("%d%d", ord($str[$i]), ord($str[$i+1]));
+		switch ($str[$i]) {
+			case '+':
+			case '=':
+			case '|':
+				$temp .= ' ';
+				break;
+			default:
+				$temp .= $str[$i];
+				break;
+		}
+	}
+	$temp = str_split($temp);
+	$output = '';
+	for($i=0; $i<count($temp); $i++) {
+		if (isset($temp[$i+1])) {
+			$chrNum = sprintf("%d%d", ord($temp[$i]), ord($temp[$i+1]));
 			switch ($chrNum) {
 				case '4039': // remove ('
 				case '3941': // remove ')
+				case '4041': // remove ()
+				case '4747': // remove //
 					$output .= ' ';
 					$i += 1;
 					break;
 				default:
-					$output .= $str[$i];
+					$output .= $temp[$i];
 					break;
 			}
 		} else {
-			$output .= $str[$i];
+			$output .= $temp[$i];
 		}
 	}
 	$output = strip_tags($output);
-	return htmlspecialchars($output, ENT_QUOTES, 'UTF-8');;
+	return htmlspecialchars($output, ENT_QUOTES, 'UTF-8');
 }
 
 
 function traiteStringFromBDD($str){
 	return htmlspecialchars_decode($str, ENT_QUOTES);
+}
+
+
+function generateToken() {
+	$token = hash('sha3-256', random_bytes(32));
+	return $token;
+}
+
+
+function controlAssessment($answer) {
+	global $noteMax;
+	foreach ($answer as $key => $value){
+		if (substr($key, 0, 7) === 'comment') {
+			$answer[$key] = traiteStringToBDD($value);
+		}
+		if (substr($key, 0, 8) === 'question') {
+			$tmp = intval($value);
+			if ($tmp<0 || $tmp>$noteMax) {
+				$tmp = 0;
+			}
+			$answer[$key] = $tmp;
+		}
+	}
+	$base = dbConnect();
+	$answer = mysqli_real_escape_string($base, serialize($answer));
+	dbDisconnect($base);
+	return $answer;
+}
+
+
+function controlObjectifs($answer) {
+	global $noteMax;
+	foreach ($answer as $key => $value){
+		$tmp = intval($value);
+		if ($tmp<0 || $tmp>$noteMax) {
+			$tmp = 0;
+		}
+		$answer[$key] = $tmp;
+	}
+	$base = dbConnect();
+	$answer = mysqli_real_escape_string($base, serialize($answer));
+	dbDisconnect($base);
+	return $answer;
 }
 
 
@@ -539,12 +601,19 @@ function recordNewPassword($passwd) {
 	$base = dbConnect();
 	$passwd = password_hash($passwd, PASSWORD_BCRYPT);
 	$request = sprintf("UPDATE users SET password='%s' WHERE login='%s'", $passwd, $_SESSION['login']);
-	if (mysqli_query($base, $request)) {
-		return true;
+	if (isset($_SESSION['token'])) {
+		unset($_SESSION['token']);
+		if (mysqli_query($base, $request)) {
+			dbDisconnect($base);
+			return true;
+		} else {
+			dbDisconnect($base);
+			return false;
+		}
 	} else {
+		dbDisconnect($base);
 		return false;
 	}
-	dbDisconnect($base);
 }
 
 
