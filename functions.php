@@ -1488,9 +1488,9 @@ function htmlLatexParser($text) {
 }
 
 
-function latexHead($id_etab, $annee=0) {
+function latexHead($annee=0) {
+	$id_etab = $_SESSION['id_etab']
 	$auditor = getAuditor($id_etab);
-	$id_etab = intval($id_etab);
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
@@ -1541,14 +1541,13 @@ function latexFoot() {
 }
 
 
-function printAssessment($etablissement, $assessment, $annee=0) {
-	$etablissement = intval($etablissement);
+function printAssessment($assessment, $annee=0) {
 	$text = "";
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
 	$base = dbConnect();
-	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $etablissement);
+	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row_regroup = mysqli_fetch_object($result);
 	if (stripos($row_regroup->abrege, "_TEAM") === false) {
@@ -1633,9 +1632,9 @@ function printAssessment($etablissement, $assessment, $annee=0) {
 }
 
 
-function printGraphsAndNotes($id_etab, $annee=0) {
+function printGraphsAndNotes($annee=0) {
 	global $cheminIMG;
-	$id_etab = intval($id_etab);
+	$id_etab = $_SESSION['id_etab'];
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	} else {
@@ -1867,9 +1866,9 @@ function makeRapport($abrege_etab, $text, $annee) {
 }
 
 
-function generateRapport($script, $id_etab, $annee=0) {
+function generateRapport($script, $annee=0) {
 	$printByEtablissement = true;
-	$id_etab = intval($id_etab);
+	$id_etab = $_SESSION['id_etab'];
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 		$printByEtablissement = false;
@@ -1896,12 +1895,12 @@ function generateRapport($script, $id_etab, $annee=0) {
 			// L'évaluation est complète
 			if (isAssessComplete($reponses[$annee])) {
 				if ($row->valide) {
-					$head = latexHead($id_etab, $annee);
+					$head = latexHead($annee);
 					if ($printByEtablissement) {
 						$head .= "\n\n\\begin{center}\n\n{\\Large{\\textcolor{myRed}{Rapport imprimé par l'établissement le \\today.}}}\n\n\\end{center}\n\n\\clearpage\n\n";
 					}
-					$first_section = printGraphsAndNotes($id_etab, $annee);
-					$second_section = printAssessment($id_etab, $assessment, $annee);
+					$first_section = printGraphsAndNotes($annee);
+					$second_section = printAssessment($assessment, $annee);
 					$annexes = printAnnexes();
 					$foot = latexFoot();
 					$rapport = $head."\n".$first_section."\n".$second_section."\n".$annexes."\n".$foot;

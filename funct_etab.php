@@ -145,7 +145,7 @@ function exportRapport($script, $annee) {
 	$msg = sprintf("Télécharger le plan d'actions %s (Excel)", $annee);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	generateRapport($script, $_SESSION['id_etab'], $annee);
+	generateRapport($script, $annee);
 	printf("</div>\n");
 	printf("<div class='column right'>\n");
 	linkMsg($xlsFile, $msg, "xlsx.png", 'menu');

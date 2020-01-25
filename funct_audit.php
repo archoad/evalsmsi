@@ -37,15 +37,14 @@ function isEtabLegitimate($id_etab) {
 
 function createAssessmentRegroup() {
 	$base = dbConnect();
-	$id_etab = $_SESSION['etablissement'];
-	$annee = $_SESSION['annee'];
-	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $id_etab, $annee);
+	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $_SESSION['etablissement'], $_SESSION['annee']);
 	if (mysqli_query($base, $request)){
-		return mysqli_insert_id($base); // Création de l'évaluation
+		dbDisconnect($base);
+		return true;
 	} else {
-		return 0; // Erreur de création
+		dbDisconnect($base);
+		return false;
 	}
-	dbDisconnect($base);
 }
 
 
@@ -135,9 +134,15 @@ function writeAudit() {
 	$record = controlAssessment($_POST);
 	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
 	$base = dbConnect();
-	if (mysqli_query($base, $request)) {
-		dbDisconnect($base);
-		return true;
+	if (isset($_SESSION['token'])) {
+		unset($_SESSION['token']);
+		if (mysqli_query($base, $request)){
+			dbDisconnect($base);
+			return true;
+		} else {
+			dbDisconnect($base);
+			return false;
+		}
 	} else {
 		dbDisconnect($base);
 		return false;
@@ -146,9 +151,8 @@ function writeAudit() {
 
 
 function objectifs() {
-	$id_etab = intval($_SESSION['id_etab']);
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	$obj = unserialize($row->objectifs);
@@ -174,10 +178,9 @@ function objectifs() {
 
 
 function recordObjectifs() {
-	$id_etab = $_SESSION['id_etab'];
 	$objectifs = controlObjectifs($_POST);
 	$base = dbConnect();
-	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectifs, $id_etab);
+	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectifs, $_SESSION['id_etab']);
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
 		if (mysqli_query($base, $request)) {
@@ -206,13 +209,12 @@ function journalisation() {
 
 function recordCommentGraph() {
 	$base = dbConnect();
-	$id_etab = isset($_POST['id_etab']) ? intval(trim($_POST['id_etab'])) : NULL;
 	$id_assess = isset($_POST['id_assess']) ? intval(trim($_POST['id_assess'])) : NULL;
 	$comment = isset($_POST['comments']) ? traiteStringToBDD($_POST['comments']) : NULL;
 	$request = sprintf("UPDATE assess SET comment_graph_par='%s' WHERE id='%d'", $comment, $id_assess);
 	if (mysqli_query($base, $request)){
 		dbDisconnect($base);
-		return $id_etab;
+		return true;
 	} else {
 		dbDisconnect($base);
 		return false;
@@ -227,7 +229,7 @@ function isAssessGroupValidate() {
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
-	$row=mysqli_fetch_object($result);
+	$row = mysqli_fetch_object($result);
 	$team = explode(',', $row->regroupement);
 	foreach ($team as $id_member) {
 		$nom = getEtablissement($id_member);
@@ -245,6 +247,7 @@ function isAssessGroupValidate() {
 			}
 		}
 	}
+	dbDisconnect($base);
 	return $isOk;
 }
 
@@ -500,7 +503,7 @@ function getCommentGraphPar() {
 					$record = mysqli_fetch_object($result);
 					printf("<div class='onecolumn'>\n");
 					if (isRegroupEtab()) {
-						graphBilan($id_etab, 0);
+						graphBilan(0);
 						printf("<p><img src='%s' alt='' /></p>\n", 'pict/generated/result_bilan_par.png');
 					} else {
 						printf("<div id='graphs'>\n");
@@ -512,7 +515,6 @@ function getCommentGraphPar() {
 					}
 					printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' onsubmit='return champs_ok(this)'>\n");
 					printf("<input type='hidden' size='3' maxlength='3' name='id_assess' id='id_assess' value='%s'/>\n", $record->id);
-					printf("<input type='hidden' size='3' maxlength='3' name='id_etab' id='id_etab' value='%s'/>\n", $id_etab);
 					printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10'>%s</textarea>\n", traiteStringFromBDD($record->comment_graph_par));
 					validForms('Continuer', 'audit.php', $back=False);
 					printf("</form>\n");
