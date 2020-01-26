@@ -144,6 +144,9 @@ function writeAssessment(){
 
 
 function exportRapport($script, $annee) {
+	if (isset($_SESSION['token'])) {
+		unset($_SESSION['token']);
+	}
 	$xlsFile = generateExcellRapport($annee);
 	$msg = sprintf("Télécharger le plan d'actions %s (Excel)", $annee);
 	printf("<div class='row'>\n");

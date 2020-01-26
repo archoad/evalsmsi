@@ -3,9 +3,10 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
+
 \usepackage{libertine}
-\usepackage{libertinust1math}
-\usepackage{sourcecodepro}
+\usepackage{libertinust1math} % pour les maths
+\usepackage{inconsolata} % pour le code
 
 \usepackage{titlesec}
 \titlelabel{\thetitle.\enspace}
@@ -76,6 +77,7 @@
 \makeindex % On fait un index
 
 \hypersetup{%
+	pdfencoding=unicode,
 	hypertexnames=false,
 	pdfstartview=FitH,
 	colorlinks=true,

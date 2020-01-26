@@ -907,9 +907,9 @@ function createRadarGraph($plusL=0, $plusH=0) {
 }
 
 
-function getObjectives($id_etab) {
+function getObjectives() {
 	$base = dbConnect();
-	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
@@ -917,20 +917,9 @@ function getObjectives($id_etab) {
 }
 
 
-function createTargetPlot($table, $id_etab) {
-	$objectifs = getObjectives($id_etab);
-	if ($table == "paragraphe") {
-		$plot= new RadarPlot($objectifs);
-	} else {
-		$base = dbConnect();
-		$req = "SELECT id, id_paragraphe FROM $table";
-		$res = mysqli_query($base, $req);
-		while ($r = mysqli_fetch_object($res)) {
-			$values[] = $objectifs[$r->id_paragraphe - 1];
-		}
-		dbDisconnect($base);
-		$plot= new RadarPlot($values);
-	}
+function createTargetPlot() {
+	$objectifs = getObjectives();
+	$plot= new RadarPlot($objectifs);
 	$plot->SetLineWeight(2);
 	$plot->SetLegend("Objectifs");
 	$plot->SetColor('red');
@@ -939,9 +928,9 @@ function createTargetPlot($table, $id_etab) {
 }
 
 
-function createAveragePlot($id_etab) {
+function createAveragePlot() {
 	$base = dbConnect();
-	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	foreach (unserialize($row->objectifs) as $par => $obj) {
@@ -966,9 +955,9 @@ function isAssessComplete($table) {
 }
 
 
-function getAnswers($id_etab) {
+function getAnswers() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee", $id_etab);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$answers = array();
 	while ($row = mysqli_fetch_object($result)) {
@@ -986,8 +975,9 @@ function getAnswers($id_etab) {
 }
 
 
-function currentYearGraph($id_etab, $annee, $reponses) {
+function currentYearGraph($annee, $reponses) {
 	global $cheminIMG, $colors;
+	$id_etab = $_SESSION['id_etab'];
 	$titles_par = getAllParAbrege();
 	$nom_etab = getEtablissement($id_etab);
 	$graph = createRadarGraph();
@@ -1005,8 +995,8 @@ function currentYearGraph($id_etab, $annee, $reponses) {
 	$plot->SetFillColor($colors[0].'@0.8');
 	$plot->mark->SetType(MARK_FILLEDCIRCLE);
 	$plot->mark->SetFillColor($colors[0]);
-	$graph->Add(createTargetPlot("paragraphe", $id_etab));
-	$graph->Add(createAveragePlot($id_etab));
+	$graph->Add(createTargetPlot());
+	$graph->Add(createAveragePlot());
 	$graph->Add($plot);
 	$txt = makeGraphTxt();
 	$graph->AddText($txt);
@@ -1014,8 +1004,9 @@ function currentYearGraph($id_etab, $annee, $reponses) {
 }
 
 
-function cumulatedGraph($id_etab, $reponses) {
+function cumulatedGraph($reponses) {
 	global $cheminIMG, $colors;
+	$id_etab = $_SESSION['id_etab'];
 	$titles_par = getAllParAbrege();
 	$nom_etab = getEtablissement($id_etab);
 	$graph = createRadarGraph();
@@ -1025,8 +1016,8 @@ function cumulatedGraph($id_etab, $reponses) {
 	$graph->SetTitles($titles_par);
 	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
 	$graph->legend->SetLayout(LEGEND_HOR);
-	$graph->Add(createTargetPlot("paragraphe", $id_etab));
-	$graph->Add(createAveragePlot($id_etab));
+	$graph->Add(createTargetPlot());
+	$graph->Add(createAveragePlot());
 	$plot = array();
 	$cpt = 0;
 	foreach (array_keys($reponses) as $an){
@@ -1053,8 +1044,7 @@ function cumulatedGraph($id_etab, $reponses) {
 
 function displayEtablissmentGraphs() {
 	$annee = $_SESSION['annee'];
-	$id_etab = $_SESSION['id_etab'];
-	$reponses = getAnswers($id_etab);
+	$reponses = getAnswers();
 	if (sizeof(array_keys($reponses))) {
 		if (isAssessComplete($reponses[$annee])) {
 			linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
@@ -1080,20 +1070,21 @@ function displayEtablissmentGraphs() {
 }
 
 
-function doEtablissementGraphs($id_etab, $annee=0) {
+function deleteGraphsImg() {
 	global $cheminIMG;
 	@unlink($cheminIMG."result_par.png");
 	@unlink($cheminIMG."result_subpar.png");
 	@unlink($cheminIMG."result_par_cumul.png");
-	$nom_etab = getEtablissement($id_etab);
-	if (!$annee) {
-		$annee = $_SESSION['annee'];
-	}
-	$reponses = getAnswers($id_etab);
+}
+
+
+function doEtablissementGraphs($annee) {
+	deleteGraphsImg();
+	$reponses = getAnswers();
 	if (sizeof(array_keys($reponses))) {
-		currentYearGraph($id_etab, $annee, $reponses);
+		currentYearGraph($annee, $reponses);
 		if (sizeof(array_keys($reponses)) > 1) {
-			cumulatedGraph($id_etab, $reponses);
+			cumulatedGraph($reponses);
 		}
 	}
 }
@@ -1210,8 +1201,8 @@ function graphBilan($print=1) {
 	$graph->legend->SetLayout(LEGEND_HOR);
 	$txt = makeGraphTxt();
 	$graph->AddText($txt);
-	$graph->Add(createTargetPlot("paragraphe", $id_etab_regroup));
-	$graph->Add(createAveragePlot($id_etab_regroup));
+	$graph->Add(createTargetPlot());
+	$graph->Add(createAveragePlot());
 	$plot= new RadarPlot(array_values($notesMin));
 	$plot->SetLineWeight(2);
 	$plot->SetLegend(utf8_decode("Bilan (notes minimales) ".$annee));
@@ -1231,8 +1222,8 @@ function graphBilan($print=1) {
 	$graph->legend->SetLayout(LEGEND_HOR);
 	$txt = makeGraphTxt();
 	$graph->AddText($txt);
-	$graph->Add(createTargetPlot("paragraphe", $id_etab_regroup));
-	$graph->Add(createAveragePlot($id_etab_regroup));
+	$graph->Add(createTargetPlot());
+	$graph->Add(createAveragePlot());
 	$plot= new RadarPlot(array_values($notesMoy));
 	$plot->SetLineWeight(2);
 	$plot->SetLegend(utf8_decode("Bilan (moyenne des notes) ".$annee));
@@ -1252,8 +1243,8 @@ function graphBilan($print=1) {
 	$graph->legend->SetLayout(LEGEND_HOR);
 	$txt = makeGraphTxt();
 	$graph->AddText($txt);
-	$graph->Add(createTargetPlot("paragraphe", $id_etab_regroup));
-	$graph->Add(createAveragePlot($id_etab_regroup));
+	$graph->Add(createTargetPlot());
+	$graph->Add(createAveragePlot());
 	$plot= new RadarPlot(array_values($notesMin));
 	$plot->SetLineWeight(2);
 	$plot->SetLegend(utf8_decode("Bilan (minimales) ".$annee));
@@ -1555,7 +1546,6 @@ function printAssessment($assessment, $annee=0) {
 	} else {
 		$regroup = true;
 	}
-	$result = mysqli_query($base, $request);
 	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
 	$res_par = mysqli_query($base, $req_par);
 	$text .= sprintf("\\section{Résultats de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
@@ -1632,14 +1622,10 @@ function printAssessment($assessment, $annee=0) {
 }
 
 
-function printGraphsAndNotes($annee=0) {
+function printGraphsAndNotes($annee) {
 	global $cheminIMG;
 	$id_etab = $_SESSION['id_etab'];
-	if (!$annee) {
-		$annee = $_SESSION['annee'];
-	} else {
-		doEtablissementGraphs($id_etab, $annee=$annee);
-	}
+	doEtablissementGraphs($annee);
 	$nbr_par = paragraphCount();
 	$titles_par = getAllParAbrege();
 	$base = dbConnect();
@@ -1858,6 +1844,7 @@ function makeRapport($abrege_etab, $text, $annee) {
 		exec("make");
 		exec("make clean");
 		chdir($rem_courant);
+		deleteGraphsImg();
 		$msg = sprintf("Télécharger le rapport %d", $annee);
 		linkMsg($script."/rapports/".$abrege_etab.".pdf", $msg, "print_rapport.png", 'menu');
 	} else {
@@ -1867,15 +1854,14 @@ function makeRapport($abrege_etab, $text, $annee) {
 
 
 function generateRapport($script, $annee=0) {
-	$printByEtablissement = true;
 	$id_etab = $_SESSION['id_etab'];
+	$printByEtablissement = true;
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 		$printByEtablissement = false;
 	}
 	$name_etab = getEtablissement($id_etab);
 	$abrege_etab = mb_strtolower(getEtablissement($id_etab, $abrege=1));
-
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);

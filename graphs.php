@@ -27,18 +27,18 @@ $authorizedRole = array('2', '3', '4');
 isSessionValid($authorizedRole);
 header('Content-Type: application/json');
 
-$id_etab = $_SESSION['id_etab'];
+
 $annee = $_SESSION['annee'];
-$nom_etab = getEtablissement($id_etab);
+$nom_etab = getEtablissement($_SESSION['id_etab']);
 $labels = getAllParAbrege();
-$reponses = getAnswers($id_etab);
+$reponses = getAnswers();
 $first_year = key($reponses);
 $scores = [];
 for ($i=0; $i<count($reponses); $i++) {
 	$current_year = $i + $first_year;
 	$scores[$current_year] = array_values(calculNotes($reponses[$current_year]));
 }
-$goal = getObjectives($id_etab);
+$goal = getObjectives();
 
 $rawdata = [];
 for ($i=0; $i<count($labels); $i++) {
