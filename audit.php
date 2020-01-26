@@ -139,7 +139,7 @@ if (isset($_GET['action'])) {
 
 	case 'record_comment':
 		if (recordCommentGraph()) {
-			generateRapport($script, $result);
+			generateRapport($script);
 		} else {
 			linkMsg($script, "Erreur lors de la sauvegarde des commentaires.", "alert.png");
 		}

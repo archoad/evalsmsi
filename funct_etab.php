@@ -22,15 +22,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 function createAssessment() {
 	$base = dbConnect();
-	$id_etab = $_SESSION['id_etab'];
-	$annee = $_SESSION['annee'];
-	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $id_etab, $annee);
-	if (mysqli_query($base, $request)){
-		return mysqli_insert_id($base); // Création de l'évaluation
+	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee']);
+	if (mysqli_query($base, $request)) {
+		dbDisconnect($base);
+		return true;
 	} else {
-		return false; // Erreur de création
+		dbDisconnect($base);
+		return false;
 	}
-	dbDisconnect($base);
 }
 
 
@@ -124,15 +123,19 @@ function displayAssessment() {
 
 function writeAssessment(){
 	recordLog();
-	$id_etab = $_SESSION['id_etab'];
-	$annee = $_SESSION['annee'];
 	$comment = isset($answer['final_comment']) ? traiteStringToBDD($answer['final_comment']) : NULL;
 	$record = controlAssessment($_POST);
-	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $id_etab, $annee);
+	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $_SESSION['id_etab'], $_SESSION['annee']);
 	$base = dbConnect();
-	if (mysqli_query($base, $request)){
-		dbDisconnect($base);
-		return true;
+	if (isset($_SESSION['token'])) {
+		unset($_SESSION['token']);
+		if (mysqli_query($base, $request)){
+			dbDisconnect($base);
+			return true;
+		} else {
+			dbDisconnect($base);
+			return false;
+		}
 	} else {
 		dbDisconnect($base);
 		return false;
@@ -155,8 +158,7 @@ function exportRapport($script, $annee) {
 
 function selectYearRapport() {
 	$base = dbConnect();
-	$id_etab = $_SESSION['id_etab'];
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d'", $id_etab);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d'", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	$list = array();

@@ -1489,7 +1489,7 @@ function htmlLatexParser($text) {
 
 
 function latexHead($annee=0) {
-	$id_etab = $_SESSION['id_etab']
+	$id_etab = $_SESSION['id_etab'];
 	$auditor = getAuditor($id_etab);
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
