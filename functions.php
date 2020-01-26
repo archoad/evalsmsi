@@ -69,6 +69,8 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.entropy_length', 32);
 ini_set('session.entropy_file', '/dev/urandom');
 ini_set('session.hash_function', 'sha256');
+ini_set('filter.default', 'full_special_chars');
+ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
 
@@ -149,6 +151,21 @@ function menuAudit() {
 	linkMsg("audit.php?action=delete", "Supprimer une évaluation", "remove.png", 'menu');
 	linkMsg("audit.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	printf("</div>\n</div>");
+}
+
+
+function sanitizePhpSelf($phpself) {
+	$phpself = trim($phpself);
+	$phpself = htmlspecialchars($phpself, ENT_QUOTES, 'UTF-8');
+	$phpself = basename($phpself);
+	$valid = array('admin.php', 'aide.php', 'audit.php', 'etab.php', 'evalsmsi.php');
+	if (in_array($phpself, $valid)) {
+		return $phpself;
+	} else {
+			$path = dirname($_SERVER['SCRIPT_NAME']);
+			destroySession();
+			header("Location: ".$path."/evalsmsi.php");
+	}
 }
 
 
@@ -286,6 +303,8 @@ function headPage($titre, $sousTitre=''){
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
+	header("X-XSS-Protection: 1; mode=block");
+	header("X-Frame-Options: deny");
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<meta name='author' content='Michel Dubois' />\n");

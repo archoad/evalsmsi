@@ -428,6 +428,7 @@ function recordUser($action) {
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
 	$login = isset($_POST['login']) ? traiteStringToBDD($_POST['login']) : NULL;
 	$etbs = isset($_POST['result']) ?  implode(",", $_POST['result']) : NULL;
+	if ($role === 1) { return false; }
 	switch ($action) {
 		case 'add':
 			$passwd = isset($_POST['passwd']) ?  traiteStringToBDD($_POST['passwd']) : NULL;

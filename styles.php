@@ -233,6 +233,10 @@ textarea {
 	box-shadow: var(--shadowHover);
 }
 
+.pleft {
+	text-align: left;
+}
+
 .row {
 	margin-left: auto;
 	margin-right: auto;

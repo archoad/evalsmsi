@@ -160,7 +160,7 @@ function redirectUser($data) {
 			break;
 		default:
 			destroySession();
-			menuAuth();
+			header("Location: evalsmsi.php");
 			break;
 	}
 }

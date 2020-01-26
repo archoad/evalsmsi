@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 function isEtabLegitimate($id_etab) {
+	$id_etab = intval($id_etab);
 	if(isset($_SESSION['id_etab'])) {
 		unset($_SESSION['id_etab']);
 	}
@@ -167,7 +168,7 @@ function objectifs() {
 	printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>\n");
 	while ($row_par=mysqli_fetch_object($res_par)) {
 		$objCurr = sprintf("obj_%d", $row_par->id);
-		printf("<tr><td>%d</td><td style='text-align:left'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $row_par->numero, $row_par->libelle, $row_par->id, $row_par->id, $obj[$objCurr]);
+		printf("<tr><td>%d</td><td class='pleft'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $row_par->numero, $row_par->libelle, $row_par->id, $row_par->id, $obj[$objCurr]);
 	}
 	printf("</table>\n</fieldset>\n");
 	validForms('Enregistrer', 'audit.php', $back=False);
