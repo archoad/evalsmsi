@@ -27,7 +27,7 @@ session_start();
 $authorizedRole = array('1');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Administration");
-$script = basename($_SERVER['PHP_SELF']);
+$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 
 
 if (isset($_GET['action'])) {

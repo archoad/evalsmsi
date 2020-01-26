@@ -27,6 +27,8 @@ function headPageAuth() {
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
+	header("X-XSS-Protection: 1; mode=block");
+	header("X-Frame-Options: deny");
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");

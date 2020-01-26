@@ -25,7 +25,7 @@ session_start();
 $authorizedRole = array('3', '4', '100');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Aide et documentation");
-$script = basename($_SERVER['PHP_SELF']);
+$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 
 function about() {
 	printf("<div class='row'>\n");
