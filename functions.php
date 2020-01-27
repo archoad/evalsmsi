@@ -78,7 +78,7 @@ $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminIMG = sprintf("%s/pict/generated/", $server_path);
 $cheminTTF = sprintf("%s/jpgraph/fonts/", $server_path);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
-$cheminJSON = sprintf("%s/data/", $server_path);
+$cheminDATA = sprintf("%s/data/", $server_path);
 
 DEFINE( "TTF_DIR", $cheminTTF);
 require_once ('jpgraph/jpgraph.php');
@@ -99,7 +99,7 @@ Settings::setPdfRenderer(Settings::PDF_RENDERER_DOMPDF, 'phpoffice/vendor/dompdf
 
 $largeur=798; // Largeur graphe
 $hauteur=532; // Hauteur graphe
-$txtGraph = "Evaluation du SMSI - (c)2019 Michel Dubois";
+$txtGraph = "Evaluation du SMSI - (c)2020 Michel Dubois";
 
 $colors = array('darkslateblue', 'darkorange', 'darkorchid', 'bisque4', 'aquamarine4', 'azure4', 'brown', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'darkgoldenrod', 'darkmagenta', 'darkolivegreen4', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'deeppink', 'deepskyblue', 'goldenrod', 'indianred');
 // --------------------
@@ -1094,6 +1094,9 @@ function deleteGraphsImg() {
 	@unlink($cheminIMG."result_par.png");
 	@unlink($cheminIMG."result_subpar.png");
 	@unlink($cheminIMG."result_par_cumul.png");
+	@unlink($cheminIMG."result_bilan_par_min.png");
+	@unlink($cheminIMG."result_bilan_par_moy.png");
+	@unlink($cheminIMG."result_bilan_par.png");
 }
 
 
@@ -1153,9 +1156,7 @@ function assessSynthese() {
 function graphBilan($print=1) {
 	global $cheminIMG, $colors, $hauteur;
 	$id_etab_regroup = $_SESSION['id_etab'];
-	@unlink($cheminIMG."result_bilan_par_min.png");
-	@unlink($cheminIMG."result_bilan_par_moy.png");
-	@unlink($cheminIMG."result_bilan_par.png");
+	deleteGraphsImg();
 	$annee = $_SESSION['annee'];
 	$titles_par = getAllParAbrege();
 	$titles_subpar = getSubParNum();
@@ -1831,41 +1832,47 @@ function printAnnexes() {
 }
 
 
-function purgePreviousFiles($name) {
+function purgeRapportsFiles() {
 	global $cheminRAP;
-	$rem_courant = getcwd();
-	chdir($cheminRAP);
-	if ($handle = opendir($cheminRAP)) {
-		while (false !== ($file = readdir($handle))) {
-			if ($file != "." && $file != ".." && filetype($cheminRAP.$file) == 'file') {
-				$data = pathinfo($cheminRAP.$file);
-				if ($data['filename'] == $name) {
-					@unlink($file);
-				}
-			}
-		}
-		closedir($handle);
+	if (isset($_SESSION['id_etab'])) {
+		$abrege_etab = getEtablissement($_SESSION['id_etab'], $abrege=1);
+		$rapportPDF = sprintf("%s.pdf", $abrege_etab);
+		$rapportXLSX = sprintf("plan_actions_%d.xlsx", $_SESSION['id_etab']);
+		$evalDOCX = sprintf("evaluation_%s.docx", $abrege_etab);
+		$evalXLSX = sprintf("evaluation_%s.xlsx", $abrege_etab);
+		$currentDirectory = getcwd();
+		chdir($cheminRAP);
+		@unlink($rapportPDF);
+		@unlink($rapportXLSX);
+		@unlink($evalDOCX);
+		@unlink($evalXLSX);
+		@unlink("referentiel.docx");
+		@unlink("referentiel.pdf");
+		chdir($currentDirectory);
 	}
-	chdir($rem_courant);
 }
 
 
 function makeRapport($abrege_etab, $text, $annee) {
-	global $cheminRAP;
-	purgePreviousFiles($abrege_etab);
+	global $cheminRAP, $cheminDATA;
 	$script = dirname($_SERVER['PHP_SELF']);
-	$file = sprintf("%s%s.tex", $cheminRAP, $abrege_etab);
+	$file = sprintf("%s%s.tex", $cheminDATA, $abrege_etab);
+	$pdffile = sprintf("%s%s.pdf", $cheminDATA, $abrege_etab);
+	$newpdffile = sprintf("%s%s.pdf", $cheminRAP, $abrege_etab);
+	$pdfLink = sprintf("%s/rapports/%s.pdf", dirname($_SERVER['REQUEST_URI']), $abrege_etab);
 	if ($handle = fopen($file, "w")) {
 		fwrite($handle, $text);
 		fclose($handle);
 		$rem_courant = getcwd();
-		chdir($cheminRAP);
+		chdir($cheminDATA);
 		exec("make");
 		exec("make clean");
+		unlink($file);
+		rename($pdffile, $newpdffile);
 		chdir($rem_courant);
 		deleteGraphsImg();
 		$msg = sprintf("Télécharger le rapport %d", $annee);
-		linkMsg($script."/rapports/".$abrege_etab.".pdf", $msg, "print_rapport.png", 'menu');
+		linkMsg($pdfLink, $msg, "print_rapport.png", 'menu');
 	} else {
 		linkMsg("#", "Erreur de création du rapport", "alert.png");
 	}
@@ -1880,7 +1887,7 @@ function generateRapport($script, $annee=0) {
 		$printByEtablissement = false;
 	}
 	$name_etab = getEtablissement($id_etab);
-	$abrege_etab = mb_strtolower(getEtablissement($id_etab, $abrege=1));
+	$abrege_etab = getEtablissement($id_etab, $abrege=1);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
@@ -1951,9 +1958,9 @@ function exportEval($script) {
 	$dir = dirname($_SERVER['PHP_SELF']);
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$abrege = getEtablissement(intval($id_etab), $abrege=1);
-	$fileDoc = sprintf("rapports/evaluation_%s_%s.docx", $annee, $abrege);
-	$fileXlsx = sprintf("rapports/evaluation_%s_%s.xlsx", $annee, $abrege);
+	$abrege_etab = getEtablissement(intval($id_etab), $abrege=1);
+	$fileDoc = sprintf("rapports/evaluation_%s.docx", $abrege_etab);
+	$fileXlsx = sprintf("rapports/evaluation_%s.xlsx", $abrege_etab);
 
 	$phpWord = createWordDoc();
 	$myTableStyleName = 'myTable';
@@ -2093,7 +2100,7 @@ function exportEval($script) {
 
 function generateExcellRapport($annee) {
 	$id_etab = $_SESSION['id_etab'];
-	$fileXlsx = sprintf("rapports/plan_actions_%d_%d.xlsx", $annee, $id_etab);
+	$fileXlsx = sprintf("rapports/plan_actions_%d.xlsx", $id_etab);
 
 	$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 	$sheet = $spreadsheet->getActiveSheet();

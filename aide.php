@@ -32,7 +32,7 @@ function about() {
 	printf("<div class='column left'>\n");
 	printf("<p><img src='pict/logoCerbere.png' alt='logo SSI' /></p>\n");
 	printf("<p><b>Remerciements:</b> Merci à Philippe Loudenot pour son aide et son soutien, merci à Ange Ferrari, à Christophe Grenier, à Sébastien Duquette de Corelan Team et à Xavier Beule pour leurs contributions dans la correction de bugs.</p>\n");
-	printf("<p><b>EvalSMSI version 4.2 - 12/05/2019</b></p>\n");
+	printf("<p><b>EvalSMSI version 4.5 - 27/01/2020</b></p>\n");
 	printf("</div>\n<div class='column right'>\n");
 	printf("<p>Le programme d'évaluation du SMSI - <i>evalSMSI</i> - est écrit en PHP et utilise une base MySQL. Son objectif est de fournir un outil d'évaluation simple à mettre en oeuvre et facile d'utilisation.</p>\n");
 	printf("<p>The ISMS assessment program - <i>evalSMSI</i> - is written in PHP and uses a MySQL database. Its objective is to provide an evaluation tool that is simple to implement and easy to use.</p>\n");
@@ -101,8 +101,8 @@ function docISMSeval() {
 
 
 function afficheLexique() {
-	global $cheminJSON;
-	$jsonFile = sprintf("%slexique.json", $cheminJSON);
+	global $cheminDATA;
+	$jsonFile = sprintf("%slexique.json", $cheminDATA);
 	$jsonSource = file_get_contents($jsonFile);
 	$jsonLexique = json_decode($jsonSource);
 	printf("<div class='onecolumn'>\n");

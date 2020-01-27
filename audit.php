@@ -27,7 +27,7 @@ $authorizedRole = array('2');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Audit");
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
-
+purgeRapportsFiles();
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {

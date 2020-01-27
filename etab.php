@@ -28,6 +28,7 @@ $authorizedRole = array('3', '4');
 isSessionValid($authorizedRole);
 headPage($appli_titre);
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
+purgeRapportsFiles();
 
 
 if (isset($_GET['action'])) {
