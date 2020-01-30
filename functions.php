@@ -75,16 +75,9 @@ ini_set('filter.default_flags', 0);
 $noteMax = 7;
 
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
-$cheminIMG = sprintf("%s/pict/generated/", $server_path);
-$cheminTTF = sprintf("%s/jpgraph/fonts/", $server_path);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
 $cheminDATA = sprintf("%s/data/", $server_path);
 
-DEFINE( "TTF_DIR", $cheminTTF);
-require_once ('jpgraph/jpgraph.php');
-require_once ('jpgraph/jpgraph_bar.php');
-require_once ('jpgraph/jpgraph_line.php');
-require_once ('jpgraph/jpgraph_radar.php');
 require_once ('phpoffice/bootstrap.php');
 
 use Dompdf\Dompdf;
@@ -441,7 +434,6 @@ function generateToken() {
 	$token = hash('sha3-256', random_bytes(32));
 	return $token;
 }
-
 
 
 function controlAssessment($answer) {
@@ -906,27 +898,6 @@ function getPoidsQuestion($num, $base) {
 }
 
 
-function createRadarGraph($plusL=0, $plusH=0) {
-	global $largeur,$hauteur;
-	$graph = new  RadarGraph($largeur+$plusL, $hauteur+$plusH ,"auto");
-	$graph->SetScale('lin', 0, 7);
-	$graph->SetFrame(true, 'darkgray', 1);
-	$graph->SetColor(array(0xe7, 0xe2, 0xd9));
-	$graph->HideTickMarks();
-	$graph->img->SetImgFormat("png");
-	$graph->title->SetFont(FF_VERDANA,FS_BOLD);
-	$graph->axis->SetFont(FF_VERDANA,FS_BOLD);
-	$graph->axis->SetColor('darkgray');
-	$graph->axis->SetFont(FF_VERDANA,FS_NORMAL,8);
-	$graph->axis->title->SetMargin(5);
-	$graph->axis->title->SetFont(FF_VERDANA,FS_NORMAL,8);
-	$graph->grid->SetColor('darkgray');
-	$graph->grid-> SetLineStyle( "dotted");
-	$graph->grid->Show();
-	return $graph;
-}
-
-
 function getObjectives() {
 	$base = dbConnect();
 	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
@@ -934,35 +905,6 @@ function getObjectives() {
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
 	return array_values(unserialize($row->objectifs));
-}
-
-
-function createTargetPlot() {
-	$objectifs = getObjectives();
-	$plot= new RadarPlot($objectifs);
-	$plot->SetLineWeight(2);
-	$plot->SetLegend("Objectifs");
-	$plot->SetColor('red');
-	$plot->SetFill(false);
-	return $plot;
-}
-
-
-function createAveragePlot() {
-	$base = dbConnect();
-	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	foreach (unserialize($row->objectifs) as $par => $obj) {
-		$values[] = $obj / 2;
-	}
-	$plot= new RadarPlot($values);
-	$plot->SetLineWeight(2);
-	$plot->SetLegend("Moyenne");
-	$plot->SetColor('orange');
-	$plot->SetFill(false);
-	dbDisconnect($base);
-	return $plot;
 }
 
 
@@ -995,69 +937,37 @@ function getAnswers() {
 }
 
 
-function currentYearGraph($annee, $reponses) {
-	global $cheminIMG, $colors;
+function currentYearGraph($reponses) {
 	$id_etab = $_SESSION['id_etab'];
+	$annee = $_SESSION['annee'];
 	$titles_par = getAllParAbrege();
 	$nom_etab = getEtablissement($id_etab);
-	$graph = createRadarGraph();
-	$graph->SetCenter(0.45, 0.48);
-	$graph->SetSize(0.65);
-	$graph->title->Set(utf8_decode("Résultats de\n".$nom_etab));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
 	$notes = calculNotes($reponses[$annee]);
-	$plot= new RadarPlot(array_values($notes));
-	$plot->SetLineWeight(1);
-	$plot->SetLegend(utf8_decode("Année ".$annee));
-	$plot->SetColor($colors[0].'@0.2');
-	$plot->SetFillColor($colors[0].'@0.8');
-	$plot->mark->SetType(MARK_FILLEDCIRCLE);
-	$plot->mark->SetFillColor($colors[0]);
-	$graph->Add(createTargetPlot());
-	$graph->Add(createAveragePlot());
-	$graph->Add($plot);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$graph-> Stroke($cheminIMG."result_par.png");
+	$objectifs = getObjectives();
 }
 
 
 function cumulatedGraph($reponses) {
-	global $cheminIMG, $colors;
 	$id_etab = $_SESSION['id_etab'];
 	$titles_par = getAllParAbrege();
 	$nom_etab = getEtablissement($id_etab);
-	$graph = createRadarGraph();
-	$graph->SetCenter(0.45, 0.48);
-	$graph->SetSize(0.64);
-	$graph->title->Set(utf8_decode("Résultats cumulés de\n".$nom_etab));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$graph->Add(createTargetPlot());
-	$graph->Add(createAveragePlot());
-	$plot = array();
 	$cpt = 0;
 	foreach (array_keys($reponses) as $an){
 		if (isValidateRapport($id_etab, $an)) {
 			$notes[$an] = calculNotes($reponses[$an]);
-			$plot[$an] = new RadarPlot(array_values($notes[$an]));
-			$plot[$an]->SetLineWeight(1);
-			$plot[$an]->SetLegend(utf8_decode("Année ".$an));
-			$plot[$an]->SetColor($colors[$cpt].'@0.2');
-			$plot[$an]->SetFillColor($colors[$cpt].'@0.8');
-			$plot[$an]->mark->SetType(MARK_FILLEDCIRCLE);
-			$plot[$an]->mark->SetFillColor($colors[$cpt]);
-			$graph->Add($plot[$an]);
 			$cpt++;
 		}
 	}
-	if ($cpt) {
-		$txt = makeGraphTxt();
-		$graph->AddText($txt);
-		$graph-> Stroke($cheminIMG."result_par_cumul.png");
+}
+
+
+function doEtablissementGraphs($annee) {
+	$reponses = getAnswers();
+	if (sizeof(array_keys($reponses))) {
+		currentYearGraph($reponses);
+		if (sizeof(array_keys($reponses)) > 1) {
+			cumulatedGraph($reponses);
+		}
 	}
 }
 
@@ -1086,29 +996,6 @@ function displayEtablissmentGraphs() {
 	} else {
 		$msg = sprintf("L'évaluation %d est vide.", $annee);
 		linkMsg("#", $msg, "alert.png");
-	}
-}
-
-
-function deleteGraphsImg() {
-	global $cheminIMG;
-	@unlink($cheminIMG."result_par.png");
-	@unlink($cheminIMG."result_subpar.png");
-	@unlink($cheminIMG."result_par_cumul.png");
-	@unlink($cheminIMG."result_bilan_par_min.png");
-	@unlink($cheminIMG."result_bilan_par_moy.png");
-	@unlink($cheminIMG."result_bilan_par.png");
-}
-
-
-function doEtablissementGraphs($annee) {
-	deleteGraphsImg();
-	$reponses = getAnswers();
-	if (sizeof(array_keys($reponses))) {
-		currentYearGraph($annee, $reponses);
-		if (sizeof(array_keys($reponses)) > 1) {
-			cumulatedGraph($reponses);
-		}
 	}
 }
 
@@ -1151,198 +1038,6 @@ function assessSynthese() {
 	printf("<tr>\n<td style='width:120px;'><b>%s</b></td><td><ul>%s</ul></td><td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
 	dbDisconnect($base);
 	printf("</table>\n");
-}
-
-
-function graphBilan($print=1) {
-	global $cheminIMG, $colors, $hauteur;
-	$id_etab_regroup = $_SESSION['id_etab'];
-	deleteGraphsImg();
-	$annee = $_SESSION['annee'];
-	$titles_par = getAllParAbrege();
-	$titles_subpar = getSubParNum();
-
-	$base = dbConnect();
-	// on récupère la liste des établissements composant l'établissement de regroupement.
-	$req_regroup = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab_regroup);
-	$res_regroup = mysqli_query($base, $req_regroup);
-	$row_regroup = mysqli_fetch_object($res_regroup);
-	// on récupère la liste des réponses pondérée par le poids de chaque question.
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement IN (%s)", $annee, $row_regroup->regroupement);
-	$result = mysqli_query($base, $request);
-	$reponses = array();
-	while ($row = mysqli_fetch_object($result)) {
-		if (!empty($row->reponses)) {
-			$id_etab = $row->etablissement;
-			foreach(unserialize($row->reponses) as $quest => $rep) {
-				if (substr($quest, 0, 8) == 'question') {
-					$reponses[$id_etab][substr($quest, 8, 14)]=$rep;
-				}
-			}
-		}
-	}
-	// On construit les tableaux de résulats (minimum)
-	$questionMin = array();
-	foreach ($reponses as $etab => $result) {
-		foreach (array_keys($result) as $val) {
-			if (!isset($questionMin[$val])) {
-				$questionMin[$val] = $result[$val];
-			} else {
-				if ($result[$val] <= $questionMin[$val]) {
-					$questionMin[$val] = $result[$val];
-				}
-			}
-		}
-	}
-	// On construit les tableaux de résulats (moyenne)
-	$questionMoy = array();
-	foreach ($reponses as $etab => $result) {
-		foreach (array_keys($result) as $val) {
-			$questionMoy[$val] = array();
-			$questionMoy[$val]['sum'] = "";
-			$questionMoy[$val]['nbr'] = "";
-			$questionMoy[$val]['sum'] = $questionMoy[$val]['sum'] + $result[$val];
-			$questionMoy[$val]['nbr'] = $questionMoy[$val]['nbr'] + 1;
-		}
-	}
-	// Calcul de la moyenne
-	foreach ($questionMoy as $etab => $item) {
-		$questMoy[$etab] = $item['sum'] / $item['nbr'];
-	}
-	$notesMin = calculNotes($questionMin);
-	$notesMoy = calculNotes($questMoy);
-	$name_etab = $row_regroup->nom;
-
-	$graph = createRadarGraph(0,40);
-	$graph->SetCenter(0.46, 0.46);
-	$graph->SetSize(0.65);
-	$graph->title->Set(utf8_decode("Résultats globaux de ".$name_etab." pour ".$annee));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$graph->Add(createTargetPlot());
-	$graph->Add(createAveragePlot());
-	$plot= new RadarPlot(array_values($notesMin));
-	$plot->SetLineWeight(2);
-	$plot->SetLegend(utf8_decode("Bilan (notes minimales) ".$annee));
-	$plot->SetColor($colors[2]);
-	$plot->SetFillColor($colors[2].'@0.7');
-	$plot->mark->SetType(MARK_FILLEDCIRCLE);
-	$plot->mark->SetFillColor($colors[2]);
-	$graph->Add($plot);
-	$graph-> Stroke($cheminIMG."result_bilan_par_min.png");
-
-	$graph = createRadarGraph(0,40);
-	$graph->SetCenter(0.46, 0.46);
-	$graph->SetSize(0.65);
-	$graph->title->Set(utf8_decode("Résultats globaux de ".$name_etab." pour ".$annee));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$graph->Add(createTargetPlot());
-	$graph->Add(createAveragePlot());
-	$plot= new RadarPlot(array_values($notesMoy));
-	$plot->SetLineWeight(2);
-	$plot->SetLegend(utf8_decode("Bilan (moyenne des notes) ".$annee));
-	$plot->SetColor($colors[6]);
-	$plot->SetFillColor($colors[6].'@0.7');
-	$plot->mark->SetType(MARK_FILLEDCIRCLE);
-	$plot->mark->SetFillColor($colors[6]);
-	$graph->Add($plot);
-	$graph-> Stroke($cheminIMG."result_bilan_par_moy.png");
-
-	$graph = createRadarGraph(0,40);
-	$graph->SetCenter(0.46, 0.46);
-	$graph->SetSize(0.65);
-	$graph->title->Set(utf8_decode("Résultats globaux de ".$name_etab." pour ".$annee));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$graph->Add(createTargetPlot());
-	$graph->Add(createAveragePlot());
-	$plot= new RadarPlot(array_values($notesMin));
-	$plot->SetLineWeight(2);
-	$plot->SetLegend(utf8_decode("Bilan (minimales) ".$annee));
-	$plot->SetColor($colors[7]);
-	$plot->SetFillColor($colors[7].'@0.7');
-	$plot->mark->SetType(MARK_FILLEDCIRCLE);
-	$plot->mark->SetFillColor($colors[7]);
-	$graph->Add($plot);
-	$plot= new RadarPlot(array_values($notesMoy));
-	$plot->SetLineWeight(2);
-	$plot->SetLegend(utf8_decode("Bilan (moyenne) ".$annee));
-	$plot->SetColor($colors[5]);
-	$plot->SetFillColor($colors[5].'@0.9');
-	$plot->mark->SetType(MARK_FILLEDCIRCLE);
-	$plot->mark->SetFillColor($colors[5]);
-	$graph->Add($plot);
-	$graph-> Stroke($cheminIMG."result_bilan_par.png");
-
-	dbDisconnect($base);
-
-	if($print) {
-		printf("<div class='onecolumn'>\n");
-		printf("<table>\n<tr><th colspan='3'>Bilan global des établissements pour %s</th></tr>\n", $annee);
-		printf("<tr><th>Etablissement</th><th>Détail des notes (notes minimales obtenues)</th><th>Note finale</th></tr>\n");
-		$noteSum = 0;
-		printf("<tr>\n<td style='width:120px;'><b>%s</b></td>\n<td>\n", $name_etab);
-		for ($i=0; $i<sizeof($titles_par); $i++) {
-			$text_note = "";
-			$note_minimum = 20 * $notesMin[$i+1] / 7;
-			$noteSum = $noteSum + $note_minimum;
-			if ($note_minimum <= 10) {
-				$text_note .= sprintf("<li>%s -> <b style='color:red;'>%d/20</b></li>", $titles_par[$i], $note_minimum);
-			} else {
-				$text_note .= sprintf("<li>%s -> <b>%d/20</b></li>", $titles_par[$i], $note_minimum);
-			}
-			printf("<ul>%s</ul>\n", $text_note);
-		}
-		$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-		printf("</td>\n<td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n</table>\n", $noteFinale);
-
-		printf("<table>\n<tr><th colspan='3'>Bilan global des établissements pour %s</th></tr>\n", $annee);
-		printf("<tr><th>Etablissement</th><th>Détail des notes (moyenne des notes obtenues)</th><th>Note finale</th></tr>\n");
-		$noteSum = 0;
-		printf("<tr>\n<td style='width:120px;'><b>%s</b></td>\n<td>\n", $name_etab);
-		for ($i=0; $i<sizeof($titles_par); $i++) {
-			$text_note = "";
-			$note_minimum = 20 * $notesMoy[$i+1] / 7;
-			$noteSum = $noteSum + $note_minimum;
-			if ($note_minimum <= 10) {
-				$text_note .= sprintf("<li>%s -> <b style='color:red;'>%d/20</b></li>", $titles_par[$i], $note_minimum);
-			} else {
-				$text_note .= sprintf("<li>%s -> <b>%d/20</b></li>", $titles_par[$i], $note_minimum);
-			}
-			printf("<ul>%s</ul>\n", $text_note);
-		}
-		$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-		printf("</td>\n<td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n</table>\n", $noteFinale);
-
-		printf("<table>\n");
-		printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_bilan_par_min.png');
-		printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_bilan_par_moy.png');
-		printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_bilan_par.png');
-		printf("</table>\n</div>\n");
-	} else {
-		return $notesMoy;
-	}
-}
-
-
-function makeGraphTxt() {
-	global $hauteur, $txtGraph;
-	$t = $txtGraph.' - (graphe généré '.fullTimestampToDate(time()).')';
-	$txt = new Text($t);
-	$txt->SetPos(0.02, 0.95, 'left');
-	$txt->SetFont(FF_VERDANA, FS_NORMAL, 6);
-	$txt->SetColor("red");
-	return $txt;
 }
 
 
@@ -1644,7 +1339,6 @@ function printAssessment($assessment, $annee=0) {
 
 
 function printGraphsAndNotes($annee) {
-	global $cheminIMG;
 	$id_etab = $_SESSION['id_etab'];
 	doEtablissementGraphs($annee);
 	$nbr_par = paragraphCount();
@@ -1652,31 +1346,6 @@ function printGraphsAndNotes($annee) {
 	$base = dbConnect();
 	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
-
-	if (isRegroupEtab()) {
-		$text .= "\\subsection{Liste des établissements évalués}\n\n";
-		$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
-		$result = mysqli_query($base, $request);
-		$row = mysqli_fetch_object($result);
-		$request = sprintf("SELECT * FROM etablissement WHERE id IN (%s)", $row->regroupement);
-		$result = mysqli_query($base, $request);
-		$text .= "\\begin{itemize}\n";
-		while ($row = mysqli_fetch_object($result)) {
-			$req_dir = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='3') LIMIT 1", $id_etab);
-			$res_dir = mysqli_query($base, $req_dir);
-			$row_dir = mysqli_fetch_object($res_dir);
-			$req_rssi = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='4') LIMIT 1", $id_etab);
-			$res_rssi = mysqli_query($base, $req_rssi);
-			$row_rssi = mysqli_fetch_object($res_rssi);
-			$text .= sprintf("\\item\\textbf{%s}", traiteStringFromBDD($row->nom));
-			$text .= "\\begin{itemize}\n";
-			$text .= sprintf("\\item Directeur: %s %s", traiteStringFromBDD($row_dir->prenom), traiteStringFromBDD($row_dir->nom));
-			$text .= sprintf("\\item CLSSI: %s %s", traiteStringFromBDD($row_rssi->prenom), traiteStringFromBDD($row_rssi->nom));
-			$text .= "\\end{itemize}\n";
-		}
-		$text .= "\\end{itemize}\n\n";
-		$notesMoy = graphBilan($id_etab, 0);
-	}
 	$request = sprintf("SELECT * FROM assess WHERE annee='%d'", $annee);
 	$result = mysqli_query($base, $request);
 	$reponses = array();
@@ -1697,21 +1366,12 @@ function printGraphsAndNotes($annee) {
 	$notes = calculNotes($reponses[$id_etab]);
 	$noteSum = 0;
 
-	if (isRegroupEtab()) {
-		$text .= "\\subsection{Cotations de l'évaluation}\n\n";
-	} else {
-		$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
-	}
+	$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
 	$text .= "\\begin{center}\n";
 	$text .= "\\begin{tabular}{ | >{\\centering}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\$\\quad\\rightarrow\\quad\$} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
 	$text .= "\\hline\n";
-	if (isRegroupEtab()) {
-		$text .= "\\multicolumn{4}{| c |}{Bilan global des établissements}\\tabularnewline\n\\hline\n";
-		$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes (notes minimales obtenues)}} & Note finale \\tabularnewline\n";
-	} else {
-		$text .= "\\multicolumn{4}{| c |}{Notes finales de l'établissement}\\tabularnewline\n\\hline\n";
-		$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes}} & Note finale \\tabularnewline\n";
-	}
+	$text .= "\\multicolumn{4}{| c |}{Notes finales de l'établissement}\\tabularnewline\n\\hline\n";
+	$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes}} & Note finale \\tabularnewline\n";
 	$text .= "\\hline\n";
 	$text .= sprintf("\\multirow{%d}{*}{%s} & \\multicolumn{2}{ c |}{} & \\tabularnewline\n", $nbr_par+2, $name_etab);
 	for ($i=0; $i<sizeof($titles_par); $i++) {
@@ -1729,65 +1389,17 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\end{tabular}\n";
 	$text .= "\\end{center}\n\n";
 
-	if (isRegroupEtab()) {
-		$text .= "\n\n\\bigskip\n\n";
-		$text .= "\\begin{center}\n";
-		$text .= "\\begin{tabular}{ | >{\\centering\\textbf}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\\quad \$\\rightarrow\$ \\quad} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
-		$text .= "\\hline\n";
-		$text .= "\\multicolumn{4}{| c |}{Bilan global des établissements} \\tabularnewline\n\\hline\n";
-		$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes (moyenne des notes obtenues)}} & Note finale \\tabularnewline\n";
-		$text .= "\\hline\n";
-		$text .= sprintf("\\multirow{%d}{*}{%s} & \\multicolumn{2}{ c |}{} & \\tabularnewline\n", $nbr_par+2, $name_etab);
-		$noteSum = 0;
-		for ($i=0; $i<sizeof($titles_par); $i++) {
-			$note_minimum = 20 * $notesMoy[$i+1] / 7;
-			$noteSum = $noteSum + $note_minimum;
-			if ($note_minimum <= 10) {
-				$text .= sprintf("& %s & \\textcolor{myRed}{\$%01.2f / 20\$} & \\tabularnewline\n", $titles_par[$i], $note_minimum);
-			} else {
-				$text .= sprintf("& %s & \$%01.2f / 20\$ & \\tabularnewline\n", $titles_par[$i], $note_minimum);
-			}
-		}
-		$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-		$text .= sprintf("& \\multicolumn{2}{ c |}{} & \multirow{-%d}{*}{\$%01.2f / 20\$} \\tabularnewline\n", $nbr_par+2, $noteFinale);
-		$text .= "\\hline\n";
-		$text .= "\\end{tabular}\n";
-		$text .= "\\end{center}\n\n";
-	}
-	if (isRegroupEtab()) {
-		$text .= "\\subsection{Graphes de synthèses}\n\n";
-		$text .= "Voir figures \\ref{figminimal}, \\ref{figmoyenne} et \\ref{figfinal} pages \\pageref{figminimal}, \\pageref{figmoyenne} et \\pageref{figfinal}\n\n";
-	} else {
-		$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
-	}
-	if (isRegroupEtab()) {
-		$text .= "\\begin{figure}[ht]\n";
-		$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_bilan_par_min.png");
-		$text .= "\\caption{Résultats par thèmes à partir des notes minimales}\n";
-		$text .= "\\label{figminimal}\n";
-		$text .= "\\end{figure}\n\n";
-		$text .= "\\begin{figure}[ht]\n";
-		$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_bilan_par_moy.png");
-		$text .= "\\caption{Résultats par thèmes à partir de la moyenne des notes}\n";
-		$text .= "\\label{figmoyenne}\n";
-		$text .= "\\end{figure}\n\n";
-		$text .= "\\begin{figure}[ht]\n";
-		$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_bilan_par.png");
-		$text .= "\\caption{Résultats par thèmes: Bilan final}\n";
-		$text .= "\\label{figfinal}\n";
-		$text .= "\\end{figure}\n\n";
-	} else {
-		$text .= "\\begin{figure}[ht]\n";
-		$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_par.png");
-		$text .= "\\caption{Résultats par thèmes}\n";
-		$text .= "\\end{figure}\n\n";
-		if (file_exists($cheminIMG."result_par_cumul.png")) {
-			$text .= "\\begin{figure}[ht]\n";
-			$text .= sprintf("\\begin{center}\\includegraphics[width=0.90\\textwidth]{%s}\\end{center}\n", $cheminIMG."result_par_cumul.png");
-			$text .= "\\caption{Résultats cumulés par thèmes}\n";
-			$text .= "\\end{figure}\n\n";
-		}
-	}
+	$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
+	$text .= "\\begin{figure}[ht]\n";
+	$text .= sprintf("\\begin{center}\\end{center}\n");
+	$text .= "\\caption{Résultats par thèmes}\n";
+	$text .= "\\end{figure}\n\n";
+
+	$text .= "\\begin{figure}[ht]\n";
+	$text .= sprintf("\\begin{center}\\end{center}\n");
+	$text .= "\\caption{Résultats cumulés par thèmes}\n";
+	$text .= "\\end{figure}\n\n";
+
 	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
@@ -1871,7 +1483,6 @@ function makeRapport($abrege_etab, $text, $annee) {
 		unlink($file);
 		rename($pdffile, $newpdffile);
 		chdir($rem_courant);
-		deleteGraphsImg();
 		$msg = sprintf("Télécharger le rapport %d", $annee);
 		linkMsg($pdfLink, $msg, "print_rapport.png", 'menu');
 	} else {

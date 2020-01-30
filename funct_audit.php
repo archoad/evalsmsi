@@ -49,20 +49,6 @@ function createAssessmentRegroup() {
 }
 
 
-function menu_synthese($id=0) {
-	$script = basename($_SERVER['PHP_SELF']);
-	if (!empty($_POST['id_etab'])) {
-		$id = $_POST['id_etab'];
-	}
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
-	linkMsg("audit.php?action=synthese&amp;id=".$id, "Synthèse des établissements", "piechart.png", "menu");
-	printf("</div><div class='column right'>\n");
-	linkMsg("audit.php?action=bilan&amp;id=".$id, "Bilan global", "piechart.png", "menu");
-	printf("</div>\n</div>\n");
-}
-
-
 function selectEtablissementAudit() {
 	$action = explode('=', $_SERVER['QUERY_STRING'])[1];
 	$result = getEtablissement();
@@ -503,17 +489,12 @@ function getCommentGraphPar() {
 					$result = mysqli_query($base, $request);
 					$record = mysqli_fetch_object($result);
 					printf("<div class='onecolumn'>\n");
-					if (isRegroupEtab()) {
-						graphBilan(0);
-						printf("<p><img src='%s' alt='' /></p>\n", 'pict/generated/result_bilan_par.png');
-					} else {
-						printf("<div id='graphs'>\n");
-						printf("<canvas id='currentYearGraphBar'></canvas>\n");
-						printf("<a id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
-						printf("<canvas id='currentYearGraphPolar'></canvas>\n");
-						printf("<a id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
-						printf("</div>\n");
-					}
+					printf("<div id='graphs'>\n");
+					printf("<canvas id='currentYearGraphBar'></canvas>\n");
+					printf("<a id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
+					printf("<canvas id='currentYearGraphPolar'></canvas>\n");
+					printf("<a id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
+					printf("</div>\n");
 					printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' onsubmit='return champs_ok(this)'>\n");
 					printf("<input type='hidden' size='3' maxlength='3' name='id_assess' id='id_assess' value='%s'/>\n", $record->id);
 					printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10'>%s</textarea>\n", traiteStringFromBDD($record->comment_graph_par));
@@ -534,120 +515,6 @@ function getCommentGraphPar() {
 		$msg = sprintf("Il n'y a pas d'évaluation créée pour cet établissement pour l'année %d", $annee);
 		linkMsg("audit.php", $msg, "alert.png");
 	}
-	dbDisconnect($base);
-}
-
-
-function graphSynthese() {
-	global $cheminIMG, $colors, $hauteur;
-	$annee = $_SESSION['annee'];
-	$titles_par = getAllParAbrege();
-	$titles_subpar = getSubParNum();
-
-	$base = dbConnect();
-	// on récupère la liste des établissements composant l'établissement de regroupement.
-	$req_regroup = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
-	$res_regroup = mysqli_query($base, $req_regroup);
-	$row_regroup = mysqli_fetch_object($res_regroup);
-	// on récupère la liste des réponses pondérée par le poids de chaque question.
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement IN (%s)", $annee, $row_regroup->regroupement);
-	$result = mysqli_query($base, $request);
-	$reponses = array();
-	while ($row = mysqli_fetch_object($result)) {
-		if (!empty($row->reponses)) {
-			$id_etab = $row->etablissement;
-			foreach(unserialize($row->reponses) as $quest => $rep) {
-				if (substr($quest, 0, 8) == 'question') {
-					$reponses[$id_etab][substr($quest, 8, 14)]=$rep;
-				}
-			}
-		}
-	}
-
-	printf("<div class='onecolumn'>\n");
-	printf("<table>\n<tr><th colspan='3'>Notes finale des établissements</th></tr>\n");
-	printf("<tr><th>Etablissement</th><th>Détail des notes</th><th>Note finale</th></tr>\n");
-	foreach($reponses as $etab=>$rep) {
-		$req_name = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", $etab);
-		$res_name = mysqli_query($base, $req_name);
-		$row_name = mysqli_fetch_object($res_name);
-		$name_etab = $row_name->nom;
-		$notes = calculNotes($reponses[$etab]);
-		$text_note = "";
-		$noteSum = 0;
-		for ($i=0; $i<sizeof($titles_par); $i++) {
-			$note = 20 * $notes[$i+1] / 7;
-			$noteSum = $noteSum + $note;
-			if ($note <= 10) {
-				$text_note .= sprintf("<li>%s -> <b style='color:red;'>%d/20</b></li>", $titles_par[$i], $note);
-			} else {
-				$text_note .= sprintf("<li>%s -> <b>%d/20</b></li>", $titles_par[$i], $note);
-			}
-		}
-		$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-		printf("<tr>\n<td style='width:120px;'><b>%s</b></td><td><ul>%s</ul></td><td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
-	}
-	printf("</table>\n");
-	printf("<table>\n");
-	$graph = createRadarGraph(0,40);
-	$graph->SetCenter(0.46, 0.46);
-	$graph->SetSize(0.65);
-	$graph->title->Set(utf8_decode("Résultats globaux des établissements pour ".$annee));
-	$graph->SetTitles($titles_par);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$graph->legend->SetColumns(6);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$compteur = 1;
-	foreach($reponses as $etab=>$rep) {
-		$req_name = sprintf("SELECT abrege, nom FROM etablissement WHERE id='%d' LIMIT 1", $etab);
-		$res_name = mysqli_query($base, $req_name);
-		$row_name = mysqli_fetch_object($res_name);
-		$name_etab = $row_name->nom;
-		$notes = calculNotes($reponses[$etab]);
-		$plot= new RadarPlot(array_values($notes));
-		$plot->SetLineWeight(2);
-		$plot->SetLegend(utf8_decode($name_etab));
-		$plot->SetColor($colors[$compteur].'@0.1');
-		$plot->SetFillColor($colors[$compteur].'@0.9');
-		$plot->mark->SetType(MARK_FILLEDCIRCLE);
-		$plot->mark->SetFillColor($colors[$compteur]);
-		$graph->Add($plot);
-		$compteur++;
-	}
-	$graph-> Stroke($cheminIMG."result_global_par.png");
-	printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_global_par.png');
-
-	$graph = createRadarGraph(0,40);
-	$graph->SetCenter(0.5, 0.5);
-	$graph->title->Set(utf8_decode("Résultats globaux détaillés des établissements pour ".$annee));
-	$graph->SetTitles($titles_subpar);
-	$graph->legend->SetPos(0.5, 0.94,'center','bottom');
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$graph->legend->SetColumns(6);
-	$txt = makeGraphTxt();
-	$graph->AddText($txt);
-	$compteur = 1;
-	foreach($reponses as $etab=>$rep) {
-		$req_name = sprintf("SELECT abrege, nom FROM etablissement WHERE id='%d' LIMIT 1", $etab);
-		$res_name = mysqli_query($base, $req_name);
-		$row_name = mysqli_fetch_object($res_name);
-		$name_etab = $row_name->nom;
-		$notes = calculNotesDetail($reponses[$etab]);
-		$plot= new RadarPlot(array_values($notes));
-		$plot->SetLineWeight(1);
-		$plot->SetLegend(utf8_decode($name_etab));
-		$plot->SetColor($colors[$compteur].'@0.1');
-		$plot->SetFillColor($colors[$compteur].'@0.9');
-		$plot->mark->SetType(MARK_FILLEDCIRCLE);
-		$plot->mark->SetFillColor($colors[$compteur]);
-		$graph->Add($plot);
-		$compteur++;
-	}
-	$graph-> Stroke($cheminIMG."result_global_subpar.png");
-	printf("<tr><td><img src='%s' alt='' /></td></tr>\n", 'pict/generated/result_global_subpar.png');
-	printf("</table>\n</div>\n");
 	dbDisconnect($base);
 }
 

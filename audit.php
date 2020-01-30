@@ -54,14 +54,9 @@ if (isset($_GET['action'])) {
 	case 'do_graph':
 		if (isEtabLegitimate($_POST['id_etab'])) {
 			if (isThereAssessForEtab()) {
-				if (isRegroupEtab()) {
-					menu_synthese();
-					footPage($script, "Accueil");
-				} else {
-					printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
-					displayEtablissmentGraphs();
-					footPage($script, "Accueil");
-				}
+				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+				displayEtablissmentGraphs();
+				footPage($script, "Accueil");
 			} else {
 				$msg = sprintf("L'évaluation pour %d n'a pas été créée.", $_SESSION['annee']);
 				linkMsg($script, $msg, "alert.png");
@@ -71,16 +66,6 @@ if (isset($_GET['action'])) {
 			linkMsg($script, "Etablissement invalide", "alert.png");
 			footPage();
 		}
-		break;
-
-	case 'synthese':
-		graphSynthese();
-		footPage($script, "Accueil");
-		break;
-
-	case 'bilan':
-		graphBilan();
-		footPage($script, "Accueil");
 		break;
 
 	case 'audit':
