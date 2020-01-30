@@ -443,6 +443,7 @@ function generateToken() {
 }
 
 
+
 function controlAssessment($answer) {
 	global $noteMax;
 	foreach ($answer as $key => $value){
