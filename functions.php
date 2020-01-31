@@ -34,13 +34,14 @@ $login = 'web';
 // Mot de passe de connexion
 $passwd = 'webphpsql';
 // Titre de l'application
-//$appli_titre = ("Evaluation du Système de Management de la Sécurité de l'Information");
-$appli_titre = ("Evaluation du SMSI");
-$appli_titre_short = ("EvalSMSI");
+$appli_titre = "Evaluation du SMSI";
+$appli_titre_short = "EvalSMSI";
 // Thème CSS
-$cssTheme = 'standard'; // 'laposte' , 'standard'
+$cssTheme = 'standard';
 // Image accueil
-$auhtPict = 'pict/accueil.png'; // 'pict/accueil.png', ''pict/auditics.png';'
+$auhtPict = 'pict/accueil.png';
+// Image rapport
+$rapportPicts = array("pict/archoad.png", "pict/customer.png");
 // Mode captcha
 $captchaMode = 'num'; // 'txt' or 'num'
 // --------------------
@@ -1302,7 +1303,18 @@ function htmlLatexParser($text) {
 }
 
 
+function disclaimer() {
+	$txt = "\\bigskip\n";
+	$txt .= "\\begin{center}\n\\begin{tikzpicture}\n";
+	$txt .= "\\tikzstyle{every node} = [draw=myRed, rounded corners=4pt, fill=myRed!20, text width=300pt, inner sep=5pt]\n";
+	$txt .= "\\node {Ce document, réservé à votre seul usage interne, est émis en application du contrat convenu entre nous. Il a été établi sur la base des informations que vous nous avez préalablement communiquées, par référence à votre contexte et en tenant compte de vos éléments d'analyse. L'émetteur du présent document apporte tout le soin possible à la préparation des informations et des conclusions qui y sont présentées, à partir de notre méthodologie et de nos expertises. La décision de mettre en oeuvre ou non ces conclusions, ainsi que les modalités de mise en oeuvre relèvent de la seule responsabilité du lecteur.};\n";
+	$txt .= "\\end{tikzpicture}\n\\end{center}\n";
+	return $txt;
+}
+
+
 function latexHead($annee=0) {
+	global $rapportPicts;
 	$id_etab = $_SESSION['id_etab'];
 	$auditor = getAuditor($id_etab);
 	if (!$annee) {
@@ -1323,15 +1335,20 @@ function latexHead($annee=0) {
 
 	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n\\Subject{Evaluation du SMSI}\n\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
 	$en_tete .= "\\documentclass[a4paper,10pt]{article}\n\n\\input{header}\n\n";
-	$en_tete .= sprintf("\\title{Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $etablissement);
+	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
+	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $etablissement);
+	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $etablissement);
 	$en_tete .= sprintf("\\author{%s -- \\textcolor{myRed}{Auditeur}}\n\n", $auditor);
 	$en_tete .= "\\date{\\today}\n\n";
-	$en_tete .= "\\begin{document}\n\n\\renewcommand{\labelitemi}{\\ensuremath{\\bullet}}\n\\renewcommand{\\labelitemii}{\\ensuremath{\circ}}\n\\renewcommand{\\labelitemiii}{\\ensuremath{\\triangleright}}\n\n\\maketitle\n\n";
-	$en_tete .= "\\bigskip\\bigskip\\bigskip\n\n";
-	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation du Système de Management de la Sécurité de l'Information (SMSI) réalisé à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux normes ISO~27001 et ISO~27002.}\n\n\\bigskip\\bigskip\\bigskip\n\n\\begin{itemize}\n", $etablissement, $annee, $auditor);
-	$en_tete .= sprintf("\\item Directeur de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_dir->prenom)), htmlLatexParser(traiteStringFromBDD($row_dir->nom)));
+	$en_tete .= "\\begin{document}\n\n\\renewcommand{\labelitemi}{\\ensuremath{\\bullet}}\n\\renewcommand{\\labelitemii}{\\ensuremath{\circ}}\n\\renewcommand{\\labelitemiii}{\\ensuremath{\\triangleright}}\n\n";
+	$en_tete .= "\\maketitle\n\n";
+	$en_tete .= "\\bigskip\\bigskip\n\n";
+	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n\\begin{itemize}\n", $etablissement, $annee, $auditor);
+	if (isset($row_dir)) {
+		$en_tete .= sprintf("\\item Directeur de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_dir->prenom)), htmlLatexParser(traiteStringFromBDD($row_dir->nom)));
+	}
 	$en_tete .= sprintf("\\item RSSI de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_rssi->prenom)), htmlLatexParser(traiteStringFromBDD($row_rssi->nom)));
-	$en_tete .= "\\end{itemize}\n\n\\bigskip\\bigskip\\bigskip\n\n";
+	$en_tete .= "\\end{itemize}\n\n\\bigskip\\bigskip\n\n";
 	$en_tete .= "\\begin{center}\n";
 	if (isValidateRapport($id_etab, $annee)) {
 		$en_tete .= "\\Large{\\textcolor{myRed}{Rapport validé}}\n";
@@ -1340,9 +1357,9 @@ function latexHead($annee=0) {
 	}
 	$en_tete .= "\\end{center}\n\n";
 	if (isValidateRapport($id_etab, $annee)) {
-		$en_tete .= "\\bigskip\\bigskip\\bigskip\n\n\\begin{flushright}\n\\textcolor{myRed}{Original signé}\n\n";
-		$en_tete .= sprintf("\\textcolor{myRed}{%s}\\end{flushright}\n\n", $auditor);
+		$en_tete .= "\\bigskip\\bigskip\n\n\\begin{flushright}\n\\textcolor{myRed}{Original signé}\n\\end{flushright}\n\n";
 	}
+	$en_tete .= disclaimer();
 	$en_tete .= "\\clearpage\n\n";
 	$en_tete .= "\\textcolor{myRed}{\\tableofcontents}\n\n\\clearpage\n\n";
 	return $en_tete;
@@ -1464,8 +1481,9 @@ function printGraphsAndNotes($annee) {
 		}
 	}
 
-	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
-	$text .= "\\input{intro}\n\n";
+	//$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
+	$text = sprintf("\\section{Analyse de l'évaluation pour l'année %s}\n\n", $annee);
+	//$text .= "\\input{intro}\n\n";
 	$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
 	$text .= "\\begin{center}\n";
 	$text .= "\\begin{tabular}{ | >{\\centering}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\$\\quad\\rightarrow\\quad\$} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
@@ -1488,7 +1506,7 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\hline\n";
 	$text .= "\\end{tabular}\n";
 	$text .= "\\end{center}\n\n";
-	$text .= "\\clearpage\n\n";
+	//$text .= "\\clearpage\n\n";
 
 	$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
 	$text .= defineGraphVariables(count($titles_par));
@@ -1597,7 +1615,7 @@ function generateRapport($script, $annee=0) {
 					}
 					$first_section = printGraphsAndNotes($annee);
 					$second_section = printAssessment($assessment, $annee);
-					$annexes = printAnnexes();
+					//$annexes = printAnnexes();
 					$foot = latexFoot();
 					$rapport = $head."\n".$first_section."\n".$second_section."\n".$annexes."\n".$foot;
 					makeRapport($abrege_etab, $rapport, $annee);
