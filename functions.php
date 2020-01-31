@@ -948,6 +948,12 @@ function defineGraphVariables($nbrPar) {
 	$tmp .= "\\definecolor{year2}{RGB}{75,192,192}\n";
 	$tmp .= "\\definecolor{year3}{RGB}{153,102,255}\n";
 	$tmp .= "\\definecolor{objectiv}{RGB}{255,99,132}\n\n";
+	$tmp .= "\\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]\n";
+	$tmp .= "\\tikzstyle{myShapeFill} = [opacity=0.5]\n";
+	$tmp .= "\\tikzstyle{myLabel} = [font=\\scriptsize, text width=45pt, text badly centered, inner sep=0pt]\n";
+	$tmp .= "\\tikzstyle{myLegend} = [font=\\scriptsize, anchor=west]\n";
+	$tmp .= "\\tikzstyle{myTitle} = [font=\\bfseries, fill=myBeige, text width=90pt, text badly centered, inner sep=5pt, rounded corners=2pt]\n";
+	$tmp .= "\\tikzstyle{myMatrix} = [fill=myBeige, inner sep=5pt, rounded corners=2pt]\n";
 	return $tmp;
 }
 
@@ -955,11 +961,7 @@ function defineGraphVariables($nbrPar) {
 function simpleYearGraph($annee, $notes, $titles_par) {
 	$objectifs = getObjectives();
 
-	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}\n";
-	$txtGraph .= "\\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]\n";
-	$txtGraph .= "\\tikzstyle{myShapeFill} = [opacity=0.5]\n";
-	$txtGraph .= "\\tikzstyle{myLabel} = [font=\\scriptsize, text width=40pt, text badly centered, inner sep=0pt]\n";
-	$txtGraph .= "\\tikzstyle{myLegend} = [font=\\scriptsize, anchor=west]\n";
+	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}[background rectangle/.style={fill=myBeige!45, draw=myBeige, rounded corners=4pt, inner sep=5pt}, show background rectangle]\n";
 	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{ \\draw [color=black!80] (\\x*\\axisAngle:0) -- (\\x*\\axisAngle:\\radiusMax); }\n";
 	$txtGraph .= "\\foreach \\y in {0,...,\\unit}{\n";
 	$txtGraph .= "\\draw [color=black!40] (0:\\y*\\radiusMax/\\unit) \\foreach \\x in {1,...,\\dimension}{-- (\\x*\\axisAngle:\\y*\\radiusMax/\\unit)} -- cycle;\n";
@@ -989,11 +991,11 @@ function simpleYearGraph($annee, $notes, $titles_par) {
 	}
 	$txtGraph .=  $temp."cycle;\n\n";
 	// legend
-	$txtGraph .= "\\matrix [xshift=180pt, yshift=-100pt] {\n";
+	$txtGraph .= "\\matrix [myMatrix, xshift=180pt, yshift=-100pt] {\n";
 	$txtGraph .= "\\node [rectangle, fill=objectiv] {}; & \\node [myLegend] {Objectifs}; \\\\\n";
 	$txtGraph .= sprintf("\\node [rectangle, fill=year1] {};  & \\node [myLegend] {Année %d}; \\\\\n};\n", $annee);
 	// title
-	$txtGraph .= "\\node [yshift=160pt, font=\\bfseries] {Résultats par domaines};\n";
+	$txtGraph .= "\\node [myTitle, xshift=180pt, yshift=40pt] {Résultats par domaines};\n";
 	$txtGraph .= "\\end{tikzpicture}\n\\end{center}\n\n";
 	return $txtGraph;
 }
@@ -1002,11 +1004,7 @@ function simpleYearGraph($annee, $notes, $titles_par) {
 function cumulatedGraph($cumulNotes, $annee, $titles_par) {
 	$objectifs = getObjectives();
 
-	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}\n";
-	$txtGraph .= "\\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]\n";
-	$txtGraph .= "\\tikzstyle{myShapeFill} = [opacity=0.5]\n";
-	$txtGraph .= "\\tikzstyle{myLabel} = [font=\\scriptsize, text width=40pt, text badly centered, inner sep=0pt]\n";
-	$txtGraph .= "\\tikzstyle{myLegend} = [font=\\scriptsize, anchor=west]\n";
+	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}[background rectangle/.style={fill=myBeige!45, draw=myBeige, rounded corners=4pt, inner sep=5pt}, show background rectangle]\n";
 	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{ \\draw [color=black!80] (\\x*\\axisAngle:0) -- (\\x*\\axisAngle:\\radiusMax); }\n";
 	$txtGraph .= "\\foreach \\y in {0,...,\\unit}{\n";
 	$txtGraph .= "\\draw [color=black!40] (0:\\y*\\radiusMax/\\unit) \\foreach \\x in {1,...,\\dimension}{-- (\\x*\\axisAngle:\\y*\\radiusMax/\\unit)} -- cycle;\n";
@@ -1065,7 +1063,7 @@ function cumulatedGraph($cumulNotes, $annee, $titles_par) {
 	}
 	$txtGraph .=  $temp."cycle;\n\n";
 	// legend
-	$txtGraph .= "\\matrix [xshift=180pt, yshift=-100pt] {\n";
+	$txtGraph .= "\\matrix [myMatrix, xshift=180pt, yshift=-100pt] {\n";
 	$txtGraph .= "\\node [rectangle, fill=objectiv] {}; & \\node [myLegend] {Objectifs}; \\\\\n";
 	if (isset($cumulNotes[$annee-2])) {
 		$txtGraph .= sprintf("\\node [rectangle, fill=year3] {};  & \\node [myLegend] {Année %d}; \\\\\n", $annee-2);
@@ -1075,7 +1073,7 @@ function cumulatedGraph($cumulNotes, $annee, $titles_par) {
 	}
 	$txtGraph .= sprintf("\\node [rectangle, fill=year1] {};  & \\node [myLegend] {Année %d}; \\\\\n};\n", $annee);
 	// title
-	$txtGraph .= "\\node [yshift=160pt, font=\\bfseries] {Résultats cumulés par domaines};\n";
+	$txtGraph .= "\\node [myTitle, xshift=180pt, yshift=40pt] {Résultats cumulés par domaines};\n";
 	$txtGraph .= "\\end{tikzpicture}\n\\end{center}\n\n";
 	return $txtGraph;
 }
@@ -1460,6 +1458,11 @@ function printGraphsAndNotes($annee) {
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
+	foreach (array_keys($reponses) as $year){
+		if (isValidateRapport($id_etab, $year) && $year<=$annee) {
+			$cumulNotes[$year] = calculNotes($reponses[$year]);
+		}
+	}
 
 	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
@@ -1490,11 +1493,6 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
 	$text .= defineGraphVariables(count($titles_par));
 	$text .= simpleYearGraph($annee, $notes, $titles_par);
-	foreach (array_keys($reponses) as $year){
-		if (isValidateRapport($id_etab, $year) && $year<=$annee) {
-			$cumulNotes[$year] = calculNotes($reponses[$year]);
-		}
-	}
 	if (count($cumulNotes)>1) {
 		$text .= "\\bigskip\n\n\\bigskip\n\n";
 		$text .= cumulatedGraph($cumulNotes, $annee, $titles_par);
@@ -1513,31 +1511,8 @@ function printGraphsAndNotes($annee) {
 
 
 function printAnnexes() {
-	$base = dbConnect();
-	$request = "SELECT paragraphe.numero AS 'num_par', sub_paragraphe.numero AS 'num_subpar', sub_paragraphe.libelle AS 'libelle' FROM sub_paragraphe JOIN paragraphe ON sub_paragraphe.id_paragraphe=paragraphe.id";
-	$result = mysqli_query($base, $request);
-	$tab_subpar = array();
-	while ($row = mysqli_fetch_object($result)) {
-		$num = $row->num_par.$row->num_subpar;
-		$tab_subpar[$num] = $row->libelle;
-	}
-	dbDisconnect($base);
-
 	$text = "\\appendix\n";
 	$text .= "\\input{methode}\n\n";
-
-	$text .= "\\section{Numérotation des sous-thèmes}\n\n";
-	$text .= "Dans les graphes présentés dans ce rapport, les thèmes et sous-thèmes sont numérotés de la façon suivante:\n\n";
-	$text .= "\\begin{center}\n\\begin{longtable}[c]{ | >{\\centering}m{0.1\\textwidth} | >{\\raggedright}m{0.4\\textwidth} | }\n";
-	$text .= "\\hline\n";
-	$text .= "\\centering{Numéro} & \\centering{Libellé} \\tabularnewline\\endfirsthead\n";
-	$text .= "\\hline\n";
-	$text .= "\\centering{Numéro} & \\centering{Libellé} \\tabularnewline\\endhead\n";
-	$text .= "\\hline\n";
-	foreach ($tab_subpar as $num => $lib) {
-		$text .= sprintf("%s & %s \\tabularnewline\n\\hline\n", $num, $lib);
-	}
-	$text .= "\\end{longtable}\n\\end{center}\n\n";
 	return $text;
 }
 

@@ -161,7 +161,7 @@ function exportRapport($script, $annee) {
 
 function selectYearRapport() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d'", $_SESSION['id_etab']);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee DESC", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	$list = array();
