@@ -937,38 +937,147 @@ function getAnswers() {
 }
 
 
-function currentYearGraph($reponses) {
-	$id_etab = $_SESSION['id_etab'];
-	$annee = $_SESSION['annee'];
-	$titles_par = getAllParAbrege();
-	$nom_etab = getEtablissement($id_etab);
-	$notes = calculNotes($reponses[$annee]);
+function defineGraphVariables($nbrPar) {
+	global $noteMax;
+	$tmp = sprintf("\\newcommand{\\dimension}{%d}\n", $nbrPar);
+	$tmp .= sprintf("\\newcommand{\\unit}{%d}\n", $noteMax);
+	$tmp .= "\\newcommand{\\axisAngle}{360/\\dimension}\n";
+	$tmp .= "\\newdimen\\radiusMax \\setlength{\\radiusMax}{130pt}\n";
+	$tmp .= "\\newdimen\\labelDist \\setlength{\\labelDist}{\\radiusMax + 15pt}\n";
+	$tmp .= "\\definecolor{year1}{RGB}{255,205,86}\n";
+	$tmp .= "\\definecolor{year2}{RGB}{75,192,192}\n";
+	$tmp .= "\\definecolor{year3}{RGB}{153,102,255}\n";
+	$tmp .= "\\definecolor{objectiv}{RGB}{255,99,132}\n\n";
+	return $tmp;
+}
+
+
+function simpleYearGraph($annee, $notes, $titles_par) {
 	$objectifs = getObjectives();
+
+	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}\n";
+	$txtGraph .= "\\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]\n";
+	$txtGraph .= "\\tikzstyle{myShapeFill} = [opacity=0.5]\n";
+	$txtGraph .= "\\tikzstyle{myLabel} = [font=\\scriptsize, text width=40pt, text badly centered, inner sep=0pt]\n";
+	$txtGraph .= "\\tikzstyle{myLegend} = [font=\\scriptsize, anchor=west]\n";
+	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{ \\draw [color=black!80] (\\x*\\axisAngle:0) -- (\\x*\\axisAngle:\\radiusMax); }\n";
+	$txtGraph .= "\\foreach \\y in {0,...,\\unit}{\n";
+	$txtGraph .= "\\draw [color=black!40] (0:\\y*\\radiusMax/\\unit) \\foreach \\x in {1,...,\\dimension}{-- (\\x*\\axisAngle:\\y*\\radiusMax/\\unit)} -- cycle;\n";
+	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{\n";
+	$txtGraph .= "\\path (\\x*\\axisAngle:\\y*\\radiusMax/\\unit) coordinate (D\\x-\\y);\n";
+	$txtGraph .= "\\fill [color=black!80] (D\\x-\\y) circle (1.2pt);\n}\n}\n";
+	// label
+	for ($i=0; $i<count($titles_par); $i++) {
+		$txtGraph .= sprintf("\\path (%d*\\axisAngle:\\labelDist) node [myLabel] {%s};\n", $i+1, $titles_par[$i]);
+	}
+	$txtGraph .= "\n";
+	// Année n
+	$temp = "\\draw [myShape, color=year1] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, round($notes[$i+1]));
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	$temp = "\\fill [myShapeFill, color=year1!20] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, round($notes[$i+1]));
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	// Objectifs
+	$temp = "\\draw [myShape, color=objectiv] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, $objectifs[$i]);
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	// legend
+	$txtGraph .= "\\matrix [xshift=180pt, yshift=-100pt] {\n";
+	$txtGraph .= "\\node [rectangle, fill=objectiv] {}; & \\node [myLegend] {Objectifs}; \\\\\n";
+	$txtGraph .= sprintf("\\node [rectangle, fill=year1] {};  & \\node [myLegend] {Année %d}; \\\\\n};\n", $annee);
+	// title
+	$txtGraph .= "\\node [yshift=160pt, font=\\bfseries] {Résultats par domaines};\n";
+	$txtGraph .= "\\end{tikzpicture}\n\\end{center}\n\n";
+	return $txtGraph;
 }
 
 
-function cumulatedGraph($reponses) {
-	$id_etab = $_SESSION['id_etab'];
-	$titles_par = getAllParAbrege();
-	$nom_etab = getEtablissement($id_etab);
-	$cpt = 0;
-	foreach (array_keys($reponses) as $an){
-		if (isValidateRapport($id_etab, $an)) {
-			$notes[$an] = calculNotes($reponses[$an]);
-			$cpt++;
-		}
-	}
-}
+function cumulatedGraph($cumulNotes, $annee, $titles_par) {
+	$objectifs = getObjectives();
 
-
-function doEtablissementGraphs($annee) {
-	$reponses = getAnswers();
-	if (sizeof(array_keys($reponses))) {
-		currentYearGraph($reponses);
-		if (sizeof(array_keys($reponses)) > 1) {
-			cumulatedGraph($reponses);
-		}
+	$txtGraph = "\\begin{center}\n\\begin{tikzpicture}\n";
+	$txtGraph .= "\\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]\n";
+	$txtGraph .= "\\tikzstyle{myShapeFill} = [opacity=0.5]\n";
+	$txtGraph .= "\\tikzstyle{myLabel} = [font=\\scriptsize, text width=40pt, text badly centered, inner sep=0pt]\n";
+	$txtGraph .= "\\tikzstyle{myLegend} = [font=\\scriptsize, anchor=west]\n";
+	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{ \\draw [color=black!80] (\\x*\\axisAngle:0) -- (\\x*\\axisAngle:\\radiusMax); }\n";
+	$txtGraph .= "\\foreach \\y in {0,...,\\unit}{\n";
+	$txtGraph .= "\\draw [color=black!40] (0:\\y*\\radiusMax/\\unit) \\foreach \\x in {1,...,\\dimension}{-- (\\x*\\axisAngle:\\y*\\radiusMax/\\unit)} -- cycle;\n";
+	$txtGraph .= "\\foreach \\x in {1,...,\\dimension}{\n";
+	$txtGraph .= "\\path (\\x*\\axisAngle:\\y*\\radiusMax/\\unit) coordinate (D\\x-\\y);\n";
+	$txtGraph .= "\\fill [color=black!80] (D\\x-\\y) circle (1.2pt);\n}\n}\n";
+	// label
+	for ($i=0; $i<count($titles_par); $i++) {
+		$txtGraph .= sprintf("\\path (%d*\\axisAngle:\\labelDist) node [myLabel] {%s};\n", $i+1, $titles_par[$i]);
 	}
+	$txtGraph .= "\n";
+	// Année n-2
+	if (isset($cumulNotes[$annee-2])) {
+		$curNotes = $cumulNotes[$annee-2];
+		$temp = "\\draw [myShape, color=year3] ";
+		for ($i=0; $i<count($titles_par); $i++) {
+			$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+		}
+		$txtGraph .=  $temp."cycle;\n\n";
+		$temp = "\\fill [myShapeFill, color=year3!20] ";
+		for ($i=0; $i<count($titles_par); $i++) {
+			$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+		}
+		$txtGraph .=  $temp."cycle;\n\n";
+	}
+	// Année n-1
+	if (isset($cumulNotes[$annee-1])) {
+		$curNotes = $cumulNotes[$annee-1];
+		$temp = "\\draw [myShape, color=year2] ";
+		for ($i=0; $i<count($titles_par); $i++) {
+			$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+		}
+		$txtGraph .=  $temp."cycle;\n\n";
+		$temp = "\\fill [myShapeFill, color=year2!20] ";
+		for ($i=0; $i<count($titles_par); $i++) {
+			$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+		}
+		$txtGraph .=  $temp."cycle;\n\n";
+	}
+	// Année n
+	$curNotes = $cumulNotes[$annee];
+	$temp = "\\draw [myShape, color=year1] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	$temp = "\\fill [myShapeFill, color=year1!20] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, round($curNotes[$i+1]));
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	// Objectifs
+	$temp = "\\draw [myShape, color=objectiv] ";
+	for ($i=0; $i<count($titles_par); $i++) {
+		$temp .= sprintf("(D%d-%d) -- ", $i+1, $objectifs[$i]);
+	}
+	$txtGraph .=  $temp."cycle;\n\n";
+	// legend
+	$txtGraph .= "\\matrix [xshift=180pt, yshift=-100pt] {\n";
+	$txtGraph .= "\\node [rectangle, fill=objectiv] {}; & \\node [myLegend] {Objectifs}; \\\\\n";
+	if (isset($cumulNotes[$annee-2])) {
+		$txtGraph .= sprintf("\\node [rectangle, fill=year3] {};  & \\node [myLegend] {Année %d}; \\\\\n", $annee-2);
+	}
+	if (isset($cumulNotes[$annee-1])) {
+		$txtGraph .= sprintf("\\node [rectangle, fill=year2] {};  & \\node [myLegend] {Année %d}; \\\\\n", $annee-1);
+	}
+	$txtGraph .= sprintf("\\node [rectangle, fill=year1] {};  & \\node [myLegend] {Année %d}; \\\\\n};\n", $annee);
+	// title
+	$txtGraph .= "\\node [yshift=160pt, font=\\bfseries] {Résultats cumulés par domaines};\n";
+	$txtGraph .= "\\end{tikzpicture}\n\\end{center}\n\n";
+	return $txtGraph;
 }
 
 
@@ -1340,32 +1449,20 @@ function printAssessment($assessment, $annee=0) {
 
 function printGraphsAndNotes($annee) {
 	$id_etab = $_SESSION['id_etab'];
-	doEtablissementGraphs($annee);
 	$nbr_par = paragraphCount();
 	$titles_par = getAllParAbrege();
+	$name_etab = getEtablissement($id_etab);
+	$reponses = getAnswers();
+	$notes = calculNotes($reponses[$annee]);
+	$noteSum = 0;
 	$base = dbConnect();
+	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+
 	$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d'", $annee);
-	$result = mysqli_query($base, $request);
-	$reponses = array();
-	while ($row = mysqli_fetch_object($result)) {
-		if (!empty($row->reponses)) {
-			$id_etablissement = $row->etablissement;
-			foreach(unserialize($row->reponses) as $quest => $rep) {
-				if (substr($quest, 0, 8) == 'question') {
-					$reponses[$id_etablissement][substr($quest, 8, 14)]=$rep;
-				}
-			}
-		}
-	}
-	$req_name = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
-	$res_name = mysqli_query($base, $req_name);
-	$row_name = mysqli_fetch_object($res_name);
-	$name_etab = traiteStringFromBDD($row_name->nom);
-	$notes = calculNotes($reponses[$id_etab]);
-	$noteSum = 0;
-
 	$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
 	$text .= "\\begin{center}\n";
 	$text .= "\\begin{tabular}{ | >{\\centering}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\$\\quad\\rightarrow\\quad\$} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
@@ -1388,22 +1485,22 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\hline\n";
 	$text .= "\\end{tabular}\n";
 	$text .= "\\end{center}\n\n";
+	$text .= "\\clearpage\n\n";
 
 	$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
-	$text .= "\\begin{figure}[ht]\n";
-	$text .= sprintf("\\begin{center}\\end{center}\n");
-	$text .= "\\caption{Résultats par thèmes}\n";
-	$text .= "\\end{figure}\n\n";
+	$text .= defineGraphVariables(count($titles_par));
+	$text .= simpleYearGraph($annee, $notes, $titles_par);
+	foreach (array_keys($reponses) as $year){
+		if (isValidateRapport($id_etab, $year) && $year<=$annee) {
+			$cumulNotes[$year] = calculNotes($reponses[$year]);
+		}
+	}
+	if (count($cumulNotes)>1) {
+		$text .= "\\bigskip\n\n\\bigskip\n\n";
+		$text .= cumulatedGraph($cumulNotes, $annee, $titles_par);
+	}
+	$text .= "\\clearpage\n\n";
 
-	$text .= "\\begin{figure}[ht]\n";
-	$text .= sprintf("\\begin{center}\\end{center}\n");
-	$text .= "\\caption{Résultats cumulés par thèmes}\n";
-	$text .= "\\end{figure}\n\n";
-
-	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
 	$text .= "\\subsection{Commentaires et conclusion}\n\n";
 	$text .= "\\subsubsection{Commentaires de l'établissement}\n\n";
 	$commEtab = htmlLatexParser(traiteStringFromBDD($row->comments));
