@@ -29,6 +29,7 @@ isSessionValid($authorizedRole);
 headPage($appli_titre);
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 purgeRapportsFiles();
+$_SESSION['quiz_file'] = 'quiz_hygiene_rules.json'; // 'quiz_iso_27002.json' 'quiz_hygiene_rules.json'
 
 
 if (isset($_GET['action'])) {

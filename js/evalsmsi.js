@@ -196,7 +196,7 @@ function champs_na(form) {
 		if (form.elements[i].id.substring(0,8) == 'question') {
 			var comment = 'comment'+form.elements[i].id.substring(8,18);
 			if ((form.elements[i].value == 1) && (form.elements[comment].value == '')) {
-				alert("Vous avez spécifié que certaines questions ne vous sont pas applicables sans le justifier.");
+				myAlert("Vous avez spécifié que certaines questions ne vous sont pas applicables sans le justifier.");
 				var subpar = form.elements[comment].parentNode;
 				var par = subpar.parentNode;
 				par.style.display = 'block';
@@ -206,7 +206,7 @@ function champs_na(form) {
 				return false;
 			}
 			if ((form.elements[i].value == 7) && (form.elements[comment].value == '')) {
-				alert("Vous avez spécifié que certaines mesures sont existantes sans apporter les éléments de preuves.");
+				myAlert("Vous avez spécifié que certaines mesures sont existantes sans apporter les éléments de preuves.");
 				var subpar = form.elements[comment].parentNode;
 				var par = subpar.parentNode;
 				par.style.display = 'block';
@@ -220,7 +220,7 @@ function champs_na(form) {
 	if (nbr_quests == num_quest_ok) {
 		var final_elt = document.getElementById('final_comment');
 		if (final_elt.value == '<br />') {
-			alert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
+			myAlert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
 			return false;
 		}
 	}

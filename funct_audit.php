@@ -394,7 +394,7 @@ function displayAuditRegroup() {
 			}
 		}
 	}
-	$par_complete = paragrapheComplete($assessment,$base);
+	$par_complete = domainComplete($assessment);
 	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
 	$res_par = mysqli_query($base, $req_par);
 	# affichage du formulaire
@@ -416,7 +416,7 @@ function displayAuditRegroup() {
 		printf("<dl style='display:none;' id='dl%s'>\n", $row_par->numero);
 		while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
 			$dtid = $row_par->numero.'-'.$row_sub_par->numero;
-			$subpar_complete = subParagrapheComplete($assessment, $row_par->numero, $row_sub_par->numero, $base);
+			$subpar_complete = subDomainComplete($assessment, $row_par->numero, $row_sub_par->numero);
 			if ($subpar_complete[$row_sub_par->numero] == 0) {
 				$fond = "<span class='redpoint'>&nbsp;</span>";
 			} elseif ($subpar_complete[$row_sub_par->numero] == 1) {

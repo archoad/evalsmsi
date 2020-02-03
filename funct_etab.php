@@ -36,10 +36,12 @@ function createAssessment() {
 function displayAssessment() {
 	$numQuestion = questionsCount();
 	$annee = $_SESSION['annee'];
-	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
+	$dom = getJsonFile();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['id_etab'], $annee);
 	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
 	// un enregistrement a déjà été fait
 	if ($result->num_rows) {
 		$row = mysqli_fetch_object($result);
@@ -50,53 +52,40 @@ function displayAssessment() {
 		linkMsg("etab.php", "L'évaluation pour ".$annee." est complète et validée par les évaluateurs. Vous ne pouvez plus la modifier.", "alert.png");
 		footPage();
 	} else {
-		$par_complete = paragrapheComplete($assessment,$base);
-		$req_par="SELECT * FROM paragraphe ORDER BY numero";
-		$res_par=mysqli_query($base, $req_par);
 		# affichage de la barre de progression
 		printf("<div id='a'><div id='b'><div id='c'></div></div></div>");
 		# affichage du formulaire
 		printf("<div class='row'>\n");
 		printf("<div class='column largeleft'>\n");
+		printf("<h3>Cette évaluation comprend %s questions</h3>\n", $numQuestion);
 		printf("<div class='assess'>\n");
 		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' onsubmit='return champs_na(this)'>\n");
 		printf("<p><input type='hidden' id='nbr_questions' value='%s' /></p>\n", $numQuestion);
-		while ($row_par=mysqli_fetch_object($res_par)) {
-			if ($par_complete[$row_par->numero] == 0) {
-				$fond = "<span class='redpoint'>&nbsp;</span>";
-			} elseif ($par_complete[$row_par->numero] == 1) {
-				$fond = "<span class='orangepoint'>&nbsp;</span>";
-			} else {
-				$fond = "<span class='greenpoint'>&nbsp;</span>";
-			}
-			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $row_par->numero, traiteStringFromBDD($row_par->libelle), $row_par->numero);
-			$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
-			$res_sub_par=mysqli_query($base, $req_sub_par);
-			printf("<dl style='display:none;' id='dl%s'>\n", $row_par->numero);
-			while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
-				$dtid = $row_par->numero.'-'.$row_sub_par->numero;
-				$subpar_complete = subParagrapheComplete($assessment, $row_par->numero, $row_sub_par->numero, $base);
-				if ($subpar_complete[$row_sub_par->numero] == 0) {
-					$fond = "<span class='redpoint'>&nbsp;</span>";
-				} elseif ($subpar_complete[$row_sub_par->numero] == 1) {
-					$fond = "<span class='orangepoint'>&nbsp;</span>";
-				} else {
-					$fond = "<span class='greenpoint'>&nbsp;</span>";
-				}
-				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $row_par->numero, $row_sub_par->numero, traiteStringFromBDD($row_sub_par->libelle), $dtid);
-				printf("<dd class='comment'>%s</dd>", $row_sub_par->comment);
-				$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
-				$res_quest=mysqli_query($base, $req_quest);
-				$ddid = $row_par->numero.'-'.$row_sub_par->numero;
-				printf("<dd style='display:none;' id='dd%s'>\n", $ddid);
-				while ($row_quest=mysqli_fetch_object($res_quest)) {
-					printf("<p><b>%s.%s.%s</b> %s</p>\n", $row_par->numero, $row_sub_par->numero, $row_quest->numero, traiteStringFromBDD($row_quest->libelle));
+		$dom_complete = domainComplete($assessment);
+		for ($d=0; $d<count($dom); $d++) {
+			$num_dom = $dom[$d]['numero'];
+			$fond = getColorButton($dom_complete, $num_dom);
+			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $dom[$d]['libelle'], $num_dom);
+			printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
+			$subDom = $dom[$d]['subdomains'];
+			for ($sd=0; $sd<count($subDom); $sd++) {
+				$num_sub_dom = $subDom[$sd]['numero'];
+				$id = $num_dom.'-'.$num_sub_dom;
+				$subpar_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
+				$fond = getColorButton($subpar_complete, $num_sub_dom);
+				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+				printf("<dd style='display:none;' id='dd%s'>\n", $id);
+				$questions = $subDom[$sd]['questions'];
+				for ($q=0; $q<count($questions); $q++) {
+					$num_question = $questions[$q]['numero'];
+					printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 					if (isset($assessment)) {
-						printSelect($row_par->numero, $row_sub_par->numero, $row_quest->numero, $assessment);
+						printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
 					} else {
-						printSelect($row_par->numero, $row_sub_par->numero, $row_quest->numero);
+						printSelect($num_dom, $num_sub_dom, $num_question);
 					}
-					$textID = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
+					$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 					if (isset($assessment)) {
 						printf("<br /><textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 					} else {
@@ -117,7 +106,6 @@ function displayAssessment() {
 		afficheNotesExplanation();
 		printf("</div>\n");
 	}
-	dbDisconnect($base);
 }
 
 

@@ -178,6 +178,14 @@ function dbDisconnect($dbh){
 }
 
 
+function getJsonFile() {
+	global $cheminDATA;
+	$jsonFile = sprintf("%s%s", $cheminDATA, $_SESSION['quiz_file']);
+	$jsonSource = file_get_contents($jsonFile);
+	return json_decode($jsonSource, true);
+}
+
+
 function destroySession() {
 	session_destroy();
 	unset($_SESSION);
@@ -498,52 +506,24 @@ function getRole($id) {
 }
 
 
-function getOneParAbrege($id_par) {
-	$base = dbConnect();
-	$request = sprintf("SELECT paragraphe.abrege FROM paragraphe WHERE (paragraphe.id='%d') LIMIT 1", $id_par);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	return traiteStringFromBDD($row->abrege);
+function getAllDomAbstract() {
+	$quiz = getJsonFile();
+	$domAbstract = array();
+	for ($d=0; $d<count($quiz); $d++) {
+		$domAbstract[] = $quiz[$d]['abrege'];
+	}
+	return $domAbstract;
 }
 
 
-function getAllParAbrege() {
-	$base = dbConnect();
-	$request = "SELECT abrege FROM paragraphe";
-	$result = mysqli_query($base, $request);
-	$par = array();
-	while ($row = mysqli_fetch_object($result)) {
-		$par[] = traiteStringFromBDD($row->abrege);
+function getSubParLibelle($id) {
+	$quiz = getJsonFile();
+	$subDom = $quiz[$id-1]['subdomains'];
+	$subDomLibelle = array();
+	for ($i=0; $i<count($subDom); $i++) {
+		$subDomLibelle[] = $subDom[$i]['libelle'];
 	}
-	dbDisconnect($base);
-	return $par;
-}
-
-
-function getSubParNum() {
-	$base = dbConnect();
-	$request = "SELECT paragraphe.numero AS 'par', sub_paragraphe.numero AS 'subpar' FROM sub_paragraphe JOIN paragraphe ON sub_paragraphe.id_paragraphe=paragraphe.id";
-	$result = mysqli_query($base, $request);
-	$subpar = array();
-	while ($row = mysqli_fetch_object($result)) {
-		$subpar[] = $row->par.$row->subpar;
-	}
-	dbDisconnect($base);
-	return $subpar;
-}
-
-
-function getSubParLibelle($id_par) {
-	$base = dbConnect();
-	$request = sprintf("SELECT sub_paragraphe.libelle FROM sub_paragraphe WHERE (sub_paragraphe.id_paragraphe='%d') ", $id_par);
-	$result = mysqli_query($base, $request);
-	$titles_subpar = array();
-	while ($row = mysqli_fetch_object($result)) {
-		$titles_subpar[] = traiteStringFromBDD($row->libelle);
-	}
-	dbDisconnect($base);
-	return $titles_subpar;
+	return $subDomLibelle;
 }
 
 
@@ -691,36 +671,34 @@ function textItem($num){
 }
 
 
-function paragraphCount() {
-	$base = dbConnect();
-	$request = "SELECT COUNT(id) FROM paragraphe";
-	$result=mysqli_query($base, $request);
-	$num = mysqli_fetch_array($result);
-	dbDisconnect($base);
-	return $num[0];
+function domainCount() {
+	$quiz = getJsonFile();
+	return count($quiz);
 }
 
-
-function subParagraphCount($id_par, $base) {
-	$request = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d'", intval($id_par));
-	$result=mysqli_query($base, $request);
-	$num = mysqli_num_rows($result);
-	return $num;
+function subDomainCount($id) {
+	$quiz = getJsonFile();
+	$subDom = $quiz[$id]['subdomains'];
+	return count($subDom);
 }
 
 
 function questionsCount() {
-	$base = dbConnect();
-	$request = "SELECT COUNT(id) FROM question";
-	$result=mysqli_query($base, $request);
-	$num = mysqli_fetch_array($result);
-	dbDisconnect($base);
-	return $num[0];
+	$quiz = getJsonFile();
+	$nbrQuestion = 0;
+	for ($d=0; $d<count($quiz); $d++) {
+		$subDom = $quiz[$d]['subdomains'];
+		for ($sd=0; $sd<count($subDom); $sd++) {
+			$questions = $subDom[$sd]['questions'];
+			$nbrQuestion += count($questions);
+		}
+	}
+	return $nbrQuestion;
 }
 
 
-function printSelect($num_par, $num_sub_par, $num_quest, $assessment=0) {
-	$name='question'.$num_par.'_'.$num_sub_par.'_'.$num_quest;
+function printSelect($num_dom, $num_sub_dom, $num_quest, $assessment=0) {
+	$name='question'.$num_dom.'_'.$num_sub_dom.'_'.$num_quest;
 	printf("<select name='%s' id='%s' onchange='progresse()'>\n", $name, $name);
 	if ($assessment) {
 		if ($assessment[$name] == 0) {
@@ -739,11 +717,23 @@ function printSelect($num_par, $num_sub_par, $num_quest, $assessment=0) {
 }
 
 
-function paragrapheComplete($assessment) {
+function getColorButton($complete, $num) {
+	if ($complete[$num] == 0) {
+		$color = "<span class='redpoint'>&nbsp;</span>";
+	} elseif ($complete[$num] == 1) {
+		$color = "<span class='orangepoint'>&nbsp;</span>";
+	} else {
+		$color = "<span class='greenpoint'>&nbsp;</span>";
+	}
+	return $color;
+}
+
+
+function domainComplete($assessment) {
 	$val = 0;
 	$cpt_total = 0;
 	$cpt_encours = 0;
-	$nbrPar = paragraphCount();
+	$nbrPar = domainCount();
 	$result = array_fill(0, $nbrPar+1, 0);
 	if (empty($assessment)) return $result;
 	foreach ($assessment as $key=>$value) {
@@ -777,28 +767,28 @@ function paragrapheComplete($assessment) {
 }
 
 
-function subParagrapheComplete($assessment, $par, $subpar, $base) {
+function subDomainComplete($assessment, $dom, $subdom) {
 	$cpt_total = 0;
 	$cpt_encours = 0;
-	$nbrSubPar = subParagraphCount($par, $base);
-	$result = array_fill(0, $nbrSubPar+1, 0);
+	$nbrSubDom = subDomainCount($dom-1);
+	$result = array_fill(0, $nbrSubDom+1, 0);
 	if (empty($assessment)) return $result;
 	foreach ($assessment as $key=>$value) {
 		if (preg_match("/question/", $key)) {
 			$temp = preg_replace("/question/", "", $key);
 			$temp = explode("_", $temp);
-			if (($temp[0] == $par) && ($temp[1] == $subpar)) {
+			if (($temp[0] == $dom) && ($temp[1] == $subdom)) {
 				if ($value == 0) $cpt_encours++;
 				$cpt_total++;
 			}
 		}
 	}
 	if ($cpt_encours == $cpt_total)
-		$result[$subpar] = 0;
+		$result[$subdom] = 0;
 	elseif ($cpt_encours <> 0)
-		$result[$subpar] = 1;
+		$result[$subdom] = 1;
 	else
-		$result[$subpar] = 2;
+		$result[$subdom] = 2;
 	return $result;
 }
 
@@ -826,11 +816,11 @@ function afficheNotesExplanation() {
 }
 
 
-function extractSubParRep($id_par, $table) {
+function extractSubDomRep($id_dom, $table) {
 	$result = array();
 	foreach ($table as $question => $eval) {
 		$numQuestion = explode('_', $question);
-		if ($numQuestion[0] == $id_par) {
+		if ($numQuestion[0] == $id_dom) {
 			$result[$question] = $eval;
 		}
 	}
@@ -839,7 +829,6 @@ function extractSubParRep($id_par, $table) {
 
 
 function calculNotes($table) {
-	$base = dbConnect();
 	$mem = 1; // numéro du premier paragraphe
 	$sumEval = 0;
 	$sumPoids = 0;
@@ -848,7 +837,7 @@ function calculNotes($table) {
 		$numQuestion = explode('_', $question);
 		$nq = $numQuestion[0];
 		if ($mem == $nq) {
-			$poids = getPoidsQuestion($question, $base);
+			$poids = getPoidsQuestion($question);
 			$sumEval = $sumEval + ($eval * $poids);
 			$sumPoids = $sumPoids + $poids;
 		} else {
@@ -858,7 +847,6 @@ function calculNotes($table) {
 			$sumPoids = $poids;
 		}
 	}
-	dbDisconnect($base);
 	$noteFinale[$mem] = round($sumEval / $sumPoids, 2);
 	return $noteFinale;
 }
@@ -874,7 +862,7 @@ function calculNotesDetail($table, $mem=11) {
 		$numQuestion = explode('_', $question);
 		$nq = $numQuestion[0].$numQuestion[1];
 		if ($mem == $nq) {
-			$poids = getPoidsQuestion($question, $base);
+			$poids = getPoidsQuestion($question);
 			$sumEval = $sumEval + ($eval * $poids);
 			$sumPoids = $sumPoids + $poids;
 		} else {
@@ -890,11 +878,13 @@ function calculNotesDetail($table, $mem=11) {
 }
 
 
-function getPoidsQuestion($num, $base) {
+function getPoidsQuestion($num) {
+	$base = dbConnect();
 	$tab = explode('_', $num);
 	$request = sprintf("SELECT question.poids FROM question JOIN sub_paragraphe ON question.id_sub_paragraphe=sub_paragraphe.id JOIN paragraphe ON question.id_paragraphe=paragraphe.id WHERE (paragraphe.numero='%d' AND sub_paragraphe.numero='%d' AND question.numero='%d') LIMIT 1", $tab[0], $tab[1], $tab[2]);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
 	return $row->poids;
 }
 
@@ -1111,7 +1101,7 @@ function displayEtablissmentGraphs() {
 function assessSynthese() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee_encours = $_SESSION['annee'];
-	$titles_par = getAllParAbrege();
+	$titles_par = getAllDomAbstract();
 
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%s'", $annee_encours, $id_etab);
@@ -1337,8 +1327,8 @@ function latexHead($annee=0) {
 	$en_tete .= "\\documentclass[a4paper,10pt]{article}\n\n\\input{header}\n\n";
 	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
 	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $etablissement);
-	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $etablissement);
-	$en_tete .= sprintf("\\author{%s -- \\textcolor{myRed}{Auditeur}}\n\n", $auditor);
+	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $etablissement);
+	$en_tete .= sprintf("\\author{%s -- \\textcolor{myBlue}{Auditeur}}\n\n", $auditor);
 	$en_tete .= "\\date{\\today}\n\n";
 	$en_tete .= "\\begin{document}\n\n\\renewcommand{\labelitemi}{\\ensuremath{\\bullet}}\n\\renewcommand{\\labelitemii}{\\ensuremath{\circ}}\n\\renewcommand{\\labelitemiii}{\\ensuremath{\\triangleright}}\n\n";
 	$en_tete .= "\\maketitle\n\n";
@@ -1464,8 +1454,8 @@ function printAssessment($assessment, $annee=0) {
 
 function printGraphsAndNotes($annee) {
 	$id_etab = $_SESSION['id_etab'];
-	$nbr_par = paragraphCount();
-	$titles_par = getAllParAbrege();
+	$nbr_par = domainCount();
+	$titles_par = getAllDomAbstract();
 	$name_etab = getEtablissement($id_etab);
 	$reponses = getAnswers();
 	$notes = calculNotes($reponses[$annee]);

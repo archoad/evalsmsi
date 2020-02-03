@@ -30,7 +30,7 @@ header('Content-Type: application/json');
 
 $annee = $_SESSION['annee'];
 $nom_etab = getEtablissement($_SESSION['id_etab']);
-$labels = getAllParAbrege();
+$labels = getAllDomAbstract();
 $reponses = getAnswers();
 $first_year = key($reponses);
 $scores = [];
@@ -43,7 +43,7 @@ $goal = getObjectives();
 $rawdata = [];
 for ($i=0; $i<count($labels); $i++) {
 	$cpt = $i+1;
-	$table = extractSubParRep($cpt, $reponses[$annee]);
+	$table = extractSubDomRep($cpt, $reponses[$annee]);
 	$titles = getSubParLibelle($cpt);
 	$notes = array_values(calculNotesDetail($table, $cpt.'1'));
 	$temp['domain'] = $labels[$i];

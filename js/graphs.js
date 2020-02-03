@@ -65,7 +65,6 @@ function loadGraphYear() {
 			displayYearGraphBar(this.responseText);
 			displayYearGraphPolar(this.responseText);
 			displayYearGraphScatter(this.responseText);
-			//displayDetailGraph(this.responseText);
 		}
 	};
 	xhttp.open('POST', 'graphs.php', true);
@@ -267,58 +266,4 @@ function displayYearGraphScatter(datas) {
 	};
 	var scatterContext = document.getElementById('currentYearGraphScatter').getContext('2d');
 	var yearChartScatter = new Chart(scatterContext, scatterConfig);
-}
-
-
-function displayDetailGraph(datas) {
-	var color = Chart.helpers.color;
-	var jsonObj = JSON.parse(datas);
-	var details = jsonObj.data;
-
-	for(var elt in details) {
-		var e = details[elt];
-		var sum = e.notes.reduce(getSum);
-		if (sum != 0) {
-			var current_par = document.createElement('p');
-			current_par.className = 'separation';
-			current_par.innerHTML = '&nbsp;';
-			var current_canvas = document.createElement('canvas');
-			current_canvas.id = 'doughnutGraph_' + elt;
-			document.getElementById('graphs').appendChild(current_canvas);
-			document.getElementById('graphs').appendChild(current_par);
-
-			var doughnutData = {
-				datasets: [{
-					data: e.notes,
-					backgroundColor: function(context) {
-						var value = context.dataset.data[context.dataIndex];
-						var c = Math.round(value);
-						return scoreColors[c];
-					}
-				}],
-				labels: e.subdomain,
-			};
-			var doughnutOption = {
-				responsive: true,
-				legend: {
-					display: false,
-				},
-				title: {
-					display: true,
-					text: 'Résultat par sous-domaine - ' + e.domain,
-				},
-				animation: {
-					animateScale: true,
-					animateRotate: true
-				}
-			};
-			var doughnutConfig = {
-				type: 'doughnut',
-				data: doughnutData,
-				options: doughnutOption
-			};
-			var doughnutContext = document.getElementById(current_canvas.id).getContext('2d');
-			var detailChartDoughnut = new Chart(doughnutContext, doughnutConfig);
-		}
-	}
 }
