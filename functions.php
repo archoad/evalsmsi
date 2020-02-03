@@ -102,17 +102,14 @@ $colors = array('darkslateblue', 'darkorange', 'darkorchid', 'bisque4', 'aquamar
 function menuAdmin() {
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	linkMsg("admin.php?action=add_par", "Ajouter un domaine", "add_par.png", 'menu');
-	linkMsg("admin.php?action=add_sub_par", "Ajouter un sous-domaine", "add_sub_par.png", 'menu');
-	linkMsg("admin.php?action=add_quest", "Ajouter une question", "add_question.png", 'menu');
+	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
+	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
 	linkMsg("admin.php?action=modifications", "Modifications du questionnaire", "eval_continue.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div>\n<div class='column right'>\n");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
 	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
-	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
-	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
 	printf("</div>\n</div>");
 }
 
@@ -120,14 +117,19 @@ function menuAdmin() {
 function menuEtab() {
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	linkMsg("etab.php?action=continue_assess", "Réaliser une évaluation", "eval_continue.png", 'menu');
-	linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
+	if (isset($_SESSION['quiz_file'])) {
+		linkMsg("etab.php?action=continue_assess", "Réaliser une évaluation", "eval_continue.png", 'menu');
+		linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
+	}
 	linkMsg("etab.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
 	printf("</div><div class='column right'>\n");
-	linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
-	linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
-	linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
+	linkMsg("etab.php?action=choose_quiz", "Choisir un référentiel", "quiz.png", 'menu');
+	if (isset($_SESSION['quiz_file'])) {
+		linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
+		linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
+		linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
+	}
 	printf("</div>\n</div>");
 }
 
@@ -291,15 +293,6 @@ function set_var_utf8(){
 }
 
 
-function get_var_utf8(){
-	$param1 = ini_get('mbstring.internal_encoding');
-	$param2 = ini_get('mbstring.http_input');
-	$param3 = ini_get('mbstring.http_output');
-	$param4 = ini_get('mbstring.detect_order');
-	printf("<b>%s %s %s %s</b>", $param1, $param2, $param3, $param4);
-}
-
-
 function headPage($titre, $sousTitre=''){
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
@@ -320,6 +313,9 @@ function headPage($titre, $sousTitre=''){
 		printf("<h2>%s</h2>\n", $sousTitre);
 	} else {
 		printf("<h2>%s</h2>\n", uidToEtbs());
+	}
+	if (isset($_SESSION['quiz_name'])) {
+		printf("<h4>%s</h4>\n", $_SESSION['quiz_name']);
 	}
 }
 
@@ -371,9 +367,9 @@ function linkMsg($link, $msg, $img, $class='msg') {
 
 
 function recordLog() {
+	$id_etab = $_SESSION['id_etab'];
 	$base = dbConnect();
-	$etablissement = $_SESSION['id_etab'];
-	$request = sprintf("SELECT reponses FROM assess WHERE (annee='%s' AND etablissement='%d') LIMIT 1", $_SESSION['annee'], $etablissement);
+	$request = sprintf("SELECT reponses FROM assess WHERE (annee='%s' AND etablissement='%d') LIMIT 1", $_SESSION['annee'], $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	$rep = unserialize($row->reponses);
@@ -387,7 +383,7 @@ function recordLog() {
 		$tabdiff = array_diff_assoc($_POST, $rep);
 	}
 	$tabstr = mysqli_real_escape_string($base, serialize($tabdiff));
-	$request=sprintf("INSERT INTO journal (ip, etablissement, navigateur, os, user, action) VALUES ('%s', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $etablissement, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
+	$request=sprintf("INSERT INTO journal (ip, etablissement, navigateur, os, user, action) VALUES ('%s', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $id_etab, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
 	mysqli_query($base, $request);
 	dbDisconnect($base);
 }
@@ -445,6 +441,37 @@ function generateToken() {
 }
 
 
+function setRightQuiz($id) {
+	$base = dbConnect();
+	$request = sprintf("SELECT * FROM quiz WHERE id='%d' LIMIT 1", intval($id));
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	$row = mysqli_fetch_object($result);
+	$_SESSION['quiz_file'] = $row->filename;
+	$_SESSION['quiz_name'] = $row->nom;
+}
+
+
+function chooseQuiz($script) {
+	$base = dbConnect();
+	$request = sprintf("SELECT * FROM quiz");
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	printf("<form method='post' id='quiz' action='%s?action=set_quiz' onsubmit='return champs_ok(this)'>\n", $script);
+	printf("<fieldset>\n<legend>Choix d'un questionnaire d'audit</legend>\n");
+	printf("<table>\n<tr><td>\n");
+	printf("Questionnaire:&nbsp;\n<select name='id_quiz' id='id_quiz'>\n");
+	printf("<option selected='selected' value=''>&nbsp;</option>\n");
+	while($row = mysqli_fetch_object($result)) {
+		printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);
+	}
+	printf("</select>\n");
+	printf("</td>\n</tr>\n</table>\n</fieldset>\n");
+	validForms('Continuer', $script);
+	printf("</form>\n");
+}
+
+
 function controlAssessment($answer) {
 	global $noteMax;
 	foreach ($answer as $key => $value){
@@ -457,6 +484,9 @@ function controlAssessment($answer) {
 				$tmp = 0;
 			}
 			$answer[$key] = $tmp;
+		}
+		if (substr($key, 0, 4) === 'eval') {
+			$answer[$key] = traiteStringToBDD($value);
 		}
 	}
 	$base = dbConnect();
@@ -516,9 +546,13 @@ function getAllDomAbstract() {
 }
 
 
-function getSubParLibelle($id) {
+function getSubParLibelle($num) {
 	$quiz = getJsonFile();
-	$subDom = $quiz[$id-1]['subdomains'];
+	for ($i=0; $i<count($quiz); $i++) {
+		if ($quiz[$i]['numero'] === $num) {
+			$subDom = $quiz[$i]['subdomains'];
+		}
+	}
 	$subDomLibelle = array();
 	for ($i=0; $i<count($subDom); $i++) {
 		$subDomLibelle[] = $subDom[$i]['libelle'];
@@ -528,10 +562,11 @@ function getSubParLibelle($id) {
 
 
 function getEtablissement($id_etab=0, $abrege=0) {
-	$base = dbConnect();
 	if ($id_etab<>0) {
+		$base = dbConnect();
 		$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 		$result=mysqli_query($base, $request);
+		dbDisconnect($base);
 		$row = mysqli_fetch_object($result);
 		if ($abrege) {
 			return traiteStringFromBDD($row->abrege);
@@ -539,6 +574,7 @@ function getEtablissement($id_etab=0, $abrege=0) {
 			return traiteStringFromBDD($row->nom);
 		}
 	} else {
+		$base = dbConnect();
 		if (intval($_SESSION['role']) == 2) {
 			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s)", $_SESSION['audit_etab']);
 		} else {
@@ -569,7 +605,7 @@ function isRegroupEtab() {
 function changePassword($script) {
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
-	$result=mysqli_query($base, $request);
+	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	if (mysqli_num_rows($result)) {
 		$row = mysqli_fetch_array($result);
@@ -610,7 +646,8 @@ function recordNewPassword($passwd) {
 }
 
 
-function getAuditor($id_etab) {
+function getAuditor() {
+	$id_etab = $_SESSION['id_etab'];
 	$auditor = '';
 	$base = dbConnect();
 	$request = sprintf("SELECT nom, prenom, etablissement FROM users WHERE role='2'");
@@ -627,9 +664,9 @@ function getAuditor($id_etab) {
 
 
 function isThereAssessForEtab() {
-	$base = dbConnect();
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
+	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' LIMIT 1", $id_etab, $annee);
 	$result=mysqli_query($base, $request);
 	dbDisconnect($base);
@@ -676,9 +713,13 @@ function domainCount() {
 	return count($quiz);
 }
 
-function subDomainCount($id) {
+function subDomainCount($num) {
 	$quiz = getJsonFile();
-	$subDom = $quiz[$id]['subdomains'];
+	for ($i=0; $i<count($quiz); $i++) {
+		if ($quiz[$i]['numero'] === $num) {
+			$subDom = $quiz[$i]['subdomains'];
+		}
+	}
 	return count($subDom);
 }
 
@@ -770,7 +811,7 @@ function domainComplete($assessment) {
 function subDomainComplete($assessment, $dom, $subdom) {
 	$cpt_total = 0;
 	$cpt_encours = 0;
-	$nbrSubDom = subDomainCount($dom-1);
+	$nbrSubDom = subDomainCount($dom);
 	$result = array_fill(0, $nbrSubDom+1, 0);
 	if (empty($assessment)) return $result;
 	foreach ($assessment as $key=>$value) {
@@ -854,7 +895,6 @@ function calculNotes($table) {
 
 function calculNotesDetail($table, $mem=11) {
 	//$mem = 11 -> numéro du premier sous-paragraphe
-	$base = dbConnect();
 	$sumEval = 0;
 	$sumPoids = 0;
 	$noteFinale = array();
@@ -872,20 +912,30 @@ function calculNotesDetail($table, $mem=11) {
 			$sumPoids = $poids;
 		}
 	}
-	dbDisconnect($base);
 	$noteFinale[$mem] = round($sumEval / $sumPoids, 2);
 	return $noteFinale;
 }
 
 
 function getPoidsQuestion($num) {
-	$base = dbConnect();
-	$tab = explode('_', $num);
-	$request = sprintf("SELECT question.poids FROM question JOIN sub_paragraphe ON question.id_sub_paragraphe=sub_paragraphe.id JOIN paragraphe ON question.id_paragraphe=paragraphe.id WHERE (paragraphe.numero='%d' AND sub_paragraphe.numero='%d' AND question.numero='%d') LIMIT 1", $tab[0], $tab[1], $tab[2]);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	return $row->poids;
+	$question = explode('_', $num);
+	$quiz = getJsonFile();
+	for ($i=0; $i<count($quiz); $i++) {
+		if ($quiz[$i]['numero'] === intval($question[0])) {
+			$subDom = $quiz[$i]['subdomains'];
+		}
+	}
+	for ($i=0; $i<count($subDom); $i++) {
+		if ($subDom[$i]['numero'] === intval($question[1])) {
+			$questions = $subDom[$i]['questions'];
+		}
+	}
+	for ($i=0; $i<count($questions); $i++) {
+		if ($questions[$i]['numero'] === intval($question[2])) {
+			$weight = $questions[$i]['poids'];
+		}
+	}
+	return $weight;
 }
 
 
@@ -1100,12 +1150,13 @@ function displayEtablissmentGraphs() {
 
 function assessSynthese() {
 	$id_etab = $_SESSION['id_etab'];
-	$annee_encours = $_SESSION['annee'];
+	$annee = $_SESSION['annee'];
 	$titles_par = getAllDomAbstract();
 
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%s'", $annee_encours, $id_etab);
+	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%s'", $annee, $id_etab);
 	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
 	$reponses = array();
 	while ($row = mysqli_fetch_object($result)) {
 		if (!empty($row->reponses)) {
@@ -1134,7 +1185,6 @@ function assessSynthese() {
 	}
 	$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
 	printf("<tr>\n<td style='width:120px;'><b>%s</b></td><td><ul>%s</ul></td><td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
-	dbDisconnect($base);
 	printf("</table>\n");
 }
 
@@ -1306,15 +1356,12 @@ function disclaimer() {
 function latexHead($annee=0) {
 	global $rapportPicts;
 	$id_etab = $_SESSION['id_etab'];
-	$auditor = getAuditor($id_etab);
+	$auditor = getAuditor();
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
+	$name_etab = getEtablissement($id_etab);
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
-	$result = mysqli_query($base, $request);
-	$row =mysqli_fetch_object($result);
-	$etablissement = traiteStringFromBDD($row->nom);
 	$req_dir = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='3') LIMIT 1", $id_etab);
 	$res_dir = mysqli_query($base, $req_dir);
 	$row_dir = mysqli_fetch_object($res_dir);
@@ -1326,14 +1373,14 @@ function latexHead($annee=0) {
 	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n\\Subject{Evaluation du SMSI}\n\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
 	$en_tete .= "\\documentclass[a4paper,10pt]{article}\n\n\\input{header}\n\n";
 	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
-	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $etablissement);
-	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $etablissement);
+	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $name_etab);
+	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\author{%s -- \\textcolor{myBlue}{Auditeur}}\n\n", $auditor);
 	$en_tete .= "\\date{\\today}\n\n";
 	$en_tete .= "\\begin{document}\n\n\\renewcommand{\labelitemi}{\\ensuremath{\\bullet}}\n\\renewcommand{\\labelitemii}{\\ensuremath{\circ}}\n\\renewcommand{\\labelitemiii}{\\ensuremath{\\triangleright}}\n\n";
 	$en_tete .= "\\maketitle\n\n";
 	$en_tete .= "\\bigskip\\bigskip\n\n";
-	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n\\begin{itemize}\n", $etablissement, $annee, $auditor);
+	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n\\begin{itemize}\n", $name_etab, $annee, $auditor);
 	if (isset($row_dir)) {
 		$en_tete .= sprintf("\\item Directeur de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_dir->prenom)), htmlLatexParser(traiteStringFromBDD($row_dir->nom)));
 	}
@@ -1363,6 +1410,7 @@ function latexFoot() {
 
 
 function printAssessment($assessment, $annee=0) {
+	$quiz = getJsonFile();
 	$text = "";
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
@@ -1370,84 +1418,70 @@ function printAssessment($assessment, $annee=0) {
 	$base = dbConnect();
 	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
 	$row_regroup = mysqli_fetch_object($result);
 	if (stripos($row_regroup->abrege, "_TEAM") === false) {
 		$regroup = false;
 	} else {
 		$regroup = true;
 	}
-	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
-	$res_par = mysqli_query($base, $req_par);
 	$text .= sprintf("\\section{Résultats de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
-	while ($row_par = mysqli_fetch_object($res_par)) {
-		$text .= sprintf("\\subsection{%s}\n\n", traiteStringFromBDD($row_par->libelle));
-		$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
-		$res_sub_par = mysqli_query($base, $req_sub_par);
-		while ($row_sub_par = mysqli_fetch_object($res_sub_par)) {
-			$text .= sprintf("\\subsubsection{%s}\n\n", traiteStringFromBDD($row_sub_par->libelle));
-			$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
-			$res_quest = mysqli_query($base, $req_quest);
-			while ($row_quest = mysqli_fetch_object($res_quest)) {
-				if ($regroup) {
-					$text .= sprintf("\\paragraph{Question n\\textdegree %d.%d.%d}\n", $row_par->numero, $row_sub_par->numero, $row_quest->numero);
-					$text .= sprintf("\\subparagraph{Libellé: }\n");
-					$text .= sprintf("%s\n\n", traiteStringFromBDD($row_quest->libelle));
-					$text .= sprintf("\\subparagraph{\\'Evaluation: }\n");
-					$comm = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-					if ($assessment[$comm]<>"") {
-						$commEtab = parserLatex(traiteStringFromBDD($assessment[$comm]));
-						$text .= sprintf("%s\n", $commEtab);
-					} else {
-						$text .= sprintf("\\textsl{Néant}\n");
-					}
+	for ($d=0; $d<count($quiz); $d++) {
+		$num_dom = $quiz[$d]['numero'];
+		$subDom = $quiz[$d]['subdomains'];
+		$text .= sprintf("\\subsection{%s}\n\n", $quiz[$d]['libelle']);
+		for ($sd=0; $sd<count($subDom); $sd++) {
+			$num_sub_dom = $subDom[$sd]['numero'];
+			$questions = $subDom[$sd]['questions'];
+			$text .= sprintf("\\subsubsection{%s}\n\n", $subDom[$sd]['libelle']);
+			for ($q=0; $q<count($questions); $q++) {
+				$num_question = $questions[$q]['numero'];
+				$text .= sprintf("\\textbf{Question n\\textdegree %d.%d.%d} %s\n\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+				$questID='question'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+				$commID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+				$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+				$text .= "\\begin{center}\n";
+				$text .= "\\begin{tabular}{ | >{\\centering}m{0.05\\textwidth} >{\\centering}m{0.25\\textwidth} | m{0.50\\textwidth} | }\n\\hline\n";
+				$text .= "\\multicolumn{2}{|c|}{\\textbf{\\'Evaluation de l'établissement}} & \\centering\\textbf{Commentaire} \\tabularnewline\n";
+				if ($assessment[$questID]) {
+					if ($assessment[$questID] == 1) { $color = "gray"; }
+					if (($assessment[$questID] == 2) || ($assessment[$questID] == 3)) { $color = "red"; }
+					if (($assessment[$questID] == 4) || ($assessment[$questID] == 5)) { $color = "orange"; }
+					if (($assessment[$questID] == 6) || ($assessment[$questID] == 7)) { $color = "green"; }
+					$text .= sprintf("\\tikz{\\node [rectangle, fill=%s, inner sep=10pt] {};} & ", $color);
+					$text .= sprintf("\\textcolor{myRed}{%s (%s/7)} & ", textItem($assessment[$questID]), $assessment[$questID]);
 				} else {
-					$text .= sprintf("\\textbf{Question n\\textdegree %d.%d.%d} %s\n\n", $row_par->numero, $row_sub_par->numero, $row_quest->numero, traiteStringFromBDD($row_quest->libelle));
-					$text .= "\\begin{center}\n";
-					$text .= "\\begin{tabular}{ | >{\\centering}m{0.05\\textwidth} >{\\centering}m{0.25\\textwidth} | m{0.50\\textwidth} | }\n\\hline\n";
-					$text .= "\\multicolumn{2}{|c|}{\\textbf{\\'Evaluation de l'établissement}} & \\centering\\textbf{Commentaire} \\tabularnewline\n";
-					$quest='question'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-					if ($assessment[$quest]) {
-						if ($assessment[$quest] == 1) { $color = "gray"; }
-						if (($assessment[$quest] == 2) || ($assessment[$quest] == 3)) { $color = "red"; }
-						if (($assessment[$quest] == 4) || ($assessment[$quest] == 5)) { $color = "orange"; }
-						if (($assessment[$quest] == 6) || ($assessment[$quest] == 7)) { $color = "green"; }
-						$text .= sprintf("\\tikz{\\node [rectangle, fill=%s, inner sep=10pt] {};} & ", $color);
-						$text .= sprintf("\\textcolor{myRed}{%s (%s/7)} & ", textItem($assessment[$quest]), $assessment[$quest]);
-					} else {
-						$text .= sprintf(" & \\textcolor{myRed}{Néant} & ");
-					}
-					$comm = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-					if ($assessment[$comm]<>"") {
-						$commEtab = parserLatex(traiteStringFromBDD($assessment[$comm]));
-						$text .= sprintf("%s\\tabularnewline\n", $commEtab);
-					} else {
-						$text .= sprintf("Néant\\tabularnewline\n");
-					}
-					$text .= "\\hline\n";
-					$text .= "\\multicolumn{3}{|>{\\centering}p{0.80\\textwidth}|}{\\textbf{Commentaire évaluateurs}}\\tabularnewline\n";
-					$evalID = 'eval'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-					if ($assessment[$evalID]<>"") {
-						$commEvaluateur = parserLatex(traiteStringFromBDD($assessment[$evalID]));
-						$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{\\textcolor{myBlue}{%s}}\\tabularnewline\n", $commEvaluateur);
-					} else {
-						$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{\\textcolor{myBlue}{Avis conforme}}\\tabularnewline\n");
-					}
-					$text .= "\\hline\n";
-					if ($assessment[$quest] < 5) {
-						$text .= "\\multicolumn{3}{|c|}{\\textbf{Recommandations}}\\tabularnewline\n";
-						if ($row_quest->mesure <> "") {
-							$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{%s}\\tabularnewline\n", traiteStringFromBDD($row_quest->mesure));
-						} else {
-							$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{Pas de recommandations particulière.}\\tabularnewline\n");
-						}
-						$text .= "\\hline\n";
-					}
-					$text .= "\\end{tabular}\n\\end{center}\n\\bigskip\n\n";
+					$text .= sprintf(" & \\textcolor{myRed}{Néant} & ");
 				}
+				if ($assessment[$commID]<>"") {
+					$commEtab = parserLatex(traiteStringFromBDD($assessment[$commID]));
+					$text .= sprintf("%s\\tabularnewline\n", $commEtab);
+				} else {
+					$text .= sprintf("Néant\\tabularnewline\n");
+				}
+				$text .= "\\hline\n";
+				$text .= "\\multicolumn{3}{|>{\\centering}p{0.80\\textwidth}|}{\\textbf{Commentaire évaluateurs}}\\tabularnewline\n";
+				if ($assessment[$evalID]<>"") {
+					$commEvaluateur = parserLatex(traiteStringFromBDD($assessment[$evalID]));
+					$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{\\textcolor{myBlue}{%s}}\\tabularnewline\n", $commEvaluateur);
+				} else {
+					$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{\\textcolor{myBlue}{Avis conforme}}\\tabularnewline\n");
+				}
+				$text .= "\\hline\n";
+				if ($assessment[$questID] < 5) {
+					$text .= "\\multicolumn{3}{|c|}{\\textbf{Recommandations}}\\tabularnewline\n";
+					if ($questions[$q]['mesure'] <> "") {
+						$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{%s}\\tabularnewline\n", $questions[$q]['mesure']);
+					} else {
+						$text .= sprintf("\\multicolumn{3}{|>{\\raggedright}p{0.80\\textwidth}|}{Pas de recommandations particulière.}\\tabularnewline\n");
+					}
+					$text .= "\\hline\n";
+				}
+				$text .= "\\end{tabular}\n\\end{center}\n\\bigskip\n\n";
+
 			}
 		}
 	}
-	dbDisconnect($base);
 	return $text."\\clearpage\n\n";
 }
 
@@ -1473,7 +1507,7 @@ function printGraphsAndNotes($annee) {
 
 	//$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
 	$text = sprintf("\\section{Analyse de l'évaluation pour l'année %s}\n\n", $annee);
-	//$text .= "\\input{intro}\n\n";
+	$text .= "\\input{intro}\n\n";
 	$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
 	$text .= "\\begin{center}\n";
 	$text .= "\\begin{tabular}{ | >{\\centering}m{0.20\\textwidth} | >{\\raggedright}m{0.30\\textwidth} @{\$\\quad\\rightarrow\\quad\$} >{\\raggedright}m{0.10\\textwidth} | >{\\centering}m{0.15\\textwidth} | }\n";
@@ -1496,7 +1530,7 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\hline\n";
 	$text .= "\\end{tabular}\n";
 	$text .= "\\end{center}\n\n";
-	//$text .= "\\clearpage\n\n";
+	$text .= "\\clearpage\n\n";
 
 	$text .= "\\subsection{Graphes de synthèses de l'établissement}\n\n";
 	$text .= defineGraphVariables(count($titles_par));
@@ -1605,7 +1639,7 @@ function generateRapport($script, $annee=0) {
 					}
 					$first_section = printGraphsAndNotes($annee);
 					$second_section = printAssessment($assessment, $annee);
-					//$annexes = printAnnexes();
+					$annexes = printAnnexes();
 					$foot = latexFoot();
 					$rapport = $head."\n".$first_section."\n".$second_section."\n".$annexes."\n".$foot;
 					makeRapport($abrege_etab, $rapport, $annee);
@@ -1650,6 +1684,7 @@ function exportEval($script) {
 	$dir = dirname($_SERVER['PHP_SELF']);
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
+	$quiz = getJsonFile();
 	$abrege_etab = getEtablissement(intval($id_etab), $abrege=1);
 	$fileDoc = sprintf("rapports/evaluation_%s.docx", $abrege_etab);
 	$fileXlsx = sprintf("rapports/evaluation_%s.xlsx", $abrege_etab);
@@ -1696,13 +1731,11 @@ function exportEval($script) {
 
 	$eval = array();
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Mesure', 'Note', 'Commentaire'];
+	$name_etab = getEtablissement($id_etab);
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
-	$result=mysqli_query($base, $request);
-	$row=mysqli_fetch_object($result);
-	$nom=traiteStringFromBDD($row->nom);
 	$req_assessment = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$res_assessment = mysqli_query($base, $req_assessment);
+	dbDisconnect($base);
 
 	if (mysqli_num_rows($res_assessment)) {
 		$row_assessment=mysqli_fetch_object($res_assessment);
@@ -1715,8 +1748,6 @@ function exportEval($script) {
 					$reponses[$annee][substr($quest, 8, 14)]=$rep;
 				}
 			}
-			$req_par="SELECT * FROM paragraphe ORDER BY numero";
-			$res_par=mysqli_query($base, $req_par);
 			$section->addText($appli_titre, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
 			if (intval($_SESSION['role']) == 2) {
 				$msg = "Copie de travail de l'auditeur";
@@ -1724,26 +1755,26 @@ function exportEval($script) {
 				$msg = "Copie de travail de l'établissement";
 			}
 			$section->addText($msg, array('bold'=>true, 'size'=>16, 'smallCaps'=>true, 'color'=>'9e1e1e'), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
-			$section->addText($nom . " - " . $annee, array('bold'=>true, 'size'=>18, 'smallCaps'=>true, 'color'=>'444444'), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
+			$section->addText($name_etab . " - " . $annee, array('bold'=>true, 'size'=>18, 'smallCaps'=>true, 'color'=>'444444'), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
 
-			while ($row_par=mysqli_fetch_object($res_par)) {
-				$section->addTitle($row_par->numero . " " . traiteStringFromBDD($row_par->libelle), 1);
-				$req_sub_par="SELECT * FROM sub_paragraphe WHERE id_paragraphe=\"$row_par->id\" ORDER BY numero";
-				$res_sub_par=mysqli_query($base, $req_sub_par);
-				while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
-					$dtid = $row_par->numero.'.'.$row_sub_par->numero;
-					$section->addTitle($dtid . " " . traiteStringFromBDD($row_sub_par->libelle), 2);
-					$req_quest="SELECT * FROM question WHERE (id_paragraphe=\"$row_par->id\" AND id_sub_paragraphe=\"$row_sub_par->id\") ORDER BY numero";
-					$res_quest=mysqli_query($base, $req_quest);
-					while ($row_quest=mysqli_fetch_object($res_quest)) {
-						$questID = $row_par->numero.'.'.$row_sub_par->numero.'.'.$row_quest->numero;
-						$textID = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-						$noteID = 'question'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-						$rule = traiteStringFromBDD($row_quest->libelle);
-						$measure = traiteStringFromBDD($row_quest->mesure);
+			for ($d=0; $d<count($quiz); $d++) {
+				$num_dom = $quiz[$d]['numero'];
+				$subDom = $quiz[$d]['subdomains'];
+				$section->addTitle($num_dom." ".$quiz[$d]['libelle'], 1);
+				for ($sd=0; $sd<count($subDom); $sd++) {
+					$num_sub_dom = $subDom[$sd]['numero'];
+					$section->addTitle($num_dom.".".$num_sub_dom ." ".$subDom[$sd]['libelle'], 2);
+					$questions = $subDom[$sd]['questions'];
+					for ($q=0; $q<count($questions); $q++) {
+						$num_question = $questions[$q]['numero'];
+						$questID = $num_dom.".".$num_sub_dom.".".$num_question;
+						$textID = 'comment'.$num_dom."_".$num_sub_dom."_".$num_question;
+						$noteID = 'question'.$num_dom."_".$num_sub_dom."_".$num_question;
+						$rule = $questions[$q]['libelle'];
+						$measure = $questions[$q]['mesure'];
 						$comment = traiteStringFromBDD($assessment[$textID]);
 						if (empty($comment)) { $comment = "Pas de commentaire"; }
-						if (empty($measure)) { $measure = "Pas de recommandations particulière"; }
+						if (empty($measure)) { $measure = "Pas de recommandation particulière"; }
 
 						$table = $section->addTable($myTableStyleName);
 						$table->addRow(300, $myTableRowStyle);
@@ -1758,13 +1789,12 @@ function exportEval($script) {
 						$table->addCell(10000, $myTableSpanCellStyle)->addText($comment);
 						$section->addTextBreak();
 
-						$row = [traiteStringFromBDD($row_par->libelle), traiteStringFromBDD($row_sub_par->libelle), $rule, $measure, $assessment[$noteID], $comment];
+						$row = [$quiz[$d]['libelle'], $subDom[$sd]['libelle'], $rule, $measure, $assessment[$noteID], $comment];
 						$eval[] = $row;
 					}
 				}
 			}
 			$sheet->fromArray($eval, NULL, 'A1');
-			dbDisconnect($base);
 
 			printf("<div class='row'>\n");
 			printf("<div class='column left'>\n");
@@ -1793,6 +1823,7 @@ function exportEval($script) {
 function generateExcellRapport($annee) {
 	$id_etab = $_SESSION['id_etab'];
 	$fileXlsx = sprintf("rapports/plan_actions_%d.xlsx", $id_etab);
+	$quiz = getJsonFile();
 
 	$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 	$sheet = $spreadsheet->getActiveSheet();
@@ -1813,9 +1844,9 @@ function generateExcellRapport($annee) {
 	$eval = array();
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Note', 'Commentaire', 'Commentaire évaluateur', 'Mesure'];
 	$base = dbConnect();
-	$nom = getEtablissement($id_etab);
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
 
 	// Il existe une évaluation pour cet établissement
 	if ($result->num_rows) {
@@ -1832,23 +1863,22 @@ function generateExcellRapport($annee) {
 			// L'évaluation est complète
 			if (isAssessComplete($reponses[$annee])) {
 				if ($row->valide) {
-					$req_par="SELECT * FROM paragraphe ORDER BY numero";
-					$res_par=mysqli_query($base, $req_par);
-					while ($row_par=mysqli_fetch_object($res_par)) {
-						$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
-						$res_sub_par=mysqli_query($base, $req_sub_par);
-						while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
-							$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
-							$res_quest=mysqli_query($base, $req_quest);
-							while ($row_quest=mysqli_fetch_object($res_quest)) {
-								$questID = $row_par->numero.'.'.$row_sub_par->numero.'.'.$row_quest->numero;
-								$commID = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-								$noteID = 'question'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-								$evalID = 'eval'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-								$par = traiteStringFromBDD($row_par->libelle);
-								$subpar = traiteStringFromBDD($row_sub_par->libelle);
-								$rule = traiteStringFromBDD($row_quest->libelle);
-								$measure = traiteStringFromBDD($row_quest->mesure);
+					for ($d=0; $d<count($quiz); $d++) {
+						$num_dom = $quiz[$d]['numero'];
+						$subDom = $quiz[$d]['subdomains'];
+						for ($sd=0; $sd<count($subDom); $sd++) {
+							$num_sub_dom = $subDom[$sd]['numero'];
+							$questions = $subDom[$sd]['questions'];
+							for ($q=0; $q<count($questions); $q++) {
+								$num_question = $questions[$q]['numero'];
+								$questID = $num_dom.'.'.$num_sub_dom.'.'.$num_question;
+								$commID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+								$noteID = 'question'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+								$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+								$par = $quiz[$d]['libelle'];
+								$subpar = $subDom[$sd]['libelle'];
+								$rule = $questions[$q]['libelle'];
+								$measure = $questions[$q]['mesure'];
 								$note = intval($assessment[$noteID]);
 								$comment = traiteStringFromBDD($assessment[$commID]);
 								$comeval = traiteStringFromBDD($assessment[$evalID]);
@@ -1873,7 +1903,6 @@ function generateExcellRapport($annee) {
 	} else {
 		linkMsg("etab.php", "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
 	}
-	dbDisconnect($base);
 
 	foreach ($sheet->getRowIterator() as $row) {
 		$cellIterator = $row->getCellIterator();
@@ -1900,6 +1929,7 @@ function generateExcellRapport($annee) {
 
 function exportRules() {
 	global $appli_titre;
+	$quiz = getJsonFile();
 	$script = dirname($_SERVER['PHP_SELF']);
 	$fileDoc = "rapports/referentiel.docx";
 	$filePdf = "rapports/referentiel.pdf";
@@ -1926,28 +1956,25 @@ function exportRules() {
 	$footer->addPreserveText('Page {PAGE}/{NUMPAGES}', null, array('spaceBefore' => 400, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER));
 	$section->addText($appli_titre, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
 
-	$base = dbConnect();
-	$req_par="SELECT * FROM paragraphe ORDER BY numero";
-	$res_par=mysqli_query($base, $req_par);
-	while ($row_par=mysqli_fetch_object($res_par)) {
-		$msg = sprintf("%s\t%s", $row_par->numero, traiteStringFromBDD($row_par->libelle));
-		if (intval($row_par->numero)>1) { $section->addPageBreak(); }
+	for ($d=0; $d<count($quiz); $d++) {
+		$num_dom = $quiz[$d]['numero'];
+		$subDom = $quiz[$d]['subdomains'];
+		$msg = sprintf("%s\t%s", $num_dom, $quiz[$d]['libelle']);
+		if (intval($num_dom)>1) { $section->addPageBreak(); }
 		$section->addTitle($msg, 1);
-		$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
-		$res_sub_par=mysqli_query($base, $req_sub_par);
-		while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
-			$msg = sprintf("%s.%s\t%s", $row_par->numero, $row_sub_par->numero, traiteStringFromBDD($row_sub_par->libelle));
+		for ($sd=0; $sd<count($subDom); $sd++) {
+			$num_sub_dom = $subDom[$sd]['numero'];
+			$questions = $subDom[$sd]['questions'];
+			$msg = sprintf("%s.%s\t%s", $num_dom, $num_sub_dom, $subDom[$sd]['libelle']);
 			$section->addTitle($msg, 2);
-			$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
-			$res_quest=mysqli_query($base, $req_quest);
-			while ($row_quest=mysqli_fetch_object($res_quest)) {
-				$msg = sprintf("Règle %s.%s.%s ", $row_par->numero, $row_sub_par->numero, $row_quest->numero);
+			for ($q=0; $q<count($questions); $q++) {
+				$num_question = $questions[$q]['numero'];
+				$msg = sprintf("Règle %s.%s.%s ", $num_dom, $num_sub_dom, $num_question);
 				$section->addTitle($msg, 3);
-				$section->addText(traiteStringFromBDD($row_quest->libelle));
+				$section->addText($questions[$q]['libelle']);
 			}
 		}
 	}
-	dbDisconnect($base);
 
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");

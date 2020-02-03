@@ -29,11 +29,11 @@ isSessionValid($authorizedRole);
 headPage($appli_titre);
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 purgeRapportsFiles();
-$_SESSION['quiz_file'] = 'quiz_hygiene_rules.json'; // 'quiz_iso_27002.json' 'quiz_hygiene_rules.json'
 
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
+
 	case 'continue_assess':
 		if (isThereAssessForEtab()) {
 			printf("<script type='text/javascript'>window.onload = function() { progresse(); }</script>");
@@ -102,6 +102,16 @@ if (isset($_GET['action'])) {
 			linkMsg($script, "Erreur de changement de mot de passe", "alert.png");
 		}
 		footPage();
+		break;
+
+	case 'choose_quiz':
+		chooseQuiz($script);
+		footPage();
+		break;
+
+	case 'set_quiz':
+		setRightQuiz($_POST['id_quiz']);
+		header("Location: ".$script);
 		break;
 
 	case 'rm_token':

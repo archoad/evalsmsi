@@ -126,6 +126,14 @@ h3 {
 	font-size:8pt;
 }
 
+h4 {
+	text-align:center;
+	font-size:10pt;
+	font-weight: normal;
+	letter-spacing: 2px;
+	color:var(--myBlueDark);
+}
+
 p, ul, ol {
 	text-align:left;
 	font-size:8pt;

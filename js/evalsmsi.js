@@ -67,60 +67,6 @@ function valideObj(elt) {
 }
 
 
-var xhr;
-
-
-function complete(input, action) {
-	xhr=createObject();
-	if (xhr==null) {
-		alert ("Browser does not support HTTP Request");
-		return;
-	}
-	var url="ajax.php";
-	url=url+"?query="+input;
-	url=url+"&action="+action;
-	switch (action) {
-		case 'question':
-			xhr.onreadystatechange=stateQuestionChanged;
-			break;
-		case 'sub_par':
-			xhr.onreadystatechange=stateSubParChanged;
-			break
-		case 'num_quest':
-			xhr.onreadystatechange=stateNumQuestChanged;
-			break
-		default:
-			break;
-	}
-	xhr.open("GET",url,true);
-	xhr.send(null);
-}
-
-
-function stateQuestionChanged() {
-	if (xhr.readyState==4 || xhr.readyState=="complete"){
-		var result = xhr.responseText;
-		document.getElementById("quest_id_sub_par").innerHTML=result;
-	}
-}
-
-
-function stateSubParChanged() {
-	if (xhr.readyState==4 || xhr.readyState=="complete"){
-		var result = xhr.responseText;
-		document.getElementById("num_sub_par").value=result;
-	}
-}
-
-
-function stateNumQuestChanged() {
-	if (xhr.readyState==4 || xhr.readyState=="complete"){
-		var result = xhr.responseText;
-		document.getElementById("num_quest").value=result;
-	}
-}
-
-
 function user_champs_ok(form) {
 	var l1 = document.getElementById('destination');
 	var result = document.getElementById('result[]');

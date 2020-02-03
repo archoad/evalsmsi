@@ -36,7 +36,7 @@ function createAssessment() {
 function displayAssessment() {
 	$numQuestion = questionsCount();
 	$annee = $_SESSION['annee'];
-	$dom = getJsonFile();
+	$quiz = getJsonFile();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['id_etab'], $annee);
 	$result = mysqli_query($base, $request);
@@ -62,21 +62,21 @@ function displayAssessment() {
 		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' onsubmit='return champs_na(this)'>\n");
 		printf("<p><input type='hidden' id='nbr_questions' value='%s' /></p>\n", $numQuestion);
 		$dom_complete = domainComplete($assessment);
-		for ($d=0; $d<count($dom); $d++) {
-			$num_dom = $dom[$d]['numero'];
+		for ($d=0; $d<count($quiz); $d++) {
+			$num_dom = $quiz[$d]['numero'];
+			$subDom = $quiz[$d]['subdomains'];
 			$fond = getColorButton($dom_complete, $num_dom);
-			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $dom[$d]['libelle'], $num_dom);
+			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
 			printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
-			$subDom = $dom[$d]['subdomains'];
 			for ($sd=0; $sd<count($subDom); $sd++) {
 				$num_sub_dom = $subDom[$sd]['numero'];
+				$questions = $subDom[$sd]['questions'];
 				$id = $num_dom.'-'.$num_sub_dom;
 				$subpar_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 				$fond = getColorButton($subpar_complete, $num_sub_dom);
 				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
 				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
 				printf("<dd style='display:none;' id='dd%s'>\n", $id);
-				$questions = $subDom[$sd]['questions'];
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];
 					printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);

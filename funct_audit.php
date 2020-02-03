@@ -134,17 +134,17 @@ function writeAudit() {
 		dbDisconnect($base);
 		return false;
 	}
+	return false;
 }
 
 
 function objectifs() {
+	$quiz = getJsonFile();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	$obj = unserialize($row->objectifs);
-	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
-	$res_par = mysqli_query($base, $req_par);
 	dbDisconnect($base);
 	printf("<div class='row'>\n");
 	printf("<div class='column largeleft'>\n");
@@ -152,9 +152,10 @@ function objectifs() {
 	printf("<fieldset>\n<legend>Gestion des objectifs pour <b>%s</b></legend>\n", $row->nom);
 	printf("<table>\n");
 	printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>\n");
-	while ($row_par=mysqli_fetch_object($res_par)) {
-		$objCurr = sprintf("obj_%d", $row_par->id);
-		printf("<tr><td>%d</td><td class='pleft'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $row_par->numero, $row_par->libelle, $row_par->id, $row_par->id, $obj[$objCurr]);
+	for ($i=0; $i<count($quiz); $i++) {
+		$num_dom = $quiz[$i]['numero'];
+		$objCurr = sprintf("obj_%d", $num_dom);
+		printf("<tr><td>%d</td><td class='pleft'>%s</td><td><input type='text' size='1' maxlength='1' name='obj_%s' id='obj_%s' onblur='valideObj(this)' value='%d' /></td></tr>\n", $num_dom, $quiz[$i]['libelle'], $num_dom, $num_dom, $obj[$objCurr]);
 	}
 	printf("</table>\n</fieldset>\n");
 	validForms('Enregistrer', 'audit.php', $back=False);
@@ -186,7 +187,7 @@ function recordObjectifs() {
 
 function journalisation() {
 	printf("<div class='onecolumn' id='graphs'>\n");
-	$msg = sprintf("Journal des opérations - %s", uidToEtbs($_SESSION['id_etab']));
+	$msg = sprintf("Journal des opérations - %s", uidToEtbs());
 	printf("<div class='visualization' id='visualization'><p>%s</p></div>", $msg);
 	printf("<p>&nbsp;</p>");
 	printf("<textarea name='visdata' id='visdata' rows='15' cols='100' placeholder='Détails des opérations' readonly></textarea>");
@@ -242,11 +243,13 @@ function isAssessGroupValidate() {
 function displayAudit() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$nom = getEtablissement($id_etab);
-	printf("<h1>%s - %s</h1>\n", $nom, $annee);
+	$quiz = getJsonFile();
+	$name_etab = getEtablissement($id_etab);
+	printf("<h1>%s - %s</h1>\n", $name_etab, $annee);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
 	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
 	// un enregistrement a déjà été fait
 	if ($result->num_rows) {
 		$row = mysqli_fetch_object($result);
@@ -266,32 +269,30 @@ function displayAudit() {
 		}
 		if (isAssessComplete($reponses[$annee])) {
 			linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
-			$req_par = "SELECT * FROM paragraphe ORDER BY numero";
-			$res_par = mysqli_query($base, $req_par);
 			# affichage du formulaire
 			printf("<div class='row'>\n");
 			printf("<div class='column largeleft'>\n");
 			printf("<div class='assess'>\n");
 			printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>\n");
-			while ($row_par=mysqli_fetch_object($res_par)) {
-				printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $row_par->numero, traiteStringFromBDD($row_par->libelle), $row_par->numero);
-				$req_sub_par = sprintf("SELECT * FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY numero", $row_par->id);
-				$res_sub_par = mysqli_query($base, $req_sub_par);
-				printf("<dl style='display:none;' id='dl%s'>\n", $row_par->numero);
-				while ($row_sub_par=mysqli_fetch_object($res_sub_par)) {
-					$dtid = $row_par->numero.'-'.$row_sub_par->numero;
-					printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $row_par->numero, $row_sub_par->numero, traiteStringFromBDD($row_sub_par->libelle), $dtid);
-					printf("<dd class='comment'>%s</dd>", $row_sub_par->comment);
-					$req_quest = sprintf("SELECT * FROM question WHERE (id_paragraphe='%d' AND id_sub_paragraphe='%d') ORDER BY numero", $row_par->id, $row_sub_par->id);
-					$res_quest = mysqli_query($base, $req_quest);
-					$ddid = $row_par->numero.'-'.$row_sub_par->numero;
-					printf("<dd style='display:none;' id='dd%s'>\n", $ddid);
-					while ($row_quest=mysqli_fetch_object($res_quest)) {
-						$textID = 'comment'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
-						printf("<p><b>%s.%s.%s</b> %s</p>\n", $row_par->numero, $row_sub_par->numero, $row_quest->numero, traiteStringFromBDD($row_quest->libelle));
-						printSelect($row_par->numero, $row_sub_par->numero, $row_quest->numero, $assessment);
+			for ($d=0; $d<count($quiz); $d++) {
+				$num_dom = $quiz[$d]['numero'];
+				$subDom = $quiz[$d]['subdomains'];
+				printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $num_dom, $quiz[$d]['libelle'], $num_dom);
+				printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
+				for ($sd=0; $sd<count($subDom); $sd++) {
+					$num_sub_dom = $subDom[$sd]['numero'];
+					$questions = $subDom[$sd]['questions'];
+					$id = $num_dom.'-'.$num_sub_dom;
+					printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+					printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+					printf("<dd style='display:none;' id='dd%s'>\n", $id);
+					for ($q=0; $q<count($questions); $q++) {
+						$num_question = $questions[$q]['numero'];
+						$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+						printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+						printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
 						printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly='readonly' style='background-color:#FFC7C7'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
-						$evalID = 'eval'.$row_par->numero.'_'.$row_sub_par->numero.'_'.$row_quest->numero;
+						$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 						if (isset($assessment[$evalID])) {
 							printf("<br /><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $evalID, $evalID, traiteStringFromBDD($assessment[$evalID]));
 						} else {
@@ -309,7 +310,6 @@ function displayAudit() {
 			printf("</div>\n");
 			afficheNotesExplanation();
 			printf("</div>\n");
-			dbDisconnect($base);
 		} else {
 			linkMsg("audit.php", "L'évaluation pour ".$annee." est incomplète.", "alert.png");
 		}
