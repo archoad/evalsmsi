@@ -29,7 +29,7 @@ header('Content-Type: application/json');
 
 
 $annee = $_SESSION['annee'];
-$nom_etab = getEtablissement($_SESSION['id_etab']);
+$name_etab = getEtablissement($_SESSION['id_etab']);
 $labels = getAllDomAbstract();
 $reponses = getAnswers();
 $first_year = key($reponses);
@@ -56,7 +56,7 @@ for ($i=0; $i<count($labels); $i++) {
 
 
 $results = [];
-$results['etablissement'] = $nom_etab;
+$results['etablissement'] = $name_etab;
 $results['labels'] = $labels;
 $results['goals'] = $goal;
 $results['results'] = $scores;

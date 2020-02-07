@@ -29,6 +29,7 @@ headPage($appli_titre, "Audit");
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 purgeRapportsFiles();
 
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'office':
@@ -37,7 +38,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'do_office':
-		if (isEtabLegitimate($_POST['id_etab'])) {
+		if (isEtabLegitimate($_POST)) {
 			exportEval($script);
 			footPage($script, "Accueil");
 		} else {
@@ -52,9 +53,10 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'do_graph':
-		if (isEtabLegitimate($_POST['id_etab'])) {
+		if (isEtabLegitimate($_POST)) {
 			if (isThereAssessForEtab()) {
 				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+				getObjectives();
 				displayEtablissmentGraphs();
 				footPage($script, "Accueil");
 			} else {
@@ -74,7 +76,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'display_audit':
-		if (isEtabLegitimate($_POST['id_etab'])) {
+		if (isEtabLegitimate($_POST)) {
 			if (isRegroupEtab()) {
 				if (isAssessGroupValidate()) {
 					if (isThereAssessForEtab()) {
@@ -113,8 +115,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'prepare_rapport':
-		if (isEtabLegitimate($_POST['id_etab'])) {
-			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+		if (isEtabLegitimate($_POST)) {
 			getCommentGraphPar();
 		} else {
 			linkMsg($script, "Etablissement invalide", "alert.png");
@@ -137,8 +138,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'display_journal':
-		if (isEtabLegitimate($_POST['id_etab'])) {
-			printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
+		if (isEtabLegitimate($_POST)) {
 			journalisation();
 			footPage($script, "Accueil");
 		} else {
@@ -166,7 +166,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'display_objectif':
-		if (isEtabLegitimate($_POST['id_etab'])) {
+		if (isEtabLegitimate($_POST)) {
 			objectifs();
 			footPage($script, "Accueil");
 		} else {
@@ -190,7 +190,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'valid_delete':
-		if (isEtabLegitimate($_POST['id_etab'])) {
+		if (isEtabLegitimate($_POST)) {
 			if (isThereAssessForEtab()) {
 				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 				confirmDeleteAssessment($script);

@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include("functions.php");
 session_start();
-$authorizedRole = array('2', '3', '4');
+$authorizedRole = array('2');
 isSessionValid($authorizedRole);
 header('Content-Type: application/json');
 
@@ -46,7 +46,7 @@ function processAction($action) {
 
 
 $base = dbConnect();
-$request = sprintf("SELECT * FROM journal WHERE (YEAR(timestamp)='%d' AND etablissement='%d')", $_SESSION['annee'], $_SESSION['id_etab']);
+$request = sprintf("SELECT * FROM journal WHERE (YEAR(timestamp)='%d' AND etablissement='%d' AND quiz='%d')", $_SESSION['annee'], $_SESSION['id_etab'], $_SESSION['quiz']);
 $result = mysqli_query($base, $request);
 $rawdata = [];
 $cpt = 0;

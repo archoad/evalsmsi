@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 function createAssessment() {
 	$base = dbConnect();
-	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee']);
+	$request = sprintf("INSERT INTO assess (etablissement, annee, quiz) VALUES ('%d', '%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	if (mysqli_query($base, $request)) {
 		dbDisconnect($base);
 		return true;
@@ -36,9 +36,10 @@ function createAssessment() {
 function displayAssessment() {
 	$numQuestion = questionsCount();
 	$annee = $_SESSION['annee'];
+	$id_quiz = $_SESSION['quiz'];
 	$quiz = getJsonFile();
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $_SESSION['id_etab'], $annee);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $_SESSION['id_etab'], $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
@@ -72,8 +73,8 @@ function displayAssessment() {
 				$num_sub_dom = $subDom[$sd]['numero'];
 				$questions = $subDom[$sd]['questions'];
 				$id = $num_dom.'-'.$num_sub_dom;
-				$subpar_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
-				$fond = getColorButton($subpar_complete, $num_sub_dom);
+				$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
+				$fond = getColorButton($subdom_complete, $num_sub_dom);
 				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
 				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
 				printf("<dd style='display:none;' id='dd%s'>\n", $id);
@@ -113,7 +114,7 @@ function writeAssessment(){
 	recordLog();
 	$comment = isset($answer['final_comment']) ? traiteStringToBDD($answer['final_comment']) : NULL;
 	$record = controlAssessment($_POST);
-	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE (etablissement='%d' AND annee='%d')", $record, $comment, $_SESSION['id_etab'], $_SESSION['annee']);
+	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE etablissement='%d' AND annee='%d' AND quiz='%d' ", $record, $comment, $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	$base = dbConnect();
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
@@ -149,7 +150,7 @@ function exportRapport($script, $annee) {
 
 function selectYearRapport() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee DESC", $_SESSION['id_etab']);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND quiz='%d' ORDER BY annee DESC", $_SESSION['id_etab'], $_SESSION['quiz']);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	$list = array();

@@ -74,16 +74,15 @@ function chooseEtablissement($record=0) {
 		}
 	}
 	printf("</div>\n");
-
 	printf("<div id='destination' class='dropper'>\n");
 	printf("<div class='grid_title'>Etablissements sélectionnés</div>");
 	if ($record) {
 		foreach ($listetbs as $id_etab) {
-			printf("<div id='%d' class='draggable'>%s</div>\n", intval($id_etab), getEtablissement(intval($id_etab)));
+			$name_etab = getEtablissement($id_etab);
+			printf("<div id='%d' class='draggable'>%s</div>\n", $id_etab, $name_etab);
 		}
 	}
 	printf("</div>\n");
-
 	printf("</div>\n");
 }
 
@@ -322,7 +321,7 @@ function recordEtablissement($action) {
 	$code_postal = isset($_POST['cp']) ? intval(trim($_POST['cp'])) : NULL;
 	$ville = isset($_POST['ville']) ? traiteStringToBDD($_POST['ville']) : NULL;
 	$regroup = isset($_POST['regroup']) ?  implode(",", $_POST['regroup']) : NULL;
-	$objectifs = createDefaultObjectifs($base);
+	$objectifs = createDefaultObjectifs();
 	switch ($action) {
 		case 'add':
 			$request = sprintf("INSERT INTO etablissement (nom, abrege, adresse, ville, code_postal, objectifs) VALUES ('%s', '%s', '%s', '%s', '%d', '%s')", $nom, $abrege, $adresse, $ville, $code_postal, $objectifs);
@@ -392,16 +391,26 @@ function modifications() {
 }
 
 
-function createDefaultObjectifs($base) {
-	$objs = array();
-	$req_par = "SELECT * FROM paragraphe ORDER BY numero";
-	$res_par = mysqli_query($base, $req_par);
-	while ($row_par=mysqli_fetch_object($res_par)) {
-		$objCurr = sprintf("obj_%d", $row_par->id);
-		$objs[$objCurr] = 7;
+function createDefaultObjectifs() {
+	global $cheminDATA;
+	$objectives = array();
+	$base = dbConnect();
+	$request = sprintf("SELECT * FROM quiz");
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	while ($row = mysqli_fetch_object($result)) {
+		$domains = array();
+		$jsonFile = sprintf("%s%s", $cheminDATA, $row->filename);
+		$jsonSource = file_get_contents($jsonFile);
+		$jsonQuiz = json_decode($jsonSource, true);
+		for ($i=0; $i<count($jsonQuiz); $i++) {
+			$objCurr = sprintf("obj_%d", $jsonQuiz[$i]['numero']);
+			$domains[$objCurr] = 4;
+		}
+		$objectives[$row->id] = $domains;
 	}
-	$result = mysqli_real_escape_string($base, serialize($objs));
-	return $result;
+	$output = json_encode($objectives);
+	return $output;
 }
 
 

@@ -97,21 +97,6 @@ function user_champs_ok(form) {
 }
 
 
-function createObject() {
-	var xhr=null;
-	try {
-		xhr=new XMLHttpRequest();
-	}catch (e){
-		try {
-			xhr=new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			xhr=new ActiveXObject("Microsoft.XMLHTTP");
-		}
-	}
-	return xhr;
-}
-
-
 function password_ok(form) {
 	if (form.new1.value.length < 6) {
 		myAlert('Le mot de passe doit contenir plus de 6 caractères', form.new1);
@@ -222,6 +207,7 @@ function isset(variable) {
 	}
 }
 
+
 function getURLParam(strParamName){
 	var strReturn = "";
 	var strHref = window.location.href;
@@ -237,6 +223,22 @@ function getURLParam(strParamName){
 		}
 	}
 	return unescape(strReturn);
+}
+
+
+function xhrequest(input) {
+	var xhr = new XMLHttpRequest();
+	var url="ajax.php?query="+input;
+	xhr.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var row = document.getElementById('selectEtabRow');
+			if (row.cells.length > 1) { row.deleteCell(-1); }
+			var newCell = row.insertCell(-1);
+			newCell.innerHTML = xhr.responseText;
+		}
+	};
+	xhr.open("GET", url, true);
+	xhr.send();
 }
 
 

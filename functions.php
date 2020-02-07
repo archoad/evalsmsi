@@ -117,15 +117,15 @@ function menuAdmin() {
 function menuEtab() {
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	if (isset($_SESSION['quiz_file'])) {
-		linkMsg("etab.php?action=continue_assess", "Réaliser une évaluation", "eval_continue.png", 'menu');
+	if (isset($_SESSION['quiz'])) {
+		linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
 		linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
 	}
 	linkMsg("etab.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
 	printf("</div><div class='column right'>\n");
 	linkMsg("etab.php?action=choose_quiz", "Choisir un référentiel", "quiz.png", 'menu');
-	if (isset($_SESSION['quiz_file'])) {
+	if (isset($_SESSION['quiz'])) {
 		linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
 		linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
 		linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
@@ -165,7 +165,7 @@ function sanitizePhpSelf($phpself) {
 }
 
 
-function dbConnect(){
+function dbConnect() {
 	global $servername, $dbname, $login, $passwd;
 	$dbh = mysqli_connect($servername, $login, $passwd) or die("Problème de connexion");
 	mysqli_select_db($dbh, $dbname) or die("problème avec la table");
@@ -174,7 +174,7 @@ function dbConnect(){
 }
 
 
-function dbDisconnect($dbh){
+function dbDisconnect($dbh) {
 	mysqli_close($dbh);
 	$dbh=0;
 }
@@ -182,9 +182,34 @@ function dbDisconnect($dbh){
 
 function getJsonFile() {
 	global $cheminDATA;
-	$jsonFile = sprintf("%s%s", $cheminDATA, $_SESSION['quiz_file']);
+	$base = dbConnect();
+	$request = sprintf("SELECT filename FROM quiz WHERE id='%d' LIMIT 1", $_SESSION['quiz']);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	$jsonFile = sprintf("%s%s", $cheminDATA, $row->filename);
 	$jsonSource = file_get_contents($jsonFile);
 	return json_decode($jsonSource, true);
+}
+
+
+function getQuizNameById($id_quiz) {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom FROM quiz WHERE id='%d' LIMIT 1", $id_quiz);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	return $row->nom;
+}
+
+
+function getQuizName() {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom FROM quiz WHERE id='%d' LIMIT 1", $_SESSION['quiz']);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	return $row->nom;
 }
 
 
@@ -314,8 +339,8 @@ function headPage($titre, $sousTitre=''){
 	} else {
 		printf("<h2>%s</h2>\n", uidToEtbs());
 	}
-	if (isset($_SESSION['quiz_name'])) {
-		printf("<h4>%s</h4>\n", $_SESSION['quiz_name']);
+	if (isset($_SESSION['quiz']) && intval($_SESSION['role'])!=2) {
+		printf("<h4>%s</h4>\n", getQuizName());
 	}
 }
 
@@ -368,8 +393,10 @@ function linkMsg($link, $msg, $img, $class='msg') {
 
 function recordLog() {
 	$id_etab = $_SESSION['id_etab'];
+	$annee = $_SESSION['annee'];
+	$id_quiz = $_SESSION['quiz'];
 	$base = dbConnect();
-	$request = sprintf("SELECT reponses FROM assess WHERE (annee='%s' AND etablissement='%d') LIMIT 1", $_SESSION['annee'], $id_etab);
+	$request = sprintf("SELECT reponses FROM assess WHERE annee='%s' AND etablissement='%d' AND quiz='%d' LIMIT 1", $annee, $id_etab, $id_quiz);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	$rep = unserialize($row->reponses);
@@ -383,7 +410,7 @@ function recordLog() {
 		$tabdiff = array_diff_assoc($_POST, $rep);
 	}
 	$tabstr = mysqli_real_escape_string($base, serialize($tabdiff));
-	$request=sprintf("INSERT INTO journal (ip, etablissement, navigateur, os, user, action) VALUES ('%s', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $id_etab, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
+	$request=sprintf("INSERT INTO journal (ip, etablissement, quiz, navigateur, os, user, action) VALUES ('%s', '%d', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $id_etab, $id_quiz, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
 	mysqli_query($base, $request);
 	dbDisconnect($base);
 }
@@ -447,8 +474,7 @@ function setRightQuiz($id) {
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	$row = mysqli_fetch_object($result);
-	$_SESSION['quiz_file'] = $row->filename;
-	$_SESSION['quiz_name'] = $row->nom;
+	$_SESSION['quiz'] = $row->id;
 }
 
 
@@ -496,22 +522,6 @@ function controlAssessment($answer) {
 }
 
 
-function controlObjectifs($answer) {
-	global $noteMax;
-	foreach ($answer as $key => $value){
-		$tmp = intval($value);
-		if ($tmp<0 || $tmp>$noteMax) {
-			$tmp = 0;
-		}
-		$answer[$key] = $tmp;
-	}
-	$base = dbConnect();
-	$answer = mysqli_real_escape_string($base, serialize($answer));
-	dbDisconnect($base);
-	return $answer;
-}
-
-
 function uidToEtbs() {
 	$base = dbConnect();
 	$request = sprintf("SELECT nom FROM etablissement WHERE id='%d' LIMIT 1", intval($_SESSION['id_etab']));
@@ -533,6 +543,24 @@ function getRole($id) {
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
 	return $row->intitule;
+}
+
+
+function getDomLibelle($id_quiz) {
+	global $cheminDATA;
+	$base = dbConnect();
+	$request = sprintf("SELECT filename FROM quiz WHERE id='%d' LIMIT 1", $id_quiz);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	$jsonFile = sprintf("%s%s", $cheminDATA, $row->filename);
+	$jsonSource = file_get_contents($jsonFile);
+	$jsonQuiz = json_decode($jsonSource, true);
+	$domLibelle = array();
+	for ($d=0; $d<count($jsonQuiz); $d++) {
+		$domLibelle[$jsonQuiz[$d]['numero']] = $jsonQuiz[$d]['libelle'];
+	}
+	return $domLibelle;
 }
 
 
@@ -575,7 +603,7 @@ function getEtablissement($id_etab=0, $abrege=0) {
 		}
 	} else {
 		$base = dbConnect();
-		if (intval($_SESSION['role']) == 2) {
+		if (intval($_SESSION['role']) === 2) {
 			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s)", $_SESSION['audit_etab']);
 		} else {
 			$request = "SELECT * FROM etablissement";
@@ -666,15 +694,21 @@ function getAuditor() {
 function isThereAssessForEtab() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
-	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' LIMIT 1", $id_etab, $annee);
-	$result=mysqli_query($base, $request);
-	dbDisconnect($base);
-	if ($result->num_rows) {
-		return true;
+	if (isset($_SESSION['quiz'])) {
+		$id_quiz = $_SESSION['quiz'];
+		$base = dbConnect();
+		$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
+		$result=mysqli_query($base, $request);
+		dbDisconnect($base);
+		if ($result->num_rows) {
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}
+
 }
 
 
@@ -940,12 +974,19 @@ function getPoidsQuestion($num) {
 
 
 function getObjectives() {
+	$id_quiz = $_SESSION['quiz'];
+	$id_etab = $_SESSION['id_etab'];
 	$base = dbConnect();
-	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
+	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
-	return array_values(unserialize($row->objectifs));
+	$objectives = json_decode($row->objectifs, true);
+	$output = array();
+	foreach ($objectives[$id_quiz] as $key => $value) {
+		$output[] = $value;
+	}
+	return $output;
 }
 
 
@@ -959,8 +1000,10 @@ function isAssessComplete($table) {
 
 
 function getAnswers() {
+	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' ORDER BY annee", $_SESSION['id_etab']);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND quiz='%d' ORDER BY annee", $id_etab, $id_quiz);
 	$result = mysqli_query($base, $request);
 	$answers = array();
 	while ($row = mysqli_fetch_object($result)) {
@@ -1151,10 +1194,11 @@ function displayEtablissmentGraphs() {
 function assessSynthese() {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
+	$id_quiz = $_SESSION['quiz'];
 	$titles_par = getAllDomAbstract();
 
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%s'", $annee, $id_etab);
+	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%d' AND quiz='%d'", $annee, $id_etab, $id_quiz);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	$reponses = array();
@@ -1267,12 +1311,13 @@ function getNavigateurName($str) {
 
 
 function isValidateRapport($id_etab, $annee=0) {
+	$id_quiz = $_SESSION['quiz'];
 	$base = dbConnect();
 	$id_etab = intval($id_etab);
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
-	$request = sprintf("SELECT valide FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$request = sprintf("SELECT valide FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
@@ -1488,6 +1533,7 @@ function printAssessment($assessment, $annee=0) {
 
 function printGraphsAndNotes($annee) {
 	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
 	$nbr_par = domainCount();
 	$titles_par = getAllDomAbstract();
 	$name_etab = getEtablissement($id_etab);
@@ -1495,7 +1541,7 @@ function printGraphsAndNotes($annee) {
 	$notes = calculNotes($reponses[$annee]);
 	$noteSum = 0;
 	$base = dbConnect();
-	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
@@ -1607,6 +1653,7 @@ function makeRapport($abrege_etab, $text, $annee) {
 
 function generateRapport($script, $annee=0) {
 	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
 	$printByEtablissement = true;
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
@@ -1615,7 +1662,7 @@ function generateRapport($script, $annee=0) {
 	$name_etab = getEtablissement($id_etab);
 	$abrege_etab = getEtablissement($id_etab, $abrege=1);
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	// Il existe une évaluation pour cet établissement
@@ -1683,8 +1730,8 @@ function exportEval($script) {
 	global $appli_titre, $appli_titre_short;
 	$dir = dirname($_SERVER['PHP_SELF']);
 	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
 	$annee = $_SESSION['annee'];
-	$quiz = getJsonFile();
 	$abrege_etab = getEtablissement(intval($id_etab), $abrege=1);
 	$fileDoc = sprintf("rapports/evaluation_%s.docx", $abrege_etab);
 	$fileXlsx = sprintf("rapports/evaluation_%s.xlsx", $abrege_etab);
@@ -1733,11 +1780,12 @@ function exportEval($script) {
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Mesure', 'Note', 'Commentaire'];
 	$name_etab = getEtablissement($id_etab);
 	$base = dbConnect();
-	$req_assessment = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$req_assessment = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 	$res_assessment = mysqli_query($base, $req_assessment);
 	dbDisconnect($base);
 
 	if (mysqli_num_rows($res_assessment)) {
+		$quiz = getJsonFile();
 		$row_assessment=mysqli_fetch_object($res_assessment);
 		if (!empty($row_assessment->reponses)) {
 			$assessment = unserialize($row_assessment->reponses);
@@ -1822,6 +1870,7 @@ function exportEval($script) {
 
 function generateExcellRapport($annee) {
 	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
 	$fileXlsx = sprintf("rapports/plan_actions_%d.xlsx", $id_etab);
 	$quiz = getJsonFile();
 
@@ -1844,7 +1893,7 @@ function generateExcellRapport($annee) {
 	$eval = array();
 	$eval[] = ['Thème', 'Domaine', 'Règle', 'Note', 'Commentaire', 'Commentaire évaluateur', 'Mesure'];
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE (etablissement='%d' AND annee='%d') LIMIT 1", $id_etab, $annee);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 
