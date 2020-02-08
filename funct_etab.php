@@ -179,6 +179,4 @@ function selectYearRapport() {
 }
 
 
-
-
 ?>

@@ -55,9 +55,8 @@ $captchaMode = 'num'; // 'txt' or 'num'
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
 
-//ini_set('display_errors', 0);
-//ini_set('error_reporting', 0);
-ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', -1);
+ini_set('display_error', 1);
 ini_set('session.use_trans_sid', 0);
 ini_set('session.use_cookie', 1);
 //ini_set('session.cookie_secure', 1);
@@ -81,7 +80,6 @@ $cheminDATA = sprintf("%s/data/", $server_path);
 
 require_once ('phpoffice/bootstrap.php');
 
-use Dompdf\Dompdf;
 use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
 use PhpOffice\PhpWord\Style\Language;
@@ -89,7 +87,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 Settings::loadConfig();
-Settings::setPdfRenderer(Settings::PDF_RENDERER_DOMPDF, 'phpoffice/vendor/dompdf/dompdf');
 
 $largeur=798; // Largeur graphe
 $hauteur=532; // Hauteur graphe
@@ -167,10 +164,15 @@ function sanitizePhpSelf($phpself) {
 
 function dbConnect() {
 	global $servername, $dbname, $login, $passwd;
-	$dbh = mysqli_connect($servername, $login, $passwd) or die("Problème de connexion");
-	mysqli_select_db($dbh, $dbname) or die("problème avec la table");
-	mysqli_set_charset($dbh , 'utf8');
-	return $dbh;
+	$link = mysqli_connect($servername, $login, $passwd, $dbname);
+	if (!$link) {
+		$msg = sprintf("Erreur de connexion: %d (%s)", mysqli_connect_errno(),  mysqli_connect_error());
+		linkMsg("evalsmsi.php", $msg, "alert.png");
+		footPage();
+	} else {
+		mysqli_set_charset($link , 'utf8');
+		return $link;
+	}
 }
 
 
@@ -1416,7 +1418,7 @@ function latexHead($annee=0) {
 	dbDisconnect($base);
 
 	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n\\Subject{Evaluation du SMSI}\n\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
-	$en_tete .= "\\documentclass[a4paper,10pt]{article}\n\n\\input{header}\n\n";
+	$en_tete .= "\\documentclass[a4paper,11pt]{article}\n\n\\input{header}\n\n";
 	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
 	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $name_etab);
@@ -2032,12 +2034,78 @@ function exportRules() {
 	$msg = "Télécharger le référentiel (Word)";
 	linkMsg($script."/".$fileDoc, $msg, "docx.png", 'menu');
 	printf("</div>\n<div class='column right'>\n");
-	$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'PDF');
-	$objWriter->save($filePdf);
+	makeReferentiel();
 	$msg = "Télécharger le référentiel (Adobe PDF)";
 	linkMsg($script."/".$filePdf, $msg, "pdf.png", 'menu');
 	printf("</div>\n</div>\n");
 }
 
+
+function generateReferentiel() {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom FROM quiz WHERE id='%d' LIMIT 1", $_SESSION['quiz']);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	$name_quiz = $row->nom;
+	$quiz = getJsonFile();
+	$text = "\\begin{filecontents*}{\jobname.xmpdata}\n";
+	$text .= "\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n";
+	$text .= "\\Subject{Evaluation du SMSI}\n";
+	$text .= "\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
+	$text .= "\\documentclass[a4paper,11pt]{article}\n\n";
+	$text .= "\\input{header}\n\n";
+	$text .= sprintf("\\title{Référentiel\\\\ \\textcolor{myBlue}{%s}}\n\n", $name_quiz);
+	$text .= sprintf("\\author{EvalSMSI}\n\n");
+	$text .= "\\date{\\today}\n\n";
+	$text .= "\\begin{document}\n\n";
+	$text .= "\\maketitle\n\n";
+	$text .= "\\clearpage\n\n";
+	$text .= "\\textcolor{myRed}{\\tableofcontents}\n\n\\clearpage\n\n";
+	for ($d=0; $d<count($quiz); $d++) {
+		$num_dom = $quiz[$d]['numero'];
+		if ($num_dom > 1) { $text .= "\\clearpage\n\n"; }
+		$subDom = $quiz[$d]['subdomains'];
+		$text .= sprintf("\\section{%s}\n\n", $quiz[$d]['libelle']);
+		for ($sd=0; $sd<count($subDom); $sd++) {
+			$num_sub_dom = $subDom[$sd]['numero'];
+			$questions = $subDom[$sd]['questions'];
+			$text .= sprintf("\\subsection{%s}\n\n", $subDom[$sd]['libelle']);
+			$text .= sprintf("%s\n\n", $subDom[$sd]['comment']);
+			for ($q=0; $q<count($questions); $q++) {
+				$num_question = $questions[$q]['numero'];
+				$text .= sprintf("\\textbf{Règle %d.%d.%d}\n\n", $num_dom, $num_sub_dom, $num_question);
+				$text .= sprintf("%s\n\n", $questions[$q]['libelle']);
+				$text .= sprintf("\\textbf{Mesure %d.%d.%d}\n\n", $num_dom, $num_sub_dom, $num_question);
+				$text .= sprintf("%s\n\n", $questions[$q]['mesure']);
+				$text .= "\\tikz[baseline=-0.5ex]{ \draw [line width=1pt, draw=myRed] (0,0.3) -- (0,0) -- (15,0); }\n\n";
+			}
+		}
+	}
+	$text .= "\\end{document}\n\n";
+	return $text;
+}
+
+
+function makeReferentiel() {
+	global $cheminRAP, $cheminDATA;
+	$text = generateReferentiel();
+	$fileName = "referentiel";
+	$file = sprintf("%s%s.tex", $cheminDATA, $fileName);
+	$pdffile = sprintf("%s%s.pdf", $cheminDATA, $fileName);
+	$newpdffile = sprintf("%s%s.pdf", $cheminRAP, $fileName);
+	$pdfLink = sprintf("%s/rapports/%s.pdf", dirname($_SERVER['REQUEST_URI']), $fileName);
+	if ($handle = fopen($file, "w")) {
+		fwrite($handle, $text);
+		fclose($handle);
+		$rem_courant = getcwd();
+		chdir($cheminDATA);
+		exec("make");
+		exec("make clean");
+		unlink($file);
+		rename($pdffile, $newpdffile);
+		chdir($rem_courant);
+	}
+}
 
 ?>
