@@ -108,7 +108,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
 	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
-	linkMsg("admin.php?action=bilan_etab", "Bilan global", "add_etab.png", 'menu');
+	linkMsg("admin.php?action=bilan_etab", "Bilan global", "bilan.png", 'menu');
 	printf("</div>\n</div>");
 }
 
@@ -2146,5 +2146,71 @@ function makeReferentiel() {
 		chdir($rem_courant);
 	}
 }
+
+function bilanByEtab() {
+	$base = dbConnect();
+	$req_etab = sprintf("SELECT * FROM etablissement");
+	$res_etab = mysqli_query($base, $req_etab);
+	printf("<div class='bilan'>");
+	while ($row_etab = mysqli_fetch_object($res_etab)) {
+		printf("<table>\n");
+		printf("<tr><th colspan='3'>%s (%s)</th></tr>\n", $row_etab->nom, $row_etab->abrege);
+		printf("<tr>\n");
+		printf("<th width='20%%'>Adresse</th>");
+		printf("<td width='40%%'>%s</td>", $row_etab->adresse);
+		printf("<td width='40%%'>%s %s</td>", $row_etab->code_postal, $row_etab->ville);
+		printf("</tr>\n");
+		$req_user = sprintf("SELECT role, nom, prenom, login FROM users WHERE etablissement = '%d'", $row_etab->id);
+		$res_user = mysqli_query($base, $req_user);
+		if (mysqli_num_rows($res_user)) {
+			while ($row_user = mysqli_fetch_object($res_user)) {
+				printf("<tr>\n");
+				printf("<th>Directeur</th>");
+				if ($row_user->role == '3') {
+					printf("<td>%s %s</td>", $row_user->prenom, $row_user->nom);
+					printf("<td>%s</td>", $row_user->login);
+				} else {
+					printf("<td colspan='2' class='notok'>Pas de directeur enregistré</td>");
+				}
+				printf("</tr>\n");
+				printf("<tr>\n");
+				printf("<th>RSSI</th>");
+				if ($row_user->role == '4') {
+					printf("<td>%s %s</td>", $row_user->prenom, $row_user->nom);
+					printf("<td>%s</td>", $row_user->login);
+				} else {
+					printf("<td colspan='2' class='notok'>Pas de RSSI enregistré</td>");
+				}
+				printf("</tr>\n");
+			}
+		} else {
+			printf("<tr>\n<th>Directeur</th>");
+			printf("<td colspan='2' class='notok'>Pas de directeur enregistré</td>");
+			printf("</tr>\n");
+			printf("<tr>\n<th>RSSI</th>");
+			printf("<td colspan='2' class='notok'>Pas de RSSI enregistré</td>");
+			printf("</tr>\n");
+		}
+		$req_auditor = sprintf("SELECT nom, prenom, login, etablissement FROM users WHERE role='2'");
+		$res_auditor = mysqli_query($base, $req_auditor);
+		printf("<tr>\n");
+		printf("<th>Auditeur</th>");
+		while($row_auditor = mysqli_fetch_object($res_auditor)) {
+			$etabs = explode(',', $row_auditor->etablissement);
+			if (in_array($row_etab->id, $etabs)) {
+				printf("<td>%s %s</td>", $row_auditor->prenom, $row_auditor->nom);
+				printf("<td>%s</td>", $row_auditor->login);
+			} else {
+				printf("<td colspan='2' class='notok'>Pas d'auditeur enregistré</td>");
+			}
+		}
+		printf("</tr>\n");
+		printf("</table>\n<br />\n");
+	}
+	printf("</div>");
+	dbDisconnect($base);
+}
+
+
 
 ?>

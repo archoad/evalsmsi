@@ -882,3 +882,18 @@ textarea {
 	color: var(--textClearColor);
 	background-color: var(--myRedDark);
 }
+
+.bilan {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.bilan td {
+	text-align: left;
+}
+
+.notok {
+	text-align: center;
+	color:var(--myRedDark);
+}

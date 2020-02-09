@@ -133,6 +133,11 @@ if (isset($_GET['action'])) {
 		footPage($script, "Accueil");
 		break;
 
+	case 'bilan_etab':
+		bilanByEtab();
+		footPage($script, "Accueil");
+		break;
+
 	case 'rm_token':
 		if (isset($_SESSION['token'])) {
 			unset($_SESSION['token']);
