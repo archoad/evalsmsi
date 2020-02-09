@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 function isEtabLegitimate($tab) {
+	genSyslog(__FUNCTION__);
 	$id_etab = intval($tab['id_etab']);
 	if(isset($_SESSION['id_etab'])) {
 		unset($_SESSION['id_etab']);
@@ -40,6 +41,7 @@ function isEtabLegitimate($tab) {
 
 
 function createAssessmentRegroup() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $_SESSION['etablissement'], $_SESSION['annee']);
 	if (mysqli_query($base, $request)){
@@ -53,6 +55,7 @@ function createAssessmentRegroup() {
 
 
 function selectEtablissementAudit() {
+	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['quiz'])) { unset($_SESSION['quiz']); }
 	$action = explode('=', $_SERVER['QUERY_STRING'])[1];
 	$result = getEtablissement();
@@ -105,6 +108,7 @@ function selectEtablissementAudit() {
 
 
 function getAssessment() {
+	genSyslog(__FUNCTION__);
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
@@ -121,6 +125,7 @@ function getAssessment() {
 
 
 function writeAudit() {
+	genSyslog(__FUNCTION__);
 	recordLog();
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
@@ -147,6 +152,7 @@ function writeAudit() {
 
 
 function objectifs() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
@@ -182,6 +188,7 @@ function objectifs() {
 
 function controlObjectifs($answer) {
 	global $noteMax;
+	genSyslog(__FUNCTION__);
 	foreach ($answer as $key => $value) {
 		$tmp = intval($value);
 		if ($tmp<0 || $tmp>$noteMax) {
@@ -201,6 +208,7 @@ function controlObjectifs($answer) {
 
 
 function recordObjectifs() {
+	genSyslog(__FUNCTION__);
 	$objectives = controlObjectifs($_POST);
 	$base = dbConnect();
 	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d' ", $objectives, $_SESSION['id_etab']);
@@ -221,6 +229,7 @@ function recordObjectifs() {
 
 
 function journalisation() {
+	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['quiz'])) {
 		printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
 		printf("<div class='onecolumn' id='graphs'>\n");
@@ -236,6 +245,7 @@ function journalisation() {
 
 
 function recordCommentGraph() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$id_assess = isset($_POST['id_assess']) ? intval(trim($_POST['id_assess'])) : NULL;
 	$comment = isset($_POST['comments']) ? traiteStringToBDD($_POST['comments']) : NULL;
@@ -257,6 +267,7 @@ function recordCommentGraph() {
 
 
 function isAssessGroupValidate() {
+	genSyslog(__FUNCTION__);
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
@@ -288,6 +299,7 @@ function isAssessGroupValidate() {
 
 
 function displayAudit() {
+	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['quiz'])) {
 		$id_quiz = $_SESSION['quiz'];
 		$id_etab = $_SESSION['id_etab'];
@@ -374,6 +386,7 @@ function displayAudit() {
 
 
 function displayAuditRegroup() {
+	genSyslog(__FUNCTION__);
 	$id_etab = $_SESSION['id_etab'];
 	$id_quiz = $_SESSION['quiz'];
 	$annee = $_SESSION['annee'];
@@ -500,6 +513,7 @@ function displayAuditRegroup() {
 
 
 function getCommentGraphPar() {
+	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['quiz'])) {
 		$id_etab = $_SESSION['id_etab'];
 		$annee = $_SESSION['annee'];
@@ -570,6 +584,7 @@ function getCommentGraphPar() {
 
 
 function confirmDeleteAssessment($script) {
+	genSyslog(__FUNCTION__);
 	$name_etab = getEtablissement($_SESSION['id_etab']);
 	$annee = $_SESSION['annee'];
 	$msg = sprintf("Cliquer pour effacer l'évaluation<br />réalisée en <b>%d</b> par <b>%s</b>", $annee, $name_etab);
@@ -582,6 +597,7 @@ function confirmDeleteAssessment($script) {
 
 
 function deleteAssessment() {
+	genSyslog(__FUNCTION__);
 	$id_etab = $_SESSION['id_etab'];
 	$id_quiz = $_SESSION['quiz'];
 	$annee = $_SESSION['annee'];

@@ -23,6 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 include("functions.php");
 
 function headPageAuth() {
+	genSyslog(__FUNCTION__);
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -40,12 +41,14 @@ function headPageAuth() {
 
 
 function footPageAuth() {
+	genSyslog(__FUNCTION__);
 	printf("</body>\n</html>\n");
 }
 
 
 function menuAuth($msg='') {
 	global $auhtPict;
+	genSyslog(__FUNCTION__);
 	initiateNullSession();
 	headPageAuth();
 	printf("<div class='authcont'>\n");
@@ -71,6 +74,7 @@ function menuAuth($msg='') {
 
 
 function authentification($login, $password) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $login);
 	$result = mysqli_query($base, $request);
@@ -89,6 +93,7 @@ function authentification($login, $password) {
 
 
 function initiateSession($data) {
+	genSyslog(__FUNCTION__);
 	global $cssTheme, $captchaMode;
 	session_regenerate_id();
 	date_default_timezone_set('Europe/Paris');
@@ -116,6 +121,7 @@ function initiateSession($data) {
 
 
 function initiateNullSession() {
+	genSyslog(__FUNCTION__);
 	global $cssTheme, $captchaMode;
 	session_regenerate_id();
 	$_SESSION['theme'] = $cssTheme;
@@ -126,6 +132,7 @@ function initiateNullSession() {
 
 
 function validateCaptcha($captcha) {
+	genSyslog(__FUNCTION__);
 	if (strncmp($_SESSION['sess_captcha'], $captcha, 6) === 0) {
 		return true;
 	} else {
@@ -136,6 +143,7 @@ function validateCaptcha($captcha) {
 
 function redirectUser($data) {
 	global $appli_titre;
+	genSyslog(__FUNCTION__);
 	initiateSession($data);
 	if(isset($_SESSION['sess_captcha'])) {
 		unset($_SESSION['sess_captcha']);

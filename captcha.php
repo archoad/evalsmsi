@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
-
+include("functions.php");
 session_start();
 if(isset($_SESSION['sess_captcha'])) {
 	unset($_SESSION['sess_captcha']);
@@ -33,6 +33,7 @@ $imgHeight = 25;
 
 function generateLines($image, $nbr) {
 	global $imgWidth, $imgHeight;
+	genSyslog(__FUNCTION__);
 	for($i=0; $i<=$nbr; $i++) {
 		$lineColor = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
 		imageline($image, rand(1, $imgWidth-$imgHeight), rand(1, $imgHeight), rand(1, $imgWidth+$imgHeight), rand(1, $imgHeight), $lineColor);
@@ -41,6 +42,7 @@ function generateLines($image, $nbr) {
 
 
 function txtCaptcha($image) {
+	genSyslog(__FUNCTION__);
 	$captchaString = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 	$captchaString = str_shuffle($captchaString);
 	$_SESSION['sess_captcha'] = substr($captchaString, 0, 6);
@@ -50,6 +52,7 @@ function txtCaptcha($image) {
 
 
 function numCaptcha($image) {
+	genSyslog(__FUNCTION__);
 	$captchaNumber = ["un", "deux", "trois", "quatre", "cinq"];
 	$val1 = rand(1, 5);
 	$val2 = rand(1, 5);

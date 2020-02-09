@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 function maintenanceBDD() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = "select table_name from information_schema.tables
 where table_schema='evalsmsi' ";
@@ -51,6 +52,7 @@ where table_schema='evalsmsi' ";
 
 
 function chooseEtablissement($record=0) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	if ($record) {
 		$req_etbs = sprintf("SELECT id,nom,abrege FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
@@ -88,6 +90,7 @@ function chooseEtablissement($record=0) {
 
 
 function createUser() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$req_role = "SELECT id,intitule FROM role WHERE id<>'1'";
 	$res_role = mysqli_query($base, $req_role);
@@ -115,6 +118,7 @@ function createUser() {
 
 
 function selectUserModif() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = "SELECT * FROM users WHERE role<>'1'";
 	$result = mysqli_query($base, $request);
@@ -134,6 +138,7 @@ function selectUserModif() {
 
 
 function modifUser() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE id='%d' LIMIT 1", $_SESSION['current_user']);
 	$result = mysqli_query($base, $request);
@@ -165,6 +170,7 @@ function modifUser() {
 
 
 function recordUser($action) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$id = intval($_SESSION['current_user']);
 	$prenom = isset($_POST['prenom']) ? traiteStringToBDD($_POST['prenom']) : NULL;
@@ -208,6 +214,7 @@ function recordUser($action) {
 
 
 function createEtablissement($action='') {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	if ($action === 'regroup') {
 		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_regroup' onsubmit='return champs_ok(this)'>\n");
@@ -244,6 +251,7 @@ function createEtablissement($action='') {
 
 
 function selectEtablissementModif() {
+	genSyslog(__FUNCTION__);
 	$result=getEtablissement();
 	printf("<form method='post' id='modif_etab' action='admin.php?action=modif_etab' onsubmit='return champs_ok(this)'>\n");
 	printf("<fieldset>\n<legend>Modification d'un établissement</legend>\n");
@@ -265,6 +273,7 @@ function selectEtablissementModif() {
 
 
 function modifEtablissement() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['current_etab']);
 	$result = mysqli_query($base, $request);
@@ -314,6 +323,7 @@ function modifEtablissement() {
 
 
 function recordEtablissement($action) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$nom = isset($_POST['nom']) ? traiteStringToBDD($_POST['nom']) : NULL;
 	$abrege = isset($_POST['abrege']) ? mb_strtoupper(traiteStringToBDD($_POST['abrege'])) : NULL;
@@ -370,6 +380,7 @@ function recordEtablissement($action) {
 
 
 function modifications() {
+	genSyslog(__FUNCTION__);
 	$quiz = getJsonFile();
 	printf("<table>\n");
 	printf("<tr><th style='width:12%%'>Domaine</th><th style='width:12%%'>Sous-domaine</th><th>Question</th><th>Poids</th><th>&nbsp;</th></tr>\n");
@@ -393,6 +404,7 @@ function modifications() {
 
 function createDefaultObjectifs() {
 	global $cheminDATA;
+	genSyslog(__FUNCTION__);
 	$objectives = array();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM quiz");

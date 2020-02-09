@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 function createAssessment() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("INSERT INTO assess (etablissement, annee, quiz) VALUES ('%d', '%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	if (mysqli_query($base, $request)) {
@@ -34,6 +35,7 @@ function createAssessment() {
 
 
 function displayAssessment() {
+	genSyslog(__FUNCTION__);
 	$numQuestion = questionsCount();
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
@@ -110,7 +112,8 @@ function displayAssessment() {
 }
 
 
-function writeAssessment(){
+function writeAssessment() {
+	genSyslog(__FUNCTION__);
 	recordLog();
 	$comment = isset($answer['final_comment']) ? traiteStringToBDD($answer['final_comment']) : NULL;
 	$record = controlAssessment($_POST);
@@ -133,6 +136,7 @@ function writeAssessment(){
 
 
 function exportRapport($script, $annee) {
+	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
 	}
@@ -149,6 +153,7 @@ function exportRapport($script, $annee) {
 
 
 function selectYearRapport() {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND quiz='%d' ORDER BY annee DESC", $_SESSION['id_etab'], $_SESSION['quiz']);
 	$result = mysqli_query($base, $request);

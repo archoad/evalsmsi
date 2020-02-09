@@ -73,7 +73,7 @@ ini_set('filter.default', 'full_special_chars');
 ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
-
+$progVersion = '4.6';
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
 $cheminDATA = sprintf("%s/data/", $server_path);
@@ -97,6 +97,7 @@ $colors = array('darkslateblue', 'darkorange', 'darkorchid', 'bisque4', 'aquamar
 
 
 function menuAdmin() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
@@ -107,11 +108,13 @@ function menuAdmin() {
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
 	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
+	linkMsg("admin.php?action=bilan_etab", "Bilan global", "add_etab.png", 'menu');
 	printf("</div>\n</div>");
 }
 
 
 function menuEtab() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	if (isset($_SESSION['quiz'])) {
@@ -132,6 +135,7 @@ function menuEtab() {
 
 
 function menuAudit() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	linkMsg("audit.php?action=office", "Exporter une évaluation", "docx.png", 'menu');
@@ -148,6 +152,7 @@ function menuAudit() {
 
 
 function sanitizePhpSelf($phpself) {
+	genSyslog(__FUNCTION__);
 	$phpself = trim($phpself);
 	$phpself = htmlspecialchars($phpself, ENT_QUOTES, 'UTF-8');
 	$phpself = basename($phpself);
@@ -163,6 +168,7 @@ function sanitizePhpSelf($phpself) {
 
 
 function dbConnect() {
+	genSyslog(__FUNCTION__);
 	global $servername, $dbname, $login, $passwd;
 	$link = mysqli_connect($servername, $login, $passwd, $dbname);
 	if (!$link) {
@@ -177,6 +183,7 @@ function dbConnect() {
 
 
 function dbDisconnect($dbh) {
+	genSyslog(__FUNCTION__);
 	mysqli_close($dbh);
 	$dbh=0;
 }
@@ -216,6 +223,7 @@ function getQuizName() {
 
 
 function destroySession() {
+	genSyslog(__FUNCTION__);
 	session_destroy();
 	unset($_SESSION);
 	header('Location: evalsmsi.php');
@@ -223,6 +231,7 @@ function destroySession() {
 
 
 function isSessionValid($role) {
+	genSyslog(__FUNCTION__);
 	if (!isset($_SESSION['uid']) OR (!in_array($_SESSION['role'], $role))) {
 		destroySession();
 		exit();
@@ -231,6 +240,7 @@ function isSessionValid($role) {
 
 
 function infoSession() {
+	genSyslog(__FUNCTION__);
 	$infoDay = sprintf("%s - %s", $_SESSION['day'], $_SESSION['hour']);
 	$infoNav = sprintf("%s - %s - %s", $_SESSION['os'], $_SESSION['browser'], $_SESSION['ipaddr']);
 	$infoUser = sprintf("Connecté en tant que <b>%s %s</b>", $_SESSION['prenom'], $_SESSION['nom']);
@@ -321,6 +331,7 @@ function set_var_utf8(){
 
 
 function headPage($titre, $sousTitre=''){
+	genSyslog(__FUNCTION__);
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -348,6 +359,7 @@ function headPage($titre, $sousTitre=''){
 
 
 function footPage($link='', $msg=''){
+	genSyslog(__FUNCTION__);
 	if ($_SESSION['role']==='100') {
 		printf("<div class='footer'>\n");
 		printf("Aide en ligne - Retour à la page d'accueil <a href='evalsmsi.php' class='btnWarning'>cliquer ici</a>\n");
@@ -394,6 +406,7 @@ function linkMsg($link, $msg, $img, $class='msg') {
 
 
 function recordLog() {
+	genSyslog(__FUNCTION__);
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
@@ -415,6 +428,26 @@ function recordLog() {
 	$request=sprintf("INSERT INTO journal (ip, etablissement, quiz, navigateur, os, user, action) VALUES ('%s', '%d', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $id_etab, $id_quiz, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
 	mysqli_query($base, $request);
 	dbDisconnect($base);
+}
+
+
+function genSyslog($caller) {
+	global $progVersion;
+	$log = array();
+	$log[] = array('program' => 'evalsmsi', 'version' => $progVersion);
+	$log[] = array('function' => $caller);
+	if (isset($_SESSION['login'])) {
+		$log[] = array('login' => $_SESSION['login']);
+	}
+	if (isset($_SESSION['id_etab'])) {
+		$log[] = array('etablissement' => $_SESSION['id_etab']);
+	}
+	if (isset($_SESSION['quiz'])) {
+		$log[] = array('quiz' => $_SESSION['quiz']);
+	}
+	openlog("evalsmsi", LOG_PID, LOG_SYSLOG);
+	syslog(LOG_INFO, json_encode($log));
+	closelog();
 }
 
 
@@ -633,6 +666,7 @@ function isRegroupEtab() {
 
 
 function changePassword($script) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
 	$result = mysqli_query($base, $request);
@@ -657,6 +691,7 @@ function changePassword($script) {
 
 
 function recordNewPassword($passwd) {
+	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	$passwd = password_hash($passwd, PASSWORD_BCRYPT);
 	$request = sprintf("UPDATE users SET password='%s' WHERE login='%s'", $passwd, $_SESSION['login']);

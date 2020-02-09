@@ -28,11 +28,13 @@ headPage($appli_titre, "Aide et documentation");
 $script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 
 function about() {
+	global $progVersion;
+	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	printf("<p><img src='pict/logoCerbere.png' alt='logo SSI' /></p>\n");
 	printf("<p><b>Remerciements:</b> Merci à Philippe Loudenot pour son aide et son soutien, merci à Ange Ferrari, à Christophe Grenier, à Sébastien Duquette de Corelan Team et à Xavier Beule pour leurs contributions dans la correction de bugs.</p>\n");
-	printf("<p><b>EvalSMSI version 4.5 - 27/01/2020</b></p>\n");
+	printf("<p><b>EvalSMSI version %s - 27/01/2020</b></p>\n", $progVersion);
 	printf("</div>\n<div class='column right'>\n");
 	printf("<p>Le programme d'évaluation du SMSI - <i>evalSMSI</i> - est écrit en PHP et utilise une base MySQL. Son objectif est de fournir un outil d'évaluation simple à mettre en oeuvre et facile d'utilisation.</p>\n");
 	printf("<p>The ISMS assessment program - <i>evalSMSI</i> - is written in PHP and uses a MySQL database. Its objective is to provide an evaluation tool that is simple to implement and easy to use.</p>\n");
@@ -50,6 +52,7 @@ function about() {
 
 
 function docSoftware() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='onecolumn'>\n");
 	printf("<h2>Fonctionnement du logiciel</h2>\n");
 	printf("<h3>Fonctionnement global</h3>\n");
@@ -74,6 +77,7 @@ function docSoftware() {
 
 
 function docISMSeval() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='onecolumn'>\n");
 	printf("<h2>EvalSMSI</h2>\n");
 	printf("<p>L'objectif de ce questionnaire est d'évaluer, par rapport à un référentiel précis, le système de management de la sécurité de l'information (SMSI).</p>\n");
@@ -100,6 +104,7 @@ function docISMSeval() {
 
 function afficheLexique() {
 	global $cheminDATA;
+	genSyslog(__FUNCTION__);
 	$jsonFile = sprintf("%slexique.json", $cheminDATA);
 	$jsonSource = file_get_contents($jsonFile);
 	$jsonLexique = json_decode($jsonSource);
@@ -115,6 +120,7 @@ function afficheLexique() {
 
 
 function menu() {
+	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	linkMsg("aide.php?action=h_logiciel", "Aide sur le logiciel", "help.png", "menu");
