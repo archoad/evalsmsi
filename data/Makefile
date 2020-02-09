@@ -22,7 +22,6 @@ clean :
 	-@rm *.log
 	-@rm *.out
 	-@rm *.toc
-	-@rm *.idx
 	-@rm *.xmpdata
 	-@rm *.xmpi
 

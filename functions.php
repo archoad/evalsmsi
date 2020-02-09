@@ -1417,14 +1417,18 @@ function latexHead($annee=0) {
 	$row_rssi = mysqli_fetch_object($res_rssi);
 	dbDisconnect($base);
 
-	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n\\Subject{Evaluation du SMSI}\n\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
-	$en_tete .= "\\documentclass[a4paper,11pt]{article}\n\n\\input{header}\n\n";
+	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n";
+	$en_tete .= "\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n";
+	$en_tete .= "\\Subject{Evaluation du SMSI}\n";
+	$en_tete .= "\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
+	$en_tete .= "\\documentclass[a4paper,11pt]{article}\n\n";
+	$en_tete .= "\\input{header}\n\n";
 	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
 	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\author{%s -- \\textcolor{myBlue}{Auditeur}}\n\n", $auditor);
 	$en_tete .= "\\date{\\today}\n\n";
-	$en_tete .= "\\begin{document}\n\n\\renewcommand{\labelitemi}{\\ensuremath{\\bullet}}\n\\renewcommand{\\labelitemii}{\\ensuremath{\circ}}\n\\renewcommand{\\labelitemiii}{\\ensuremath{\\triangleright}}\n\n";
+	$en_tete .= "\\begin{document}\n\n";
 	$en_tete .= "\\maketitle\n\n";
 	$en_tete .= "\\bigskip\\bigskip\n\n";
 	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n\\begin{itemize}\n", $name_etab, $annee, $auditor);
@@ -1563,7 +1567,7 @@ function printGraphsAndNotes($annee) {
 	$text .= "\\multicolumn{4}{| c |}{Notes finales de l'établissement}\\tabularnewline\n\\hline\n";
 	$text .= "\\'Etablissement & \\multicolumn{2}{ c |}{\\centering{Détail des notes}} & Note finale \\tabularnewline\n";
 	$text .= "\\hline\n";
-	$text .= sprintf("\\multirow{%d}{*}{%s} & \\multicolumn{2}{ c |}{} & \\tabularnewline\n", $nbr_par+2, $name_etab);
+	$text .= sprintf("\\multirow{%d}{0.20\\textwidth}{%s} & \\multicolumn{2}{ c |}{} & \\tabularnewline\n", $nbr_par+2, $name_etab);
 	for ($i=0; $i<sizeof($titles_par); $i++) {
 		$note = 20 * $notes[$i+1] / 7;
 		$noteSum = $noteSum + $note;
@@ -2055,7 +2059,7 @@ function generateReferentiel() {
 	$text .= "\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
 	$text .= "\\documentclass[a4paper,11pt]{article}\n\n";
 	$text .= "\\input{header}\n\n";
-	$text .= sprintf("\\title{Référentiel\\\\ \\textcolor{myBlue}{%s}}\n\n", $name_quiz);
+	$text .= sprintf("\\title{Référentiel\\\\ \\textcolor{myGreen}{%s}}\n\n", $name_quiz);
 	$text .= sprintf("\\author{EvalSMSI}\n\n");
 	$text .= "\\date{\\today}\n\n";
 	$text .= "\\begin{document}\n\n";
@@ -2078,7 +2082,7 @@ function generateReferentiel() {
 				$text .= sprintf("%s\n\n", $questions[$q]['libelle']);
 				$text .= sprintf("\\textbf{Mesure %d.%d.%d}\n\n", $num_dom, $num_sub_dom, $num_question);
 				$text .= sprintf("%s\n\n", $questions[$q]['mesure']);
-				$text .= "\\tikz[baseline=-0.5ex]{ \draw [line width=1pt, draw=myRed] (0,0.3) -- (0,0) -- (15,0); }\n\n";
+				$text .= "\\textcolor{myRed}{\\rule{\\linewidth}{0.4pt}}\n\n";
 			}
 		}
 	}
