@@ -69,6 +69,7 @@ switch ($_SESSION['theme']) {
 		$myGreenDark = '#5cb85c';
 		break;
 }
+
 ?>
 
 @charset "utf-8";

@@ -44,7 +44,6 @@ function headPageAuth() {
 
 
 function footPageAuth() {
-	genSyslog(__FUNCTION__);
 	printf("</body>\n</html>\n");
 }
 
