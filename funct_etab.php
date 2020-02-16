@@ -70,7 +70,7 @@ function displayAssessment() {
 			$subDom = $quiz[$d]['subdomains'];
 			$fond = getColorButton($dom_complete, $num_dom);
 			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
-			printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
+			printf("<dl class='none' id='dl%s'>\n", $num_dom);
 			for ($sd=0; $sd<count($subDom); $sd++) {
 				$num_sub_dom = $subDom[$sd]['numero'];
 				$questions = $subDom[$sd]['questions'];
@@ -79,7 +79,7 @@ function displayAssessment() {
 				$fond = getColorButton($subdom_complete, $num_sub_dom);
 				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
 				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
-				printf("<dd style='display:none;' id='dd%s'>\n", $id);
+				printf("<dd class='none' id='dd%s'>\n", $id);
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];
 					printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
@@ -101,7 +101,7 @@ function displayAssessment() {
 			printf("</dl>\n");
 		}
 		printf("<table>\n<tr>\n<td><b>Commentaire final - Conclusion</b></td>\n</tr>\n");
-		printf("<tr>\n<td>\n<textarea name='final_comment' id='final_comment' cols='68' rows='5' style='display:none;'>%s</textarea>\n</td>\n</tr>\n</table>\n", traiteStringFromBDD($final_c));
+		printf("<tr>\n<td>\n<textarea name='final_comment' id='final_comment' cols='68' rows='5' class='none'>%s</textarea>\n</td>\n</tr>\n</table>\n", traiteStringFromBDD($final_c));
 		validForms('Enregistrer', 'etab.php', $back=False);
 		printf("</form>\n");
 		printf("</div>\n");

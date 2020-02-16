@@ -42,7 +42,7 @@ function about() {
 	printf("<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>\n");
 	printf("<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>\n");
 	printf("<p><b>You should have received a copy of the GNU General Public License along with this program.</b></p><p>If not, see <a href='http://www.gnu.org/licenses/'>the GNU web site</a>.</p>\n");
-	printf("<table style='background:none;'>\n<tr style='background:none;'>\n");
+	printf("<table>\n<tr>\n");
 	printf("<td><img src='pict/gplv3.png' alt='logo GPL V3' /></td>\n");
 	printf("<td><img src='pict/phpoffice.png' alt='logo phpoffice' /></td>\n");
 	printf("<td><img src='pict/html5.png' alt='valid html5' /></td>\n");

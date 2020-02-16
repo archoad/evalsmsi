@@ -304,6 +304,7 @@ function displayAudit() {
 		$id_quiz = $_SESSION['quiz'];
 		$id_etab = $_SESSION['id_etab'];
 		$annee = $_SESSION['annee'];
+		$numQuestion = questionsCount();
 		$quiz = getJsonFile();
 		$name_etab = getEtablissement($id_etab);
 		printf("<h1>%s - %s</h1>\n", $name_etab, $annee);
@@ -333,26 +334,27 @@ function displayAudit() {
 				# affichage du formulaire
 				printf("<div class='row'>\n");
 				printf("<div class='column largeleft'>\n");
+				printf("<h3>Cette évaluation comprend %s questions</h3>\n", $numQuestion);
 				printf("<div class='assess'>\n");
 				printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>\n");
 				for ($d=0; $d<count($quiz); $d++) {
 					$num_dom = $quiz[$d]['numero'];
 					$subDom = $quiz[$d]['subdomains'];
 					printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $num_dom, $quiz[$d]['libelle'], $num_dom);
-					printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
+					printf("<dl class='none' id='dl%s'>\n", $num_dom);
 					for ($sd=0; $sd<count($subDom); $sd++) {
 						$num_sub_dom = $subDom[$sd]['numero'];
 						$questions = $subDom[$sd]['questions'];
 						$id = $num_dom.'-'.$num_sub_dom;
 						printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
 						printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
-						printf("<dd style='display:none;' id='dd%s'>\n", $id);
+						printf("<dd class='none' id='dd%s'>\n", $id);
 						for ($q=0; $q<count($questions); $q++) {
 							$num_question = $questions[$q]['numero'];
 							$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 							printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
-							printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly='readonly' style='background-color:#FFC7C7'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
+							printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly='readonly' class='protected'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 							$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							if (isset($assessment[$evalID])) {
 								printf("<br /><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $evalID, $evalID, traiteStringFromBDD($assessment[$evalID]));
@@ -473,7 +475,7 @@ function displayAuditRegroup() {
 		$subDom = $quiz[$d]['subdomains'];
 		$fond = getColorButton($dom_complete, $num_dom);
 		printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
-		printf("<dl style='display:none;' id='dl%s'>\n", $num_dom);
+		printf("<dl class='none;' id='dl%s'>\n", $num_dom);
 		for ($sd=0; $sd<count($subDom); $sd++) {
 			$num_sub_dom = $subDom[$sd]['numero'];
 			$questions = $subDom[$sd]['questions'];
@@ -481,7 +483,7 @@ function displayAuditRegroup() {
 			$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 			$fond = getColorButton($subdom_complete, $num_sub_dom);
 			printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
-			printf("<dd style='display:none;' id='dd%s'>\n", $id);
+			printf("<dd class='none;' id='dd%s'>\n", $id);
 			for ($q=0; $q<count($questions); $q++) {
 				$num_question = $questions[$q]['numero'];
 				$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;

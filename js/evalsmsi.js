@@ -150,7 +150,7 @@ function champs_na(form) {
 	}
 	if (nbr_quests == num_quest_ok) {
 		var final_elt = document.getElementById('final_comment');
-		if (final_elt.value == '<br />') {
+		if (final_elt.value == '') {
 			myAlert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
 			return false;
 		}
@@ -165,12 +165,12 @@ function display(elt) {
 	} else {
 		var new_elt = document.getElementById('dd'+elt.id.substring(2,6));
 	}
-	if (new_elt.style.display=='none') {
+	if (new_elt.className=='none') {
 		elt.value='-';
-		new_elt.style.display='block';
+		new_elt.className='block';
 	} else {
 		elt.value='+';
-		new_elt.style.display='none';
+		new_elt.className='none';
 	}
 }
 
@@ -191,7 +191,7 @@ function progresse() {
 	}
 	if (nbr_quests == num_quest_ok) {
 		var par = document.getElementById('final_comment');
-		par.style.display = 'block';
+		par.className='block';
 		if (document.getElementById("final_comment").value == '' ) {
 			alert("Questionnaire complété à 100%\nVEUILLEZ COMPLETER LE COMMENTAIRE FINAL EN FIN DE FORMULAIRE");
 		}

@@ -24,17 +24,20 @@ include("functions.php");
 
 function headPageAuth() {
 	genSyslog(__FUNCTION__);
+	$cspPolicy = genCspPolicy();
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
+	header('X-Content-Type-Options: "nosniff"');
 	header("X-XSS-Protection: 1; mode=block");
 	header("X-Frame-Options: deny");
+	header($cspPolicy);
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
 	printf("<link href='styles.php' rel='StyleSheet' type='text/css' media='all' />\n");
-	printf("<script type='text/javascript' src='js/evalsmsi.js'></script>\n");
+	printf("<script src='js/evalsmsi.js' ></script>\n");
 	printf("<title>Authentification</title>\n");
 	printf("</head>\n<body>\n");
 }
@@ -64,7 +67,7 @@ function menuAuth($msg='') {
 	printf("</div>");
 	printf("<input type='submit' id='valid' value='Connexion' />\n");
 	if ($msg<>'') {
-		printf("<img src='pict/help.png' alt='Aide' style='width:30px;' />");
+		printf("<div class='help'><img src='pict/help.png' alt='Aide' /></div>");
 		printf("<p>%s</p>\n", $msg);
 		printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>\n");
 	}

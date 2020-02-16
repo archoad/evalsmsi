@@ -55,7 +55,7 @@ switch ($_SESSION['theme']) {
 		$myGreenLight = '#5cb85c';
 		$myGreenDark = '#449d44';
 		break;
-	case 'laposte':
+	case 'glp':
 		$bg0Color = '#ffffff';
 		$bg1Color = '#ffcb05';
 		$bg2Color = '#003da5';
@@ -225,6 +225,30 @@ dt {
 dd {
 	color: var(--textDarkColor);
 	padding: 0 0 5px 0;
+}
+
+.none {
+	display: none;
+}
+
+.block {
+	display: block;
+}
+
+.protected {
+	background-color: #ffc7c7;
+}
+
+.modifquiz {
+	width: 12%;
+}
+
+.assesssynth {
+	width: 120px;
+}
+
+.fontvingt {
+	font-size: 20pt;
 }
 
 textarea {
@@ -399,6 +423,11 @@ textarea {
 .auth img {
 	display: block;
 	width: 50%;
+	margin: auto;
+}
+
+.help {
+	width: 60px;
 	margin: auto;
 }
 

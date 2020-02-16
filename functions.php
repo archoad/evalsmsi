@@ -73,7 +73,8 @@ ini_set('filter.default', 'full_special_chars');
 ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
-$progVersion = '4.6';
+$progVersion = '4.6.0';
+$cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
 $cheminDATA = sprintf("%s/data/", $server_path);
@@ -102,7 +103,7 @@ function menuAdmin() {
 	printf("<div class='column left'>\n");
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
 	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
-	linkMsg("admin.php?action=modifications", "Modifications du questionnaire", "eval_continue.png", 'menu');
+	linkMsg("admin.php?action=select_quiz", "Modifications du questionnaire", "eval_continue.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div>\n<div class='column right'>\n");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
@@ -168,7 +169,6 @@ function sanitizePhpSelf($phpself) {
 
 
 function dbConnect() {
-	genSyslog(__FUNCTION__);
 	global $servername, $dbname, $login, $passwd;
 	$link = mysqli_connect($servername, $login, $passwd, $dbname);
 	if (!$link) {
@@ -183,7 +183,6 @@ function dbConnect() {
 
 
 function dbDisconnect($dbh) {
-	genSyslog(__FUNCTION__);
 	mysqli_close($dbh);
 	$dbh=0;
 }
@@ -330,14 +329,30 @@ function set_var_utf8(){
 }
 
 
-function headPage($titre, $sousTitre=''){
+function genCspPolicy() {
+	global $cspReport;
+	$cspPolicy = "Content-Security-Policy: ";
+	$cspPolicy .= "default-src 'self' ; ";
+	$cspPolicy .= "script-src 'self' 'unsafe-inline' ; ";
+	$cspPolicy .= "style-src 'self' 'unsafe-inline' ; ";
+	$cspPolicy .= "frame-ancestors 'none' ; ";
+	$cspPolicy .= "base-uri 'none' ; ";
+	$cspPolicy .= sprintf("report-uri %s ; ", $cspReport);
+	return $cspPolicy;
+}
+
+
+function headPage($titre, $sousTitre='') {
 	genSyslog(__FUNCTION__);
+	$cspPolicy = genCspPolicy();
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
+	header('X-Content-Type-Options: "nosniff"');
 	header("X-XSS-Protection: 1; mode=block");
 	header("X-Frame-Options: deny");
+	header($cspPolicy);
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<meta name='author' content='Michel Dubois' />\n");
@@ -1259,13 +1274,13 @@ function assessSynthese() {
 		$note = 20 * $notes[$i+1] / 7;
 		$noteSum = $noteSum + $note;
 		if ($note <= 10) {
-			$text_note .= sprintf("<li>%s -> <b style='color:red;'>%d/20</b></li>", $titles_par[$i], $note);
+			$text_note .= sprintf("<li>%s -> <b style='color:myRed;'>%d/20</b></li>", $titles_par[$i], $note);
 		} else {
 			$text_note .= sprintf("<li>%s -> <b>%d/20</b></li>", $titles_par[$i], $note);
 		}
 	}
 	$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-	printf("<tr>\n<td style='width:120px;'><b>%s</b></td><td><ul>%s</ul></td><td><b style='font-size:20pt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
+	printf("<tr>\n<td class='assesssynth'><b>%s</b></td><td><ul>%s</ul></td><td><b class='fontvingt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
 	printf("</table>\n");
 }
 
@@ -1484,9 +1499,14 @@ function latexHead($annee=0) {
 	}
 	$en_tete .= disclaimer();
 	$en_tete .= "\\clearpage\n\n";
-	$en_tete .= "\\textcolor{myRed}{\\tableofcontents}\n\n\\clearpage\n\n";
+	$en_tete .= "\\begin{small}\n\\setlength{\\parskip}{0pt}\n";
+	$en_tete .= "\\textcolor{myRed}{\\tableofcontents}\n";
+	$en_tete .= "\\end{small}\n\n";
+	$en_tete .= "\\clearpage\n\n";
 	return $en_tete;
 }
+
+
 
 
 function latexFoot() {
@@ -2094,13 +2114,16 @@ function generateReferentiel() {
 	$text .= "\\Publisher{Michel Dubois}\n\\end{filecontents*}\n\n";
 	$text .= "\\documentclass[a4paper,11pt]{article}\n\n";
 	$text .= "\\input{header}\n\n";
-	$text .= sprintf("\\title{Référentiel\\\\ \\textcolor{myGreen}{%s}}\n\n", $name_quiz);
+	$text .= sprintf("\\title{Référentiel\\\\ \\textcolor{myRed}{%s}}\n\n", $name_quiz);
 	$text .= sprintf("\\author{EvalSMSI}\n\n");
 	$text .= "\\date{\\today}\n\n";
 	$text .= "\\begin{document}\n\n";
 	$text .= "\\maketitle\n\n";
 	$text .= "\\clearpage\n\n";
-	$text .= "\\textcolor{myRed}{\\tableofcontents}\n\n\\clearpage\n\n";
+	$text .= "\\begin{small}\n\\setlength{\\parskip}{0pt}\n";
+	$text .= "\\textcolor{myRed}{\\tableofcontents}\n";
+	$text .= "\\end{small}\n\n";
+	$text .= "\\clearpage\n\n";
 	for ($d=0; $d<count($quiz); $d++) {
 		$num_dom = $quiz[$d]['numero'];
 		if ($num_dom > 1) { $text .= "\\clearpage\n\n"; }

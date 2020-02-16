@@ -5,9 +5,11 @@
 \usepackage[french]{babel}
 
 \usepackage{bera}
+%\usepackage{libertine}
 \usepackage{libertinust1math} % pour les maths
 \usepackage{sourcecodepro} % pour le code
 
+\usepackage{titlesec}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{graphicx}
@@ -40,6 +42,14 @@
 \definecolor{myBackground}{RGB}{29,30,25}
 \definecolor{myLightBackground}{RGB}{213,202,184}
 \definecolor{myBeige}{RGB}{233,228,219}
+\definecolor{myTitleColor}{RGB}{112,113,115}
+\definecolor{mySectionColor}{RGB}{64,110,150}
+\definecolor{mySubSectionColor}{RGB}{91,155,213}
+
+\titlelabel{\thetitle.\enspace}
+\titleformat*{\section}{\bfseries\Large\color{mySectionColor}}
+\titleformat*{\subsection}{\bfseries\large\color{mySubSectionColor}}
+\titleformat*{\subsubsection}{\bfseries\color{mySubSectionColor}}
 
 \pdfadjustspacing=1
 \widowpenalty = 300
@@ -51,6 +61,8 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\headheight}{15.0pt}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
 \setlength{\columnseprule}{0.5pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \setcounter{tocdepth}{3}

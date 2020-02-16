@@ -82,7 +82,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'modif_etab':
-		$_SESSION['current_etab'] = $_POST['etablissement'];
+		$_SESSION['current_etab'] = intval($_POST['etablissement']);
 		modifEtablissement();
 		footPage();
 		break;
@@ -128,7 +128,13 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
-	case 'modifications':
+	case 'select_quiz':
+		selectQuizModification();
+		footPage();
+		break;
+
+	case 'modif_quiz':
+		$_SESSION['quiz'] = intval($_POST['quiz']);
 		modifications();
 		footPage($script, "Accueil");
 		break;

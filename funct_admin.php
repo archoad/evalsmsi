@@ -291,7 +291,7 @@ function modifEtablissement() {
 	if (stripos($record->abrege, "_TEAM") === false) {
 		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s'/>\n", traiteStringFromBDD($record->abrege));
 	} else {
-		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s' readonly='readonly' style='background:#777777;' />&nbsp;\n", traiteStringFromBDD($record->abrege));
+		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s' readonly='readonly' class='protected' />&nbsp;\n", traiteStringFromBDD($record->abrege));
 	}
 	printf("</td></tr>\n<tr><td>\n");
 	printf("Adresse:&nbsp;<input type='text' size='80' maxlength='80' name='adresse' id='adresse' value=\"%s\"/>&nbsp;\n", traiteStringFromBDD($record->adresse));
@@ -379,11 +379,32 @@ function recordEtablissement($action) {
 }
 
 
+function selectQuizModification() {
+	genSyslog(__FUNCTION__);
+	$base = dbConnect();
+	$request = sprintf("SELECT * FROM quiz");
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	printf("<form method='post' id='modif_quiz' action='admin.php?action=modif_quiz' onsubmit='return champs_ok(this)'>\n");
+	printf("<fieldset>\n<legend>Modification d'un questionnaire</legend>\n");
+	printf("<table>\n<tr><td>\n");
+	printf("Questionnaire:&nbsp;\n<select name='quiz' id='quiz'>\n");
+	printf("<option selected='selected' value=''>&nbsp;</option>\n");
+	while($row = mysqli_fetch_object($result)) {
+		printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);
+	}
+	printf("</select>\n");
+	printf("</td>\n</tr>\n</table>\n</fieldset>\n");
+	validForms('Modifier', 'admin.php', $back=False);
+	printf("</form>\n");
+}
+
+
 function modifications() {
 	genSyslog(__FUNCTION__);
 	$quiz = getJsonFile();
 	printf("<table>\n");
-	printf("<tr><th style='width:12%%'>Domaine</th><th style='width:12%%'>Sous-domaine</th><th>Question</th><th>Poids</th><th>&nbsp;</th></tr>\n");
+	printf("<tr><th class='modifquiz'>Domaine</th><th class='modifquiz'>Sous-domaine</th><th>Question</th><th>Poids</th><th>&nbsp;</th></tr>\n");
 	for ($d=0; $d<count($quiz); $d++) {
 		$num_dom = $quiz[$d]['numero'];
 		$subDom = $quiz[$d]['subdomains'];
@@ -394,7 +415,7 @@ function modifications() {
 			printf("<tr>\n<td>&nbsp;</td><td>%s.%s %s</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>\n</tr>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle']);
 			for ($q=0; $q<count($questions); $q++) {
 				$num_question = $questions[$q]['numero'];
-				printf("<tr>\n<td>&nbsp;</td><td>&nbsp;</td><td style='text-align:left;'>%s.%s.%s %s</td><td>%s</td>\n<td>&nbsp;</td></tr>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle'], $questions[$q]['poids']);
+				printf("<tr>\n<td>&nbsp;</td><td>&nbsp;</td><td class='pleft'>%s.%s.%s %s</td><td>%s</td>\n<td>&nbsp;</td></tr>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle'], $questions[$q]['poids']);
 			}
 		}
 	}
