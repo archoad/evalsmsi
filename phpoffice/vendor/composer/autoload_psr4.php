@@ -12,7 +12,5 @@ return array(
     'PhpOffice\\PhpSpreadsheet\\' => array($vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet'),
     'PhpOffice\\Common\\' => array($vendorDir . '/phpoffice/common/src/Common'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
-    'FontLib\\' => array($vendorDir . '/phenx/php-font-lib/src/FontLib'),
-    'Dompdf\\' => array($vendorDir . '/dompdf/dompdf/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
 );

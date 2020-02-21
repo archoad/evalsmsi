@@ -1,73 +1,5 @@
 [
     {
-        "name": "dompdf/dompdf",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/dompdf/dompdf.git",
-            "reference": "d30679a47a067a69540c988405cb675404898acc"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/dompdf/dompdf/zipball/d30679a47a067a69540c988405cb675404898acc",
-            "reference": "d30679a47a067a69540c988405cb675404898acc",
-            "shasum": ""
-        },
-        "require": {
-            "ext-dom": "*",
-            "ext-mbstring": "*",
-            "phenx/php-font-lib": "0.5.*",
-            "phenx/php-svg-lib": "0.3.*",
-            "php": ">=5.4.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.8|^5.5|^6.5",
-            "squizlabs/php_codesniffer": "2.*"
-        },
-        "suggest": {
-            "ext-gd": "Needed to process images",
-            "ext-gmagick": "Improves image processing performance",
-            "ext-imagick": "Improves image processing performance"
-        },
-        "time": "2019-05-10T01:14:18+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-develop": "0.7-dev"
-            }
-        },
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Dompdf\\": "src/"
-            },
-            "classmap": [
-                "lib/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-2.1"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Ménager",
-                "email": "fabien.menager@gmail.com"
-            },
-            {
-                "name": "Brian Sweeney",
-                "email": "eclecticgeek@gmail.com"
-            },
-            {
-                "name": "Gabriel Bull",
-                "email": "me@gabrielbull.com"
-            }
-        ],
-        "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
-        "homepage": "https://github.com/dompdf/dompdf"
-    },
-    {
         "name": "markbaker/complex",
         "version": "1.4.7",
         "version_normalized": "1.4.7.0",
@@ -166,33 +98,32 @@
     },
     {
         "name": "markbaker/matrix",
-        "version": "1.1.4",
-        "version_normalized": "1.1.4.0",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/MarkBaker/PHPMatrix.git",
-            "reference": "6ea97472b5baf12119b4f31f802835b820dd6d64"
+            "reference": "5348c5a67e3b75cd209d70103f916a93b1f1ed21"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/MarkBaker/PHPMatrix/zipball/6ea97472b5baf12119b4f31f802835b820dd6d64",
-            "reference": "6ea97472b5baf12119b4f31f802835b820dd6d64",
+            "url": "https://api.github.com/repos/MarkBaker/PHPMatrix/zipball/5348c5a67e3b75cd209d70103f916a93b1f1ed21",
+            "reference": "5348c5a67e3b75cd209d70103f916a93b1f1ed21",
             "shasum": ""
         },
         "require": {
             "php": "^5.6.0|^7.0.0"
         },
         "require-dev": {
-            "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
-            "phpcompatibility/php-compatibility": "^8.0",
-            "phpdocumentor/phpdocumentor": "2.*",
-            "phploc/phploc": "2.*",
-            "phpmd/phpmd": "2.*",
-            "phpunit/phpunit": "^4.8.35|^5.4.0",
-            "sebastian/phpcpd": "2.*",
-            "squizlabs/php_codesniffer": "^3.3.0"
+            "dealerdirect/phpcodesniffer-composer-installer": "dev-master",
+            "phpcompatibility/php-compatibility": "dev-master",
+            "phploc/phploc": "^4",
+            "phpmd/phpmd": "dev-master",
+            "phpunit/phpunit": "^5.7",
+            "sebastian/phpcpd": "^3.0",
+            "squizlabs/php_codesniffer": "^3.0@dev"
         },
-        "time": "2018-11-04T22:12:12+00:00",
+        "time": "2019-10-06T11:29:25+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -276,87 +207,6 @@
         ]
     },
     {
-        "name": "phenx/php-font-lib",
-        "version": "0.5.1",
-        "version_normalized": "0.5.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PhenX/php-font-lib.git",
-            "reference": "760148820110a1ae0936e5cc35851e25a938bc97"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PhenX/php-font-lib/zipball/760148820110a1ae0936e5cc35851e25a938bc97",
-            "reference": "760148820110a1ae0936e5cc35851e25a938bc97",
-            "shasum": ""
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^4.8"
-        },
-        "time": "2017-09-13T16:14:37+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "FontLib\\": "src/FontLib"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-3.0"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Ménager",
-                "email": "fabien.menager@gmail.com"
-            }
-        ],
-        "description": "A library to read, parse, export and make subsets of different types of font files.",
-        "homepage": "https://github.com/PhenX/php-font-lib"
-    },
-    {
-        "name": "phenx/php-svg-lib",
-        "version": "v0.3.2",
-        "version_normalized": "0.3.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PhenX/php-svg-lib.git",
-            "reference": "ccc46ef6340d4b8a4a68047e68d8501ea961442c"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PhenX/php-svg-lib/zipball/ccc46ef6340d4b8a4a68047e68d8501ea961442c",
-            "reference": "ccc46ef6340d4b8a4a68047e68d8501ea961442c",
-            "shasum": ""
-        },
-        "require": {
-            "sabberworm/php-css-parser": "8.1.*"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~5.0"
-        },
-        "time": "2018-06-03T10:10:03+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Svg\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-3.0"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Ménager",
-                "email": "fabien.menager@gmail.com"
-            }
-        ],
-        "description": "A library to read, parse and export to PDF SVG files.",
-        "homepage": "https://github.com/PhenX/php-svg-lib"
-    },
-    {
         "name": "phpoffice/common",
         "version": "0.2.9",
         "version_normalized": "0.2.9.0",
@@ -420,12 +270,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-            "reference": "170671c616bfb31cf1684e95583e2749d3823cee"
+            "reference": "cb18163a1ddaf374babcf39373fbf3ecdacd4291"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/170671c616bfb31cf1684e95583e2749d3823cee",
-            "reference": "170671c616bfb31cf1684e95583e2749d3823cee",
+            "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/cb18163a1ddaf374babcf39373fbf3ecdacd4291",
+            "reference": "cb18163a1ddaf374babcf39373fbf3ecdacd4291",
             "shasum": ""
         },
         "require": {
@@ -443,20 +293,19 @@
             "ext-zip": "*",
             "ext-zlib": "*",
             "markbaker/complex": "^1.4",
-            "markbaker/matrix": "^1.1",
-            "php": "^5.6|^7.0",
+            "markbaker/matrix": "^1.2",
+            "php": "^7.1",
             "psr/simple-cache": "^1.0"
         },
         "require-dev": {
-            "doctrine/instantiator": "^1.0.0",
-            "dompdf/dompdf": "^0.8.0",
-            "friendsofphp/php-cs-fixer": "@stable",
+            "dompdf/dompdf": "^0.8.3",
+            "friendsofphp/php-cs-fixer": "^2.16",
             "jpgraph/jpgraph": "^4.0",
-            "mpdf/mpdf": "^7.0.0",
-            "phpcompatibility/php-compatibility": "^8.0",
-            "phpunit/phpunit": "^5.7",
-            "squizlabs/php_codesniffer": "^3.3",
-            "tecnickcom/tcpdf": "^6.2"
+            "mpdf/mpdf": "^8.0",
+            "phpcompatibility/php-compatibility": "^9.3",
+            "phpunit/phpunit": "^7.5",
+            "squizlabs/php_codesniffer": "^3.5",
+            "tecnickcom/tcpdf": "^6.3"
         },
         "suggest": {
             "dompdf/dompdf": "Option for rendering PDF with PDF Writer",
@@ -464,7 +313,7 @@
             "mpdf/mpdf": "Option for rendering PDF with PDF Writer",
             "tecnickcom/tcpdf": "Option for rendering PDF with PDF Writer"
         },
-        "time": "2019-04-15T20:49:51+00:00",
+        "time": "2020-02-19T19:22:31+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
@@ -474,15 +323,9 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPL-2.1-or-later"
+            "MIT"
         ],
         "authors": [
-            {
-                "name": "Erik Tilt"
-            },
-            {
-                "name": "Adrien Crivelli"
-            },
             {
                 "name": "Maarten Balliauw",
                 "homepage": "https://blog.maartenballiauw.be"
@@ -494,6 +337,12 @@
             {
                 "name": "Franck Lefevre",
                 "homepage": "https://rootslabs.net"
+            },
+            {
+                "name": "Erik Tilt"
+            },
+            {
+                "name": "Adrien Crivelli"
             }
         ],
         "description": "PHPSpreadsheet - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
@@ -516,12 +365,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/PHPOffice/PHPWord.git",
-            "reference": "7b7d4e4936014544aa706f4c03d3ac925d74beb9"
+            "reference": "072c3bfdb327f6984b8bb378b08f83ae2293a708"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/PHPOffice/PHPWord/zipball/7b7d4e4936014544aa706f4c03d3ac925d74beb9",
-            "reference": "7b7d4e4936014544aa706f4c03d3ac925d74beb9",
+            "url": "https://api.github.com/repos/PHPOffice/PHPWord/zipball/072c3bfdb327f6984b8bb378b08f83ae2293a708",
+            "reference": "072c3bfdb327f6984b8bb378b08f83ae2293a708",
             "shasum": ""
         },
         "require": {
@@ -550,11 +399,11 @@
             "ext-xsl": "Allows applying XSL style sheet to headers, to main document part, and to footers of an OOXML template",
             "ext-zip": "Allows writing OOXML and ODF"
         },
-        "time": "2018-12-30T00:35:03+00:00",
+        "time": "2019-12-08T14:47:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-develop": "0.17-dev"
+                "dev-develop": "0.18-dev"
             }
         },
         "installation-source": "source",
@@ -577,16 +426,16 @@
                 "homepage": "http://gabrielbull.com/"
             },
             {
+                "name": "Franck Lefevre",
+                "homepage": "https://rootslabs.net/blog/"
+            },
+            {
                 "name": "Ivan Lanin",
                 "homepage": "http://ivan.lanin.org"
             },
             {
                 "name": "Roman Syroeshko",
                 "homepage": "http://ru.linkedin.com/pub/roman-syroeshko/34/a53/994/"
-            },
-            {
-                "name": "Franck Lefevre",
-                "homepage": "https://rootslabs.net/blog/"
             },
             {
                 "name": "Antoine de Troostembergh"
@@ -671,64 +520,18 @@
         ]
     },
     {
-        "name": "sabberworm/php-css-parser",
-        "version": "8.1.0",
-        "version_normalized": "8.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabberworm/PHP-CSS-Parser.git",
-            "reference": "850cbbcbe7fbb155387a151ea562897a67e242ef"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sabberworm/PHP-CSS-Parser/zipball/850cbbcbe7fbb155387a151ea562897a67e242ef",
-            "reference": "850cbbcbe7fbb155387a151ea562897a67e242ef",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.2"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "*"
-        },
-        "time": "2016-07-19T19:14:21+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Sabberworm\\CSS": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Raphael Schweikert"
-            }
-        ],
-        "description": "Parser for CSS Files written in PHP",
-        "homepage": "http://www.sabberworm.com/blog/2010/6/10/php-css-parser",
-        "keywords": [
-            "css",
-            "parser",
-            "stylesheet"
-        ]
-    },
-    {
         "name": "zendframework/zend-escaper",
-        "version": "2.6.0",
-        "version_normalized": "2.6.0.0",
+        "version": "2.6.1",
+        "version_normalized": "2.6.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zendframework/zend-escaper.git",
-            "reference": "31d8aafae982f9568287cb4dce987e6aff8fd074"
+            "reference": "3801caa21b0ca6aca57fa1c42b08d35c395ebd5f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zendframework/zend-escaper/zipball/31d8aafae982f9568287cb4dce987e6aff8fd074",
-            "reference": "31d8aafae982f9568287cb4dce987e6aff8fd074",
+            "url": "https://api.github.com/repos/zendframework/zend-escaper/zipball/3801caa21b0ca6aca57fa1c42b08d35c395ebd5f",
+            "reference": "3801caa21b0ca6aca57fa1c42b08d35c395ebd5f",
             "shasum": ""
         },
         "require": {
@@ -738,7 +541,7 @@
             "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2",
             "zendframework/zend-coding-standard": "~1.0.0"
         },
-        "time": "2018-04-25T15:48:53+00:00",
+        "time": "2019-09-05T20:03:20+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -761,6 +564,7 @@
             "ZendFramework",
             "escaper",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-escaper"
     }
 ]
