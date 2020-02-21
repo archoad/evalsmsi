@@ -26,7 +26,6 @@ session_start();
 $authorizedRole = array('2');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Audit");
-$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 purgeRapportsFiles();
 
 
@@ -39,10 +38,10 @@ if (isset($_GET['action'])) {
 
 	case 'do_office':
 		if (isEtabLegitimate($_POST)) {
-			exportEval($script);
-			footPage($script, "Accueil");
+			exportEval();
+			footPage($_SESSION['curr_script'], "Accueil");
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
@@ -55,17 +54,16 @@ if (isset($_GET['action'])) {
 	case 'do_graph':
 		if (isEtabLegitimate($_POST)) {
 			if (isThereAssessForEtab()) {
-				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 				getObjectives();
 				displayEtablissmentGraphs();
-				footPage($script, "Accueil");
+				footPage($_SESSION['curr_script'], "Accueil");
 			} else {
 				$msg = sprintf("L'évaluation pour %d n'a pas été créée.", $_SESSION['annee']);
-				linkMsg($script, $msg, "alert.png");
+				linkMsg($_SESSION['curr_script'], $msg, "alert.png");
 				footPage();
 			}
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
@@ -84,9 +82,9 @@ if (isset($_GET['action'])) {
 					} else {
 						if (createAssessmentRegroup()) {
 							$msg = sprintf("L'évaluation pour %s a été crée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
-							linkMsg($script, $msg, "ok.png");
+							linkMsg($_SESSION['curr_script'], $msg, "ok.png");
 						} else {
-							linkMsg($script, "Aucune évaluation disponible.", "alert.png");
+							linkMsg($_SESSION['curr_script'], "Aucune évaluation disponible.", "alert.png");
 						}
 					}
 
@@ -95,16 +93,16 @@ if (isset($_GET['action'])) {
 				displayAudit();
 			}
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'record_audit':
 		if (writeAudit()) {
-			linkMsg($script, "Evaluation mise à jour.", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Evaluation mise à jour.", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de mise à jour.", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de mise à jour.", "alert.png");
 		}
 		footPage();
 		break;
@@ -118,18 +116,18 @@ if (isset($_GET['action'])) {
 		if (isEtabLegitimate($_POST)) {
 			getCommentGraphPar();
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'record_comment':
 		if (recordCommentGraph()) {
-			generateRapport($script);
+			generateRapport();
 		} else {
-			linkMsg($script, "Erreur lors de la sauvegarde des commentaires.", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur lors de la sauvegarde des commentaires.", "alert.png");
 		}
-		footPage($script, "Accueil");
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'journal':
@@ -140,22 +138,22 @@ if (isset($_GET['action'])) {
 	case 'display_journal':
 		if (isEtabLegitimate($_POST)) {
 			journalisation();
-			footPage($script, "Accueil");
+			footPage($_SESSION['curr_script'], "Accueil");
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
 
 	case 'password':
-		changePassword($script);
+		changePassword();
 		break;
 
 	case 'chg_password':
 		if (recordNewPassword($_POST['new1'])) {
-			linkMsg($script, "Mot de passe changé avec succès", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Mot de passe changé avec succès", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de changement de mot de passe", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de changement de mot de passe", "alert.png");
 		}
 		footPage();
 		break;
@@ -168,18 +166,18 @@ if (isset($_GET['action'])) {
 	case 'display_objectif':
 		if (isEtabLegitimate($_POST)) {
 			objectifs();
-			footPage($script, "Accueil");
+			footPage($_SESSION['curr_script'], "Accueil");
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
 
 	case 'write_objectifs':
 		if (recordObjectifs()) {
-			linkMsg($script, "Objectifs enregistrés dans la base.", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Objectifs enregistrés dans la base.", "ok.png");
 		} else {
-			linkMsg($script, "Erreur d'enregistrement.", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur d'enregistrement.", "alert.png");
 		}
 		footPage();
 		break;
@@ -192,15 +190,14 @@ if (isset($_GET['action'])) {
 	case 'valid_delete':
 		if (isEtabLegitimate($_POST)) {
 			if (isThereAssessForEtab()) {
-				printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
-				confirmDeleteAssessment($script);
+				confirmDeleteAssessment();
 				footPage();
 			} else {
-				linkMsg($script, "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
+				linkMsg($_SESSION['curr_script'], "Il n'y a pas d'évaluation pour cet établissement.", "alert.png");
 				footpage();
 			}
 		} else {
-			linkMsg($script, "Etablissement invalide", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
 		break;
@@ -233,12 +230,3 @@ if (isset($_GET['action'])) {
 
 
 ?>
-
-
-
-
-
-<script type='text/javascript' src='js/chart.min.js'></script>
-<script type='text/javascript' src='js/vis.min.js'></script>
-<script type='text/javascript' src='js/evalsmsi.js'></script>
-<script type='text/javascript' src='js/graphs.js'></script>

@@ -27,7 +27,7 @@ session_start();
 $authorizedRole = array('1');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Administration");
-$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
+
 
 
 if (isset($_GET['action'])) {
@@ -39,9 +39,9 @@ if (isset($_GET['action'])) {
 
 	case 'record_user':
 		if (recordUser('add')) {
-			linkMsg($script, "Utilisateur ajouté dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Utilisateur ajouté dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur d'enregistrement", "alert.png");
 		}
 		footPage();
 		break;
@@ -59,9 +59,9 @@ if (isset($_GET['action'])) {
 
 	case 'update_user':
 		if (recordUser('update')) {
-			linkMsg($script, "Utilisateur modifié dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Utilisateur modifié dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de modification", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de modification", "alert.png");
 		}
 		footPage();
 		break;
@@ -73,7 +73,7 @@ if (isset($_GET['action'])) {
 
 	case 'maintenance':
 		maintenanceBDD();
-		footPage($script, "Accueil");
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'select_etab':
@@ -89,18 +89,18 @@ if (isset($_GET['action'])) {
 
 	case 'update_etab':
 		if (recordEtablissement('update')) {
-			linkMsg($script, "Etablissement modifié dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement modifié dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de modification", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de modification", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'update_regroup':
 		if (recordEtablissement('update_regroup')) {
-			linkMsg($script, "Etablissement modifié dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement modifié dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de modification", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de modification", "alert.png");
 		}
 		footPage();
 		break;
@@ -112,18 +112,18 @@ if (isset($_GET['action'])) {
 
 	case 'record_etab':
 		if (recordEtablissement('add')) {
-			linkMsg($script, "Etablissement créé dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement créé dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur d'enregistrement", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'record_regroup':
 		if (recordEtablissement('add_regroup')) {
-			linkMsg($script, "Etablissement créé dans la base", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Etablissement créé dans la base", "ok.png");
 		} else {
-			linkMsg($script, "Erreur d'enregistrement", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur d'enregistrement", "alert.png");
 		}
 		footPage();
 		break;
@@ -136,12 +136,12 @@ if (isset($_GET['action'])) {
 	case 'modif_quiz':
 		$_SESSION['quiz'] = intval($_POST['quiz']);
 		modifications();
-		footPage($script, "Accueil");
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'bilan_etab':
 		bilanByEtab();
-		footPage($script, "Accueil");
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'rm_token':
@@ -166,8 +166,3 @@ if (isset($_GET['action'])) {
 }
 
 ?>
-
-
-
-
-<script type='text/javascript' src='js/evalsmsi.js'></script>

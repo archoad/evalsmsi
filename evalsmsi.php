@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include("functions.php");
 
+
 function headPageAuth() {
 	genSyslog(__FUNCTION__);
 	$cspPolicy = genCspPolicy();
@@ -36,8 +37,7 @@ function headPageAuth() {
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
-	printf("<link href='styles.php' rel='StyleSheet' type='text/css' media='all' />\n");
-	printf("<script src='js/evalsmsi.js' ></script>\n");
+	printf("<link nonce='%s' href='styles.php' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce']);
 	printf("<title>Authentification</title>\n");
 	printf("</head>\n<body>\n");
 }
@@ -57,12 +57,12 @@ function menuAuth($msg='') {
 	printf("<div class='auth'>\n");
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
 	printf("</div>\n<div class='auth'>\n");
-	printf("<form method='post' id='auth' action='evalsmsi.php?action=connect' onsubmit='return champs_ok(this)'>\n");
-	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' />\n");
-	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' />\n");
+	printf("<form method='post' id='auth' action='evalsmsi.php?action=connect'>\n");
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' required />\n");
+	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' required />\n");
 	printf("<div class='captcha'>\n");
 	printf("<img src='captcha.php' alt='captcha'/>\n");
-	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' />\n");
+	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />\n");
 	printf("</div>");
 	printf("<input type='submit' id='valid' value='Connexion' />\n");
 	if ($msg<>'') {

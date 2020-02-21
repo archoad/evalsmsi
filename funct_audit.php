@@ -56,6 +56,7 @@ function createAssessmentRegroup() {
 
 function selectEtablissementAudit() {
 	genSyslog(__FUNCTION__);
+	$nonce = $_SESSION['nonce'];
 	if (isset($_SESSION['quiz'])) { unset($_SESSION['quiz']); }
 	$action = explode('=', $_SERVER['QUERY_STRING'])[1];
 	$result = getEtablissement();
@@ -84,13 +85,14 @@ function selectEtablissementAudit() {
 		default:
 			break;
 	}
-	printf("<form method='post' id='audit' action='audit.php?action=%s' onsubmit='return champs_ok(this)'>\n", $act);
+	printf("<form method='post' id='audit' action='audit.php?action=%s'>\n", $act);
 	printf("<fieldset>\n<legend>Choix d'un établissement</legend>\n");
 	printf("<table>\n<tr id='selectEtabRow'><td>\n");
 	if ($action === 'objectif') {
-		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab'>\n");
+		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab' required>\n");
 	} else {
-		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab' onchange='xhrequest(this.value)'>\n");
+		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab' required>\n");
+		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>\n", $nonce);
 	}
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row = mysqli_fetch_object($result)) {
@@ -102,7 +104,7 @@ function selectEtablissementAudit() {
 	}
 	printf("</select>\n</td>\n");
 	printf("</tr>\n</table>\n</fieldset>\n");
-	validForms('Continuer', 'audit.php');
+	validForms('Continuer', 'audit.php', $back=False);
 	printf("</form>\n");
 }
 
@@ -153,6 +155,7 @@ function writeAudit() {
 
 function objectifs() {
 	genSyslog(__FUNCTION__);
+	global $noteMax;
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
@@ -161,7 +164,7 @@ function objectifs() {
 	$objectives = json_decode($row->objectifs, true);
 	printf("<div class='row'>\n");
 	printf("<div class='column largeleft'>\n");
-	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' onsubmit='return champs_ok(this)'>\n");
+	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' >\n");
 	printf("<fieldset>\n<legend>Gestion des objectifs pour <b>%s</b></legend>\n", $row->nom);
 	foreach ($objectives as $numQuiz => $obj) {
 		$domLibelle = getDomLibelle($numQuiz);
@@ -173,7 +176,7 @@ function objectifs() {
 			$num_dom = intval(explode('_', $objectif)[1]);
 			$objCurr = sprintf("obj_%d_%d", $numQuiz, $num_dom);
 			printf("<tr>\n<td>%d</td><td class='pleft'>%s</td>", $num_dom, $domLibelle[$num_dom]);
-			printf("<td><input type='text' size='1' maxlength='1' name='%s' id='%s' onblur='valideObj(this)' value='%d' /></td></tr>", $objCurr, $objCurr, $value);
+			printf("<td><input type='number' name='%s' id='%s' value='%d' min='1' max='%d' required /></td></tr>", $objCurr, $objCurr, $value, $noteMax);
 		}
 		printf("</table>\n");
 		printf("<p class='separation'>&nbsp;</p>\n");
@@ -230,8 +233,9 @@ function recordObjectifs() {
 
 function journalisation() {
 	genSyslog(__FUNCTION__);
+	$nonce = $_SESSION['nonce'];
 	if (isset($_SESSION['quiz'])) {
-		printf("<script type='text/javascript'>window.onload = function() { loadLogs(); }</script>");
+		printf("<script nonce='%s'>document.body.addEventListener('load', loadLogs());</script>", $nonce);
 		printf("<div class='onecolumn' id='graphs'>\n");
 		$msg = sprintf("Journal des opérations - %s", uidToEtbs());
 		printf("<div class='visualization' id='visualization'><p>%s</p></div>", $msg);
@@ -301,10 +305,11 @@ function isAssessGroupValidate() {
 function displayAudit() {
 	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['quiz'])) {
+		$numQuestion = questionsCount();
+		$nonce = $_SESSION['nonce'];
+		$annee = $_SESSION['annee'];
 		$id_quiz = $_SESSION['quiz'];
 		$id_etab = $_SESSION['id_etab'];
-		$annee = $_SESSION['annee'];
-		$numQuestion = questionsCount();
 		$quiz = getJsonFile();
 		$name_etab = getEtablissement($id_etab);
 		printf("<h1>%s - %s</h1>\n", $name_etab, $annee);
@@ -340,13 +345,15 @@ function displayAudit() {
 				for ($d=0; $d<count($quiz); $d++) {
 					$num_dom = $quiz[$d]['numero'];
 					$subDom = $quiz[$d]['subdomains'];
-					printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $num_dom, $quiz[$d]['libelle'], $num_dom);
+					printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' /></p>\n", $num_dom, $quiz[$d]['libelle'], $num_dom);
+					printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>\n", $nonce, $num_dom, $num_dom);
 					printf("<dl class='none' id='dl%s'>\n", $num_dom);
 					for ($sd=0; $sd<count($subDom); $sd++) {
 						$num_sub_dom = $subDom[$sd]['numero'];
 						$questions = $subDom[$sd]['questions'];
 						$id = $num_dom.'-'.$num_sub_dom;
-						printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+						printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' /></dt>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+						printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>\n", $nonce, $id, $id);
 						printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
 						printf("<dd class='none' id='dd%s'>\n", $id);
 						for ($q=0; $q<count($questions); $q++) {
@@ -354,7 +361,7 @@ function displayAudit() {
 							$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 							printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
-							printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly='readonly' class='protected'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
+							printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly class='protected'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 							$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							if (isset($assessment[$evalID])) {
 								printf("<br /><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $evalID, $evalID, traiteStringFromBDD($assessment[$evalID]));
@@ -520,7 +527,8 @@ function getCommentGraphPar() {
 		$id_etab = $_SESSION['id_etab'];
 		$annee = $_SESSION['annee'];
 		$id_quiz = $_SESSION['quiz'];
-		printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
+		$nonce = $_SESSION['nonce'];
+		printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 		$base = dbConnect();
 		$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 		$result = mysqli_query($base, $request);
@@ -554,13 +562,15 @@ function getCommentGraphPar() {
 						printf("<div class='onecolumn'>\n");
 						printf("<div id='graphs'>\n");
 						printf("<canvas id='currentYearGraphBar'></canvas>\n");
-						printf("<a id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
+						printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
 						printf("<canvas id='currentYearGraphPolar'></canvas>\n");
-						printf("<a id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
+						printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
+						printf("<canvas id='currentYearGraphScatter'></canvas><br />\n");
+						printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>\n");
 						printf("</div>\n");
-						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' onsubmit='return champs_ok(this)'>\n");
-						printf("<input type='hidden' size='3' maxlength='3' name='id_assess' id='id_assess' value='%s'/>\n", $record->id);
-						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10'>%s</textarea>\n", traiteStringFromBDD($record->comment_graph_par));
+						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' >\n");
+						printf("<input type='hidden' name='id_assess' id='id_assess' value='%s'/>\n", $record->id);
+						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10' required>%s</textarea>\n", traiteStringFromBDD($record->comment_graph_par));
 						validForms('Continuer', 'audit.php', $back=False);
 						printf("</form>\n");
 						printf("</div>\n");
@@ -585,16 +595,19 @@ function getCommentGraphPar() {
 }
 
 
-function confirmDeleteAssessment($script) {
+function confirmDeleteAssessment() {
 	genSyslog(__FUNCTION__);
 	$name_etab = getEtablissement($_SESSION['id_etab']);
+	$nonce = $_SESSION['nonce'];
 	$annee = $_SESSION['annee'];
+	$script = $_SESSION['curr_script'];
 	$msg = sprintf("Cliquer pour effacer l'évaluation<br />réalisée en <b>%d</b> par <b>%s</b>", $annee, $name_etab);
 	linkMsg($script."?action=do_delete", $msg, "alert.png");
 	linkMsg($script, "Annuler et revenir à la page d'acueil", "ok.png");
 	printf("<div class='onecolumn' id='graphs'>\n");
 	printf("<canvas id='currentYearGraphBar'></canvas>\n");
 	printf("</div>\n");
+	printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 }
 
 

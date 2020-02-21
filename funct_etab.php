@@ -37,6 +37,7 @@ function createAssessment() {
 function displayAssessment() {
 	genSyslog(__FUNCTION__);
 	$numQuestion = questionsCount();
+	$nonce = $_SESSION['nonce'];
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
 	$quiz = getJsonFile();
@@ -62,14 +63,15 @@ function displayAssessment() {
 		printf("<div class='column largeleft'>\n");
 		printf("<h3>Cette évaluation comprend %s questions</h3>\n", $numQuestion);
 		printf("<div class='assess'>\n");
-		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' onsubmit='return champs_na(this)'>\n");
+		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' novalidate>\n");
 		printf("<p><input type='hidden' id='nbr_questions' value='%s' /></p>\n", $numQuestion);
 		$dom_complete = domainComplete($assessment);
 		for ($d=0; $d<count($quiz); $d++) {
 			$num_dom = $quiz[$d]['numero'];
 			$subDom = $quiz[$d]['subdomains'];
 			$fond = getColorButton($dom_complete, $num_dom);
-			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
+			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
+			printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>\n", $nonce, $num_dom, $num_dom);
 			printf("<dl class='none' id='dl%s'>\n", $num_dom);
 			for ($sd=0; $sd<count($subDom); $sd++) {
 				$num_sub_dom = $subDom[$sd]['numero'];
@@ -77,8 +79,9 @@ function displayAssessment() {
 				$id = $num_dom.'-'.$num_sub_dom;
 				$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 				$fond = getColorButton($subdom_complete, $num_sub_dom);
-				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
-				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+				printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>\n", $nonce, $id, $id);
+				printf("<dd class='comment'>%s</dd>\n", $subDom[$sd]['comment']);
 				printf("<dd class='none' id='dd%s'>\n", $id);
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];
@@ -88,12 +91,16 @@ function displayAssessment() {
 					} else {
 						printSelect($num_dom, $num_sub_dom, $num_question);
 					}
-					$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+					$commentID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+					$errorID = 'error'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
+					printf("<br />\n");
 					if (isset($assessment)) {
-						printf("<br /><textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
+						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $commentID, $commentID, traiteStringFromBDD($assessment[$commentID]));
 					} else {
-						printf("<br /><textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'></textarea>\n", $textID, $textID);
+						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'></textarea>\n", $commentID, $commentID);
 					}
+					printf("<span class='error' id='%s'></span>\n", $errorID);
+					printf("<script nonce='%s'>document.getElementById('%s').addEventListener('keyup', function(){progresse();});</script>", $nonce, $commentID);
 					printf("<p class='separation'>&nbsp;</p>\n");
 				}
 				printf("</dd>\n");
@@ -108,6 +115,8 @@ function displayAssessment() {
 		printf("</div>\n");
 		afficheNotesExplanation();
 		printf("</div>\n");
+		printf("<script nonce='%s'>document.body.addEventListener('load', progresse());</script>", $nonce);
+		printf("<script nonce='%s'>document.getElementById('make_assess').addEventListener('submit', function(){assessFormValidity(event);});</script>", $nonce);
 	}
 }
 
@@ -135,7 +144,7 @@ function writeAssessment() {
 }
 
 
-function exportRapport($script, $annee) {
+function exportRapport($annee) {
 	genSyslog(__FUNCTION__);
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
@@ -144,7 +153,7 @@ function exportRapport($script, $annee) {
 	$msg = sprintf("Télécharger le plan d'actions %s (Excel)", $annee);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	generateRapport($script, $annee);
+	generateRapport($annee);
 	printf("</div>\n");
 	printf("<div class='column right'>\n");
 	linkMsg($xlsFile, $msg, "xlsx.png", 'menu');
@@ -165,10 +174,10 @@ function selectYearRapport() {
 		}
 	}
 	if (count($list)) {
-		printf("<form method='post' id='select_print' action='etab.php?action=do_print' onsubmit='return champs_ok(this)'>\n");
+		printf("<form method='post' id='select_print' action='etab.php?action=do_print'>\n");
 		printf("<fieldset>\n<legend>Choix d'une année</legend>\n");
 		printf("<table>\n<tr><td>\n");
-		printf("Année:&nbsp;\n<select name='year' id='year'>\n");
+		printf("Année:&nbsp;\n<select name='year' id='year' required>\n");
 		printf("<option selected='selected' value=''>&nbsp;</option>\n");
 		foreach($list as $annee) {
 			printf("<option value='%d'>%d</option>\n", $annee, $annee);

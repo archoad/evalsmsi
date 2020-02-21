@@ -52,7 +52,7 @@ where table_schema='evalsmsi' ";
 
 
 function chooseEtablissement($record=0) {
-	genSyslog(__FUNCTION__);
+	$nonce = $_SESSION['nonce'];
 	$base = dbConnect();
 	if ($record) {
 		$req_etbs = sprintf("SELECT id,nom,abrege FROM etablissement WHERE id NOT IN (%s)", $record->etablissement);
@@ -63,9 +63,7 @@ function chooseEtablissement($record=0) {
 	$res_etbs = mysqli_query($base, $req_etbs);
 	dbDisconnect($base);
 	printf("<div class='grid'>\n");
-
 	printf("<select id='result[]' name='result[]' multiple hidden></select>\n");
-
 	printf("<div id='source' class='dropper'>\n");
 	printf("<div class='grid_title'>Etablissements existants</div>\n");
 	while ($row=mysqli_fetch_object($res_etbs)) {
@@ -86,34 +84,37 @@ function chooseEtablissement($record=0) {
 	}
 	printf("</div>\n");
 	printf("</div>\n");
+	printf("<script nonce='%s' src='js/dragdrop.js'></script>", $nonce);
 }
 
 
 function createUser() {
 	genSyslog(__FUNCTION__);
+	$nonce = $_SESSION['nonce'];
 	$base = dbConnect();
 	$req_role = "SELECT id,intitule FROM role WHERE id<>'1'";
 	$res_role = mysqli_query($base, $req_role);
 	dbDisconnect($base);
-	printf("<form method='post' id='new_user' action='admin.php?action=record_user' onsubmit='return user_champs_ok(this)'>\n");
+	printf("<form method='post' id='user' action='admin.php?action=record_user'>\n");
 	printf("<fieldset>\n<legend>Ajout d'un utilisateur</legend>\n");
 	printf("<table>\n<tr><td colspan='3'>\n");
-	printf("<input type='text' size='20' maxlength='20' name='prenom' id='prenom' placeholder='Prénom de l&apos;utilisateur' />\n");
-	printf("<input type='text' size='20' maxlength='20' name='nom' id='nom' placeholder='Nom de l&apos;utilisateur' />\n");
-	printf("Fonction:&nbsp;<select name='role' id='role' >\n");
+	printf("<input type='text' size='20' maxlength='20' name='prenom' id='prenom' placeholder='Prénom de l&apos;utilisateur' required>\n");
+	printf("<input type='text' size='20' maxlength='20' name='nom' id='nom' placeholder='Nom de l&apos;utilisateur' required>\n");
+	printf("Fonction:&nbsp;<select name='role' id='role' required>\n");
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row=mysqli_fetch_object($res_role)) {
 		printf("<option value='%d'>%s</option>\n", $row->id, $row->intitule);
 	}
 	printf("</select>\n");
 	printf("</td></tr>\n<tr><td colspan='3'>\n");
-	printf("<input type='text' size='50' maxlength='50' name='login' id='login' placeholder='Identifiant (prenom.nom)' autocomplete='username' />\n");
-	printf("<input type='password' size='20' maxlength='20' name='passwd' id='passwd' placeholder='Mot de passe' autocomplete='current-password' />\n");
+	printf("<input type='text' size='50' maxlength='50' name='login' id='login' placeholder='Identifiant (prenom.nom)' autocomplete='username' required>\n");
+	printf("<input type='password' size='20' maxlength='20' name='passwd' id='passwd' placeholder='Mot de passe' autocomplete='current-password' required>\n");
 	printf("</td></tr>\n</table>\n");
 	chooseEtablissement();
 	printf("</fieldset>\n");
 	validForms('Enregistrer', 'admin.php');
 	printf("</form>\n");
+	printf("<script nonce='%s'>document.getElementById('user').addEventListener('submit', function(){userFormValidity(event);});</script>", $nonce);
 }
 
 
@@ -122,10 +123,10 @@ function selectUserModif() {
 	$base = dbConnect();
 	$request = "SELECT * FROM users WHERE role<>'1'";
 	$result = mysqli_query($base, $request);
-	printf("<form method='post' id='modif_user' action='admin.php?action=modif_user' onsubmit='return champs_ok(this)'>\n");
+	printf("<form method='post' id='modif_user' action='admin.php?action=modif_user'>\n");
 	printf("<fieldset>\n<legend>Modification d'un utilisaeur</legend>\n");
 	printf("<table>\n<tr><td>\n");
-	printf("Utilisateur:&nbsp;\n<select name='user' id='user'>\n");
+	printf("Utilisateur:&nbsp;\n<select name='user' id='user' required>\n");
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row=mysqli_fetch_object($result)) {
 		printf("<option value='%s'>%s %s</option>\n", $row->id, $row->prenom, $row->nom);
@@ -139,6 +140,7 @@ function selectUserModif() {
 
 function modifUser() {
 	genSyslog(__FUNCTION__);
+	$nonce = $_SESSION['nonce'];
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM users WHERE id='%d' LIMIT 1", $_SESSION['current_user']);
 	$result = mysqli_query($base, $request);
@@ -147,24 +149,25 @@ function modifUser() {
 	$req_role = "SELECT id,intitule FROM role WHERE id<>'1'";
 	$res_role = mysqli_query($base, $req_role);
 
-	printf("<form method='post' id='modif_user' action='admin.php?action=update_user' onsubmit='return user_champs_ok(this)'>\n");
+	printf("<form method='post' id='user' action='admin.php?action=update_user'>\n");
 	printf("<fieldset>\n<legend>Modification d'un utilisateur</legend>\n");
 	printf("<table>\n<tr><td colspan='3'>\n");
-	printf("Prénom:&nbsp;<input type='text' size='20' maxlength='20' name='prenom' id='prenom' value=\"%s\" />\n", traiteStringFromBDD($record->prenom));
-	printf("Nom:&nbsp;<input type='text' size='20' maxlength='20' name='nom' id='nom' value=\"%s\" />\n", traiteStringFromBDD($record->nom));
-	printf("Fonction:&nbsp;<select name='role' id='role'>\n");
+	printf("Prénom:&nbsp;<input type='text' size='20' maxlength='20' name='prenom' id='prenom' value='%s' required>\n", traiteStringFromBDD($record->prenom));
+	printf("Nom:&nbsp;<input type='text' size='20' maxlength='20' name='nom' id='nom' value='%s' required>\n", traiteStringFromBDD($record->nom));
+	printf("Fonction:&nbsp;<select name='role' id='role' required>\n");
 	printf("<option selected='selected' value='%d'>%s</option>\n", intval($record->role), getRole(intval($record->role)));
 	while($row=mysqli_fetch_object($res_role)) {
 		printf("<option value='%d'>%s</option>\n", $row->id, $row->intitule);
 	}
 	printf("</select>\n");
 	printf("</td></tr>\n<tr><td colspan='3'>\n");
-	printf("Identifiant&nbsp;<input type='text' size='50' maxlength='50' name='login' id='login' value=\"%s\" />\n", traiteStringFromBDD($record->login));
+	printf("Identifiant&nbsp;<input type='text' size='50' maxlength='50' name='login' id='login' value='%s' required>\n", traiteStringFromBDD($record->login));
 	printf("</td></tr>\n</table>\n");
 	chooseEtablissement($record);
 	printf("</fieldset>\n");
 	validForms('Modifier', 'admin.php', $back=False);
 	printf("</form>\n");
+	printf("<script nonce='%s'>document.getElementById('user').addEventListener('submit', function(){userFormValidity(event);});</script>", $nonce);
 	dbDisconnect($base);
 }
 
@@ -217,20 +220,20 @@ function createEtablissement($action='') {
 	genSyslog(__FUNCTION__);
 	$base = dbConnect();
 	if ($action === 'regroup') {
-		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_regroup' onsubmit='return champs_ok(this)'>\n");
+		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_regroup'>\n");
 		printf("<fieldset>\n<legend>Création d'un établissement de regroupement</legend>\n");
 	} else {
-		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_etab' onsubmit='return champs_ok(this)'>\n");
+		printf("<form method='post' id='new_etablissement' action='admin.php?action=record_etab'>\n");
 		printf("<fieldset>\n<legend>Création d'un établissement</legend>\n");
 	}
 	printf("<table>\n<tr><td>\n");
-	printf("<input type='text' size='65' maxlength='65' name='nom' id='nom' placeholder='Nom de l&apos;établissement' />\n");
-	printf("<input type='text' size='10' maxlength='10' name='abrege' id='abrege' placeholder='Nom abrégé' />\n");
+	printf("<input type='text' size='65' maxlength='65' name='nom' id='nom' placeholder='Nom de l&apos;établissement' required>\n");
+	printf("<input type='text' size='10' maxlength='10' name='abrege' id='abrege' placeholder='Nom abrégé' required>\n");
 	printf("</td></tr>\n<tr><td>\n");
-	printf("<input type='text' size='80' maxlength='80' name='adresse' id='adresse' placeholder='Adresse' />\n");
+	printf("<input type='text' size='80' maxlength='80' name='adresse' id='adresse' placeholder='Adresse' required>\n");
 	printf("</td></tr>\n<tr><td>\n");
-	printf("<input type='text' size='5' maxlength='5' name='cp' id='cp' placeholder='CP' />\n");
-	printf("<input type='text' size='20' maxlength='20' name='ville' id='ville' placeholder='Ville' />\n");
+	printf("<input type='text' size='5' maxlength='5' name='cp' id='cp' placeholder='CP' pattern='[0-9]{5}' required>\n");
+	printf("<input type='text' size='20' maxlength='20' name='ville' id='ville' placeholder='Ville' required>\n");
 	printf("</td></tr>\n</table>\n</fieldset>\n");
 
 	if ($action === 'regroup') {
@@ -253,10 +256,10 @@ function createEtablissement($action='') {
 function selectEtablissementModif() {
 	genSyslog(__FUNCTION__);
 	$result=getEtablissement();
-	printf("<form method='post' id='modif_etab' action='admin.php?action=modif_etab' onsubmit='return champs_ok(this)'>\n");
+	printf("<form method='post' id='modif_etab' action='admin.php?action=modif_etab' >\n");
 	printf("<fieldset>\n<legend>Modification d'un établissement</legend>\n");
 	printf("<table>\n<tr><td>\n");
-	printf("Etablissement:&nbsp;\n<select name='etablissement' id='etablissement'>\n");
+	printf("Etablissement:&nbsp;\n<select name='etablissement' id='etablissement' required>\n");
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row=mysqli_fetch_object($result)) {
 		if (stripos($row->abrege, "_TEAM") !== false) {
@@ -280,24 +283,24 @@ function modifEtablissement() {
 	$record = mysqli_fetch_object($result);
 
 	if (stripos($record->abrege, "_TEAM") === false) {
-		printf("<form method='post' id='modif_etablissement' action='admin.php?action=update_etab' onsubmit='return champs_ok(this)'>\n");
+		printf("<form method='post' id='modif_etablissement' action='admin.php?action=update_etab'>\n");
 	} else {
-		printf("<form method='post' id='modif_etablissement' action='admin.php?action=update_regroup' onsubmit='return champs_ok(this)'>\n");
+		printf("<form method='post' id='modif_etablissement' action='admin.php?action=update_regroup'>\n");
 	}
 	printf("<fieldset>\n<legend>Modification d'un établissement</legend>\n");
 	printf("<table>\n<tr><td>\n");
-	printf("Nom:&nbsp;<input type='text' size='65' maxlength='65' name='nom' id='nom' value=\"%s\" />\n", traiteStringFromBDD($record->nom));
+	printf("Nom:&nbsp;<input type='text' size='65' maxlength='65' name='nom' id='nom' value='%s' required>\n", traiteStringFromBDD($record->nom));
 	printf("</td></tr>\n<tr><td>\n");
 	if (stripos($record->abrege, "_TEAM") === false) {
-		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s'/>\n", traiteStringFromBDD($record->abrege));
+		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s' required>\n", traiteStringFromBDD($record->abrege));
 	} else {
 		printf("Nom abrégé:&nbsp;<input type='text' size='10' maxlength='10' name='abrege' id='abrege' value='%s' readonly='readonly' class='protected' />&nbsp;\n", traiteStringFromBDD($record->abrege));
 	}
 	printf("</td></tr>\n<tr><td>\n");
-	printf("Adresse:&nbsp;<input type='text' size='80' maxlength='80' name='adresse' id='adresse' value=\"%s\"/>&nbsp;\n", traiteStringFromBDD($record->adresse));
+	printf("Adresse:&nbsp;<input type='text' size='80' maxlength='80' name='adresse' id='adresse' value='%s' required>&nbsp;\n", traiteStringFromBDD($record->adresse));
 	printf("</td></tr>\n<tr><td>\n");
-	printf("Code postal:&nbsp;<input type='text' size='5' maxlength='5' name='cp' id='cp' value='%s'/>&nbsp;\n", $record->code_postal);
-	printf("Ville:&nbsp;<input type='text' size='20' maxlength='20' name='ville' id='ville' value='%s'/>&nbsp;\n", traiteStringFromBDD($record->ville));
+	printf("Code postal:&nbsp;<input type='text' size='5' maxlength='5' name='cp' id='cp' value='%s' pattern='[0-9]{5}'  required>&nbsp;\n", $record->code_postal);
+	printf("Ville:&nbsp;<input type='text' size='20' maxlength='20' name='ville' id='ville' value='%s' required>&nbsp;\n", traiteStringFromBDD($record->ville));
 	printf("</td></tr>\n</table>\n</fieldset>\n");
 
 	if (stripos($record->abrege, "_TEAM") !== false) {
@@ -308,9 +311,9 @@ function modifEtablissement() {
 		while($row=mysqli_fetch_object($res_etab)) {
 			if (stripos($row->abrege, "_TEAM") === false) {
 				if ( array_search($row->id, $team) !== false) {
-					printf("<input type='checkbox' name='regroup[]' value='%d' checked='checked' />%s<br />\n", $row->id, $row->nom);
+					printf("<input type='checkbox' name='regroup[]' value='%d' checked='checked'>%s<br />\n", $row->id, $row->nom);
 				} else {
-					printf("<input type='checkbox' name='regroup[]' value='%d' />%s<br />\n", $row->id, $row->nom);
+					printf("<input type='checkbox' name='regroup[]' value='%d'>%s<br />\n", $row->id, $row->nom);
 				}
 			}
 		}
@@ -385,10 +388,10 @@ function selectQuizModification() {
 	$request = sprintf("SELECT * FROM quiz");
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
-	printf("<form method='post' id='modif_quiz' action='admin.php?action=modif_quiz' onsubmit='return champs_ok(this)'>\n");
+	printf("<form method='post' id='modif_quiz' action='admin.php?action=modif_quiz' >\n");
 	printf("<fieldset>\n<legend>Modification d'un questionnaire</legend>\n");
 	printf("<table>\n<tr><td>\n");
-	printf("Questionnaire:&nbsp;\n<select name='quiz' id='quiz'>\n");
+	printf("Questionnaire:&nbsp;\n<select name='quiz' id='quiz' required>\n");
 	printf("<option selected='selected' value=''>&nbsp;</option>\n");
 	while($row = mysqli_fetch_object($result)) {
 		printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);

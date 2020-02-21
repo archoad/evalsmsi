@@ -38,36 +38,14 @@ function myAlert(txt, elt=null) {
 	}
 	if (elt != null) {
 		elt.focus();
+		elt.setCustomValidity(txt);
 		elt.style.backgroundColor='#FFC7C7';
 	}
 }
 
 
-function champs_ok(form) {
-	for(i=0; i<form.elements.length; i++) {
-		if (form.elements[i].value === '') {
-			myAlert('Formulaire incomplet', form.elements[i]);
-			return false;
-		}
-	}
-	return true;
-}
-
-
-function valideObj(elt) {
-	if (elt.value != "") {
-		if (isNaN(elt.value)) {
-			myAlert("Vous devez saisir un chiffre.", elt);
-		} else {
-			if ((elt.value > 7) || (elt.value < 1)) {
-				myAlert("Vous devez saisir un objectif entre 1 et 7.", elt);
-			}
-		}
-	}
-}
-
-
-function user_champs_ok(form) {
+function userFormValidity() {
+	var form = document.getElementById('user');
 	var l1 = document.getElementById('destination');
 	var result = document.getElementById('result[]');
 	var role = document.getElementById('role');
@@ -84,82 +62,41 @@ function user_champs_ok(form) {
 		option.selected = true;
 		result.add(option);
 	}
-	if (champs_ok(form)) {
-		if (((role.value=='3') || (role.value=='4')) && (result.options.length>=2)) {
-			myAlert('Veuillez sélectionner un seul établissement');
-			return false;
-		}
-		return true;
+	if (result.options.length == '0') {
+		myAlert('Veuillez sélectionner un établissement');
+		event.preventDefault();
+	}
+	if (((role.value=='3') || (role.value=='4')) && (result.options.length>=2)) {
+		myAlert('Veuillez sélectionner un seul établissement');
+		event.preventDefault();
+	}
+}
+
+
+function validatePattern() {
+	var pattern = /^(?=.*[a-z])(?=.*[0-9])(?=.{6,})/;
+	var pass1 = document.getElementById('new1').value;
+	if (pass1.match(pattern)) {
+		document.getElementById('new1').setCustomValidity('');
 	} else {
-		return false;
+		document.getElementById('new1').setCustomValidity('Doit contenir majuscules, minuscules, chiffres et au moins 6 caractères');
 	}
-	return true;
 }
 
 
-function password_ok(form) {
-	if (form.new1.value.length < 6) {
-		myAlert('Le mot de passe doit contenir plus de 6 caractères', form.new1);
-		return false;
+function validatePassword() {
+	var pass1 = document.getElementById('new1').value;
+	var pass2 = document.getElementById('new2').value;
+	if (pass1 != pass2) {
+		document.getElementById('new2').setCustomValidity('Les mots de passe ne correspondent pas');
+	} else {
+		document.getElementById('new2').setCustomValidity('');
 	}
-	if (form.new1.value.match(/^[a-zA-Z0-9]*$/) != form.new1.value) {
-		myAlert('Le mot de passe ne doit contenir que des caractères alphanumériques', form.new1);
-		return false;
-	}
-	if (form.new1.value != form.new2.value) {
-		myAlert('Erreur de saisie', form.new2);
-		return false;
-	}
-	return true;
 }
 
 
-function champs_na(form) {
-	var tmp_elt = document.getElementById('nbr_questions');
-	var nbr_quests = tmp_elt.value;
-	var num_quest_ok = 0;
-	var form = document.getElementById('make_assess');
-	for (n=0; n<form.elements.length; n++) {
-		if ((form.elements[n].value != 0) && (form.elements[n].id.substring(0,8) == 'question'))
-			num_quest_ok++;
-	}
-	for(i=1; i<form.elements.length; i++) {
-		if (form.elements[i].id.substring(0,8) == 'question') {
-			var comment = 'comment'+form.elements[i].id.substring(8,18);
-			if ((form.elements[i].value == 1) && (form.elements[comment].value == '')) {
-				myAlert("Vous avez spécifié que certaines questions ne vous sont pas applicables sans le justifier.");
-				var subpar = form.elements[comment].parentNode;
-				var par = subpar.parentNode;
-				par.style.display = 'block';
-				subpar.style.display = 'block';
-				form.elements[comment].focus();
-				form.elements[comment].style.backgroundColor='#FFC7C7'
-				return false;
-			}
-			if ((form.elements[i].value == 7) && (form.elements[comment].value == '')) {
-				myAlert("Vous avez spécifié que certaines mesures sont existantes sans apporter les éléments de preuves.");
-				var subpar = form.elements[comment].parentNode;
-				var par = subpar.parentNode;
-				par.style.display = 'block';
-				subpar.style.display = 'block';
-				form.elements[comment].focus();
-				form.elements[comment].style.backgroundColor='#FFC7C7'
-				return false;
-			}
-		}
-	}
-	if (nbr_quests == num_quest_ok) {
-		var final_elt = document.getElementById('final_comment');
-		if (final_elt.value == '') {
-			myAlert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
-			return false;
-		}
-	}
-	return true;
-}
-
-
-function display(elt) {
+function display(eltName) {
+	var elt = document.getElementById(eltName);
 	if (elt.id.substring(0,2) == 'ti') {
 		var new_elt = document.getElementById('dl'+elt.id.substring(2,4));
 	} else {
@@ -174,15 +111,83 @@ function display(elt) {
 	}
 }
 
-function progresse() {
-	var tmp_elt = document.getElementById('nbr_questions');
-	var nbr_quests = tmp_elt.value;
+
+function countSetQuestion(form) {
 	var num_quest_ok = 0;
-	var form = document.getElementById('make_assess');
 	for (n=0; n<form.elements.length; n++) {
 		if ((form.elements[n].value != 0) && (form.elements[n].id.substring(0,8) == 'question'))
 			num_quest_ok++;
 	}
+	return num_quest_ok;
+}
+
+
+function controlAssessAnswers(form) {
+	for(i=1; i<form.elements.length; i++) {
+		if (form.elements[i].id.substring(0,8) == 'question') {
+			var q = form.elements[i];
+			var c_id = 'comment'+q.id.substring(8,18);
+			var e_id = 'error'+q.id.substring(8,18);
+			var c =  document.getElementById(c_id);
+			var e = document.getElementById(e_id);
+			if ((q.value == 1) || (q.value == 7)) {
+				c.required = true;
+				if (c.value == '') {
+					c.setCustomValidity('Ajouter une justification');
+					e.className = "error active";
+					if (q.value == 1) {e.innerHTML = "Vous avez spécifié que certaines questions ne vous sont pas applicables sans le justifier.";}
+					if (q.value == 7) {e.innerHTML = "Vous avez spécifié que certaines mesures sont existantes sans apporter les éléments de preuves.";}
+				} else {
+					c.setCustomValidity('');
+					e.innerHTML = "";
+					e.className = "error";
+				}
+			} else {
+				c.required = false;
+				c.setCustomValidity('');
+				e.innerHTML = "";
+				e.className = "error";
+			}
+		}
+	}
+}
+
+
+function assessFormValidity(event) {
+	var form = document.getElementById('make_assess');
+	for(i=1; i<form.elements.length; i++) {
+		if (form.elements[i].id.substring(0,8) == 'question') {
+			var q = form.elements[i];
+			var c_id = 'comment'+q.id.substring(8,18);
+			var c =  document.getElementById(c_id);
+			if (!c.validity.valid) {
+				var subpar = c.parentNode;
+				var par = subpar.parentNode;
+				par.className = 'block';
+				subpar.className = 'block';
+				c.focus();
+				event.preventDefault();
+			}
+		}
+	}
+	var nbr_quests = document.getElementById('nbr_questions').value;
+	var num_quest_ok = countSetQuestion(form);
+	if (nbr_quests == num_quest_ok) {
+		var final_elt = document.getElementById('final_comment');
+		if (final_elt.value == '') {
+			myAlert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
+			final_elt.setCustomValidity("Ajout d'un commentaire");
+		}
+	}
+}
+
+
+function progresse() {
+	var form = document.getElementById('make_assess');
+	var nbr_quests = document.getElementById('nbr_questions').value;
+	var num_quest_ok = countSetQuestion(form);
+	controlAssessAnswers(form);
+
 	if (num_quest_ok <= nbr_quests) {
 		if (num_quest_ok > 10) {
 			document.getElementById("c").innerHTML=parseInt((100*num_quest_ok)/nbr_quests)+"%";
@@ -192,37 +197,11 @@ function progresse() {
 	if (nbr_quests == num_quest_ok) {
 		var par = document.getElementById('final_comment');
 		par.className='block';
+		par.required = true;
 		if (document.getElementById("final_comment").value == '' ) {
 			alert("Questionnaire complété à 100%\nVEUILLEZ COMPLETER LE COMMENTAIRE FINAL EN FIN DE FORMULAIRE");
 		}
 	}
-}
-
-
-function isset(variable) {
-	if ( typeof( window[variable] ) != "undefined" ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-function getURLParam(strParamName){
-	var strReturn = "";
-	var strHref = window.location.href;
-	if ( strHref.indexOf("?") > -1 ){
-		var strQueryString = strHref.substr(strHref.indexOf("?")).toLowerCase();
-		var aQueryString = strQueryString.split("&");
-		for ( var iParam = 0; iParam < aQueryString.length; iParam++ ){
-			if ( aQueryString[iParam].indexOf(strParamName.toLowerCase() + "=") > -1 ){
-				var aParam = aQueryString[iParam].split("=");
-				strReturn = aParam[1];
-				break;
-			}
-		}
-	}
-	return unescape(strReturn);
 }
 
 
@@ -240,56 +219,3 @@ function xhrequest(input) {
 	xhr.open("GET", url, true);
 	xhr.send();
 }
-
-
-(function() {
-	var dndHandler = {
-		draggedElement: null,
-
-		applyDragEvents: function(element) {
-			element.draggable = true;
-			var dndHandler = this;
-			element.addEventListener('dragstart', function(e) {
-				dndHandler.draggedElement = e.target;
-				this.classList.add('draggable-active');
-				e.dataTransfer.setData('text/plain', e.target.id);
-			}, false);
-		},
-
-		applyDropEvents: function(dropper) {
-			dropper.addEventListener('dragover', function(e) {
-				e.preventDefault();
-				this.classList.add('drop_hover');
-			}, false);
-			dropper.addEventListener('dragleave', function(e) {
-				this.classList.remove('drop_hover');
-			}, false);
-			var dndHandler = this;
-			dropper.addEventListener('drop', function(e) {
-				e.preventDefault();
-				var target = e.target;
-				draggedElement = dndHandler.draggedElement;
-				clonedElement = draggedElement.cloneNode(true);
-				while(target.className.indexOf('dropper') == -1) {
-					target = target.parentNode;
-				}
-				target.classList.remove('drop_hover');
-				clonedElement.classList.remove('draggable-active');
-				clonedElement = target.appendChild(clonedElement);
-				dndHandler.applyDragEvents(clonedElement);
-				draggedElement.parentNode.removeChild(draggedElement);
-			}, false);
-		}
-	};
-
-	var elements = document.querySelectorAll('.draggable');
-	var elementsLen = elements.length;
-	for(var i = 0 ; i < elementsLen ; i++) {
-		dndHandler.applyDragEvents(elements[i]);
-	}
-	var droppers = document.querySelectorAll('.dropper');
-	var droppersLen = droppers.length;
-	for(var i = 0 ; i < droppersLen ; i++) {
-		dndHandler.applyDropEvents(droppers[i]);
-	}
-})();

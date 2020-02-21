@@ -32,7 +32,7 @@ $base = dbConnect();
 $request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' ", $id_etab, $annee);
 $result = mysqli_query($base, $request);
 if (mysqli_num_rows($result)) {
-	$return = "Questionnaire:&nbsp;\n<select name='id_quiz' id='id_quiz'>\n<option value=''>&nbsp;</option>\n";
+	$return = "Questionnaire:&nbsp;\n<select name='id_quiz' id='id_quiz' required>\n<option value=''>&nbsp;</option>\n";
 	while ($row = mysqli_fetch_object($result)) {
 		$req_quiz = sprintf("SELECT * FROM quiz WHERE id='%d' LIMIT 1", $row->quiz);
 		$res_quiz = mysqli_query($base, $req_quiz);

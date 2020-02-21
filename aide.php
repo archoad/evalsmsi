@@ -25,7 +25,7 @@ session_start();
 $authorizedRole = array('3', '4', '100');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Aide et documentation");
-$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
+
 
 function about() {
 	global $progVersion;
@@ -132,6 +132,20 @@ function menu() {
 }
 
 
+switch ($_SESSION['role']) {
+	case '100':
+		$script = 'evalsmsi.php';
+		break;
+	case '3':
+	case '4':
+		$script = 'etab.php';
+		break;
+	default:
+		$script = 'evalsmsi.php';
+		break;
+}
+
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'h_logiciel':
@@ -156,15 +170,11 @@ if (isset($_GET['action'])) {
 
 	default:
 		menu();
-		footPage("etab.php", "Accueil");
+		footPage($script, "Retour");
 	}
 } else {
 	menu();
-	if ($_SESSION['role'] === '100') {
-		footPage("evalsmsi.php", "Accueil");
-	} else {
-		footPage("etab.php", "Accueil");
-	}
+	footPage($script, "Retour");
 }
 
 ?>

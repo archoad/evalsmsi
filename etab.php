@@ -27,7 +27,6 @@ session_start();
 $authorizedRole = array('3', '4');
 isSessionValid($authorizedRole);
 headPage($appli_titre);
-$script = sanitizePhpSelf($_SERVER['PHP_SELF']);
 purgeRapportsFiles();
 
 
@@ -36,14 +35,13 @@ if (isset($_GET['action'])) {
 
 	case 'continue_assess':
 		if (isThereAssessForEtab()) {
-			printf("<script type='text/javascript'>window.onload = function() { progresse(); }</script>");
 			displayAssessment();
 		} else {
 			if (createAssessment()) {
 				$msg = sprintf("L'évaluation pour %s a été créée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
 				linkMsg("etab.php?action=continue_assess", $msg, "ok.png");
 			} else {
-				linkMsg($script, "Aucune évaluation disponible.", "alert.png");
+				linkMsg($_SESSION['curr_script'], "Aucune évaluation disponible.", "alert.png");
 			}
 		}
 		footPage();
@@ -51,21 +49,20 @@ if (isset($_GET['action'])) {
 
 	case 'make_assess':
 		if (writeAssessment()) {
-			linkMsg($script, "Evaluation mise à jour.", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Evaluation mise à jour.", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de mise à jour.", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de mise à jour.", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'graph':
 		if (isThereAssessForEtab()) {
-			printf("<script type='text/javascript'>window.onload = function() { loadGraphYear(); }</script>");
 			displayEtablissmentGraphs();
-			footPage($script, "Accueil");
+			footPage($_SESSION['curr_script'], "Accueil");
 		} else {
 			$msg = sprintf("L'évaluation pour %d n'a pas été créée.", $_SESSION['annee']);
-			linkMsg($script, $msg, "alert.png");
+			linkMsg($_SESSION['curr_script'], $msg, "alert.png");
 			footPage();
 		}
 		break;
@@ -76,42 +73,46 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'do_print':
-		exportRapport($script, intval($_POST['year']));
-		footPage($script, "Accueil");
+		exportRapport(intval($_POST['year']));
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'office':
-		exportEval($script);
-		footPage($script, "Accueil");
+		exportEval();
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'rules':
 		exportRules();
-		footPage($script, "Accueil");
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'password':
-		changePassword($script);
+		changePassword();
 		footPage();
 		break;
 
 	case 'chg_password':
 		if (recordNewPassword($_POST['new1'])) {
-			linkMsg($script, "Mot de passe changé avec succès", "ok.png");
+			linkMsg($_SESSION['curr_script'], "Mot de passe changé avec succès", "ok.png");
 		} else {
-			linkMsg($script, "Erreur de changement de mot de passe", "alert.png");
+			linkMsg($_SESSION['curr_script'], "Erreur de changement de mot de passe", "alert.png");
 		}
 		footPage();
 		break;
 
 	case 'choose_quiz':
-		chooseQuiz($script);
+		chooseQuiz();
 		footPage();
 		break;
 
 	case 'set_quiz':
-		setRightQuiz($_POST['id_quiz']);
-		header("Location: ".$script);
+		if (setRightQuiz($_POST['id_quiz'])) {
+			header("Location: ".$_SESSION['curr_script']);
+		} else {
+			linkMsg($_SESSION['curr_script'], "Erreur de référentiel", "alert.png");
+			footPage();
+		}
 		break;
 
 	case 'rm_token':
@@ -135,10 +136,3 @@ if (isset($_GET['action'])) {
 }
 
 ?>
-
-
-
-
-<script type='text/javascript' src='js/chart.min.js'></script>
-<script type='text/javascript' src='js/evalsmsi.js'></script>
-<script type='text/javascript' src='js/graphs.js'></script>
