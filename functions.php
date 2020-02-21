@@ -73,7 +73,8 @@ ini_set('filter.default', 'full_special_chars');
 ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
-$progVersion = '4.6.0';
+$progVersion = '4.8.0';
+$progDate = '21 février 2020';
 $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
