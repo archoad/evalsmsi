@@ -211,8 +211,10 @@ function getQuizName() {
 
 function destroySession() {
 	genSyslog(__FUNCTION__);
+	session_unset();
 	session_destroy();
-	unset($_SESSION);
+	session_write_close();
+	setcookie(session_name(),'',0,'/');
 	header('Location: evalsmsi.php');
 }
 
@@ -227,10 +229,11 @@ function isSessionValid($role) {
 
 
 function infoSession() {
+	$_SESSION['rand'] = genNonce();
 	$infoDay = sprintf("%s - %s", $_SESSION['day'], $_SESSION['hour']);
 	$infoNav = sprintf("%s - %s - %s", $_SESSION['os'], $_SESSION['browser'], $_SESSION['ipaddr']);
 	$infoUser = sprintf("Connecté en tant que <b>%s %s</b>", $_SESSION['prenom'], $_SESSION['nom']);
-	$logoff = sprintf("<a href='evalsmsi.php?action=disconnect'>Déconnexion&nbsp;<img alt='logoff' src='pict/turnoff.png' width='10'></a>");
+	$logoff = sprintf("<a href='evalsmsi.php?rand=%s&action=disconnect'>Déconnexion&nbsp;<img alt='logoff' src='pict/turnoff.png' width='10'></a>", $_SESSION['rand']);
 	return sprintf("Powered by EvalSMSI - %s - %s - %s - %s", $infoDay, $infoNav, $infoUser, $logoff);
 }
 

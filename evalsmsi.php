@@ -53,11 +53,12 @@ function menuAuth($msg='') {
 	genSyslog(__FUNCTION__);
 	initiateNullSession();
 	headPageAuth();
+	$_SESSION['rand'] = genNonce();
 	printf("<div class='authcont'>\n");
 	printf("<div class='auth'>\n");
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
 	printf("</div>\n<div class='auth'>\n");
-	printf("<form method='post' id='auth' action='evalsmsi.php?action=connect'>\n");
+	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>\n", $_SESSION['rand']);
 	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' required />\n");
 	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' required />\n");
 	printf("<div class='captcha'>\n");
@@ -152,57 +153,49 @@ function redirectUser($data) {
 	}
 	switch ($_SESSION['role']) {
 		case '1': // Administrateur
-			headPage($appli_titre, "Administration");
-			menuAdmin();
-			footPage();
+			header('Location: admin.php');
 			break;
 		case '2': // Auditeur
-			headPage($appli_titre, "Audit");
-			menuAudit();
-			footPage();
+			header('Location: audit.php');
 			break;
 		case '3': // Directeur
-			headPage($appli_titre);
-			footPage();
-			break;
 		case '4': // RSSI
-			headPage($appli_titre);
-			menuEtab();
-			footPage();
+			header('Location: etab.php');
 			break;
 		default:
 			destroySession();
-			header("Location: evalsmsi.php");
 			break;
 	}
 }
 
 
 session_start();
-if (isset($_GET['action'])) {
-	switch ($_GET['action']) {
-		case 'connect':
-			if (validateCaptcha($_POST['captcha'])) {
-				$data = authentification($_POST['login'], $_POST['password']);
-				if ($data) {
-					redirectUser($data);
+if (isset($_GET['rand']) && ($_GET['rand'] === $_SESSION['rand'])) {
+	if (isset($_GET['action'])) {
+		switch ($_GET['action']) {
+			case 'connect':
+				if (validateCaptcha($_POST['captcha'])) {
+					$data = authentification($_POST['login'], $_POST['password']);
+					if ($data) {
+						redirectUser($data);
+					} else {
+						menuAuth("Erreur d'authentification");
+						exit();
+					}
 				} else {
-					menuAuth("Erreur d'authentification");
-					exit();
+					destroySession();
 				}
-			} else {
+				break;
+			case 'disconnect':
 				destroySession();
-				header("Location: evalsmsi.php");
-			}
-			break;
-		case 'disconnect':
-			destroySession();
-			header("Location: evalsmsi.php");
-			break;
-		default:
-			destroySession();
-			header("Location: evalsmsi.php");
-			break;
+				break;
+			default:
+				destroySession();
+				break;
+		}
+	} else {
+		menuAuth();
+		exit;
 	}
 } else {
 	menuAuth();
