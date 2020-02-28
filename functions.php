@@ -63,6 +63,7 @@ ini_set('session.use_cookie', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cache_limiter', 'nocache');
+ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.gc_probability', 1);
 ini_set('session.gc_maxlifetime', 1800); // 30 min
 ini_set('session.cookie_httponly', 1);
