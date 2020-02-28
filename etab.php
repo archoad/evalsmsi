@@ -30,6 +30,8 @@ headPage($appli_titre);
 purgeRapportsFiles();
 
 
+
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 
@@ -134,5 +136,6 @@ if (isset($_GET['action'])) {
 	menuEtab();
 	footPage();
 }
+
 
 ?>
