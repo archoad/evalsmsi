@@ -54,18 +54,20 @@ $captchaMode = 'num'; // 'txt' or 'num'
 // Ne pas modifier ces variables !
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
-
 ini_set('error_reporting', -1);
 ini_set('display_error', 1);
 ini_set('session.use_trans_sid', 0);
-ini_set('session.use_cookie', 1);
 //ini_set('session.cookie_secure', 1);
-ini_set('session.use_only_cookies', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cache_limiter', 'nocache');
 ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_lifetime', 0);
+ini_set('session.use_cookies', 1);
+ini_set('session.use_only_cookies', 1);
 ini_set('session.gc_probability', 1);
 ini_set('session.gc_maxlifetime', 1800); // 30 min
+ini_set('session.sid_length', 48);
+ini_set('session.sid_bits_per_character', 6);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.entropy_length', 32);
 ini_set('session.entropy_file', '/dev/urandom');
