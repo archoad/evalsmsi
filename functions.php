@@ -345,6 +345,26 @@ function genCspPolicy() {
 }
 
 
+function genSyslog($caller) {
+	global $progVersion;
+	$log = array();
+	$log[] = array('program' => 'evalsmsi', 'version' => $progVersion);
+	$log[] = array('function' => $caller);
+	if (isset($_SESSION['login'])) {
+		$log[] = array('login' => $_SESSION['login']);
+	}
+	if (isset($_SESSION['id_etab'])) {
+		$log[] = array('etablissement' => $_SESSION['id_etab']);
+	}
+	if (isset($_SESSION['quiz'])) {
+		$log[] = array('quiz' => $_SESSION['quiz']);
+	}
+	openlog("evalsmsi", LOG_PID, LOG_SYSLOG);
+	syslog(LOG_INFO, json_encode($log));
+	closelog();
+}
+
+
 function headPage($titre, $sousTitre='') {
 	genSyslog(__FUNCTION__);
 	$cspPolicy = genCspPolicy();
@@ -465,26 +485,6 @@ function recordLog() {
 	$request=sprintf("INSERT INTO journal (ip, etablissement, quiz, navigateur, os, user, action) VALUES ('%s', '%d', '%d', '%s', '%s', '%s', '%s')", $_SESSION['ipaddr'], $id_etab, $id_quiz, $_SESSION['browser'], $_SESSION['os'], $_SESSION['login'], $tabstr);
 	mysqli_query($base, $request);
 	dbDisconnect($base);
-}
-
-
-function genSyslog($caller) {
-	global $progVersion;
-	$log = array();
-	$log[] = array('program' => 'evalsmsi', 'version' => $progVersion);
-	$log[] = array('function' => $caller);
-	if (isset($_SESSION['login'])) {
-		$log[] = array('login' => $_SESSION['login']);
-	}
-	if (isset($_SESSION['id_etab'])) {
-		$log[] = array('etablissement' => $_SESSION['id_etab']);
-	}
-	if (isset($_SESSION['quiz'])) {
-		$log[] = array('quiz' => $_SESSION['quiz']);
-	}
-	openlog("evalsmsi", LOG_PID, LOG_SYSLOG);
-	syslog(LOG_INFO, json_encode($log));
-	closelog();
 }
 
 
@@ -965,17 +965,17 @@ function afficheNotesExplanation() {
 	printf("<dl>\n");
 	printf("<dt>1: Non Applicable</dt>\n");
 	printf("<dd>La question est sans objet.</dd>\n");
-	printf("<dt>2: Inexistant et investissement important (Inexistant pour longtemps)</dt>\n");
+	printf("<dt>2: Inexistant et investissement important</dt>\n");
 	printf("<dd>La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.).</dd>\n");
-	printf("<dt>3: Inexistant et investissement peu important (Inexistant)</dt>\n");
+	printf("<dt>3: Inexistant et investissement peu important</dt>\n");
 	printf("<dd>La disposition proposée n’est pas appliquée actuellement, mais le sera rapidement, car sa mise en oeuvre est facile et/ou rapide.</dd>\n");
-	printf("<dt>4: En cours et demande un ajustement (Réalisation avec difficultés non prévues)</dt>\n");
-	printf("<dd>La disposition proposée est en cours de réalisation, mais quelques problèmes sont rencontrés et les plans prévus de réalisation doivent être modifiés.</dd>\n");
-	printf("<dt>5: En cours (Réalisation sans encombre)</dt>\n");
+	printf("<dt>4: En cours et demande un ajustement</dt>\n");
+	printf("<dd>La disposition proposée est en cours de réalisation, mais des difficultés sont rencontrées et les plans prévus de réalisation doivent être modifiés.</dd>\n");
+	printf("<dt>5: En cours</dt>\n");
 	printf("<dd>La disposition proposée est en cours de réalisation et se déroule sans encombre.</dd>\n");
-	printf("<dt>6: Existant et demande un ajustement (Opérationnel 90%%)</dt>\n");
+	printf("<dt>6: Existant et demande un ajustement</dt>\n");
 	printf("<dd>La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle.</dd>\n");
-	printf("<dt>7: Existant (Totalement opérationnel) / oui (100%%)</dt>\n");
+	printf("<dt>7: Opérationnel</dt>\n");
 	printf("<dd>La disposition est opérationnelle et remplit entièrement les besoins demandés</dd>\n");
 	printf("</dl>\n</div>\n");
 	printf("</div>\n");

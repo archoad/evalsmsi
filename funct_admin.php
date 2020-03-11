@@ -175,7 +175,6 @@ function modifUser() {
 function recordUser($action) {
 	genSyslog(__FUNCTION__);
 	$base = dbConnect();
-	$id = intval($_SESSION['current_user']);
 	$prenom = isset($_POST['prenom']) ? traiteStringToBDD($_POST['prenom']) : NULL;
 	$nom = isset($_POST['nom']) ? traiteStringToBDD($_POST['nom']) : NULL;
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
@@ -189,6 +188,7 @@ function recordUser($action) {
 			$request = sprintf("INSERT INTO users (prenom, nom, role, login, password, etablissement) VALUES ('%s', '%s', '%d', '%s', '%s', '%s')", $prenom, $nom, $role, $login, $passwd, $etbs);
 			break;
 		case 'update':
+			$id = intval($_SESSION['current_user']);
 			$request = sprintf("UPDATE users SET prenom='%s', nom='%s', role='%d', login='%s', etablissement='%s' WHERE id='%d'", $prenom, $nom, $role, $login, $etbs, $id);
 			break;
 	}
