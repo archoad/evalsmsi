@@ -77,7 +77,7 @@ ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
 $progVersion = '4.8.0';
-$progDate = '21 février 2020';
+$progDate = '11 mars 2020';
 $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
@@ -95,7 +95,6 @@ Settings::loadConfig();
 
 $largeur=798; // Largeur graphe
 $hauteur=532; // Hauteur graphe
-$txtGraph = "Evaluation du SMSI - (c)2020 Michel Dubois";
 
 $colors = array('darkslateblue', 'darkorange', 'darkorchid', 'bisque4', 'aquamarine4', 'azure4', 'brown', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'darkgoldenrod', 'darkmagenta', 'darkolivegreen4', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkturquoise', 'deeppink', 'deepskyblue', 'goldenrod', 'indianred');
 // --------------------
