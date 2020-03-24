@@ -21,6 +21,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 include("functions.php");
+session_set_cookie_params([
+	'lifetime' => $cookie_timeout,
+	'path' => '/',
+	'domain' => $cookie_domain,
+	'secure' => $session_secure,
+	'httponly' => $cookie_httponly,
+	'samesite' => $cookie_samesite
+]);
 session_start();
 if(isset($_SESSION['sess_captcha'])) {
 	unset($_SESSION['sess_captcha']);
@@ -57,7 +65,7 @@ function numCaptcha($image) {
 	$val1 = rand(1, 5);
 	$val2 = rand(1, 5);
 	$_SESSION['sess_captcha'] = $val1 * $val2;
-	$captchaString = $captchaNumber[$val1-1].'*'.$captchaNumber[$val2-1];
+	$captchaString = $captchaNumber[$val1-1].'*'.$captchaNumber[$val2-1].'=';
 	$textColor = imagecolorallocate($image, 40, 45, 50);
 	imagestring($image, 3, 0, 4, $captchaString, $textColor);
 }

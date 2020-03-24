@@ -1,6 +1,5 @@
-<?php
 /*=========================================================
-// File:        styles.php
+// File:        base.css
 // Description: style models for EvalSMSI
 // Created:     2009-01-01
 // Licence:     GPL-3.0-or-later
@@ -20,58 +19,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
-
-
-
-header('content-type: text/css; charset: UTF-8');
-ob_start('ob_gzhandler');
-header('Cache-Control: max-age=31536000, must-revalidate');
-session_start();
-
-switch ($_SESSION['theme']) {
-	case 'standard':
-		$bg0Color = '#eae7dc';
-		$bg1Color = '#d8c3a5';
-		$bg2Color = '#8e8d8a';
-		$myBlueLight = '#74b4e8';
-		$myBlueDark = '#51a4e8';
-		$myOrangeLight = '#e8b874';
-		$myOrangeDark = '#e8a951';
-		$myRedLight = '#e88074';
-		$myRedDark = '#e86051';
-		$myGreenLight = '#74e874';
-		$myGreenDark = '#51e851';
-		break;
-	case 'old':
-		$bg0Color = '#e9e4db';
-		$bg1Color = '#9eb1bb';
-		$bg2Color = '#4d636f';
-		$myBlueLight = '#337ab7';
-		$myBlueDark = '#286090';
-		$myOrangeLight = '#f0ad4e';
-		$myOrangeDark = '#ec971f';
-		$myRedLight = '#d9534f';
-		$myRedDark = '#c9302c';
-		$myGreenLight = '#5cb85c';
-		$myGreenDark = '#449d44';
-		break;
-	case 'glp':
-		$bg0Color = '#ffffff';
-		$bg1Color = '#ffcb05';
-		$bg2Color = '#003da5';
-		$myBlueLight = '#337ab7';
-		$myBlueDark = '#286090';
-		$myOrangeLight = '#ffcb05';
-		$myOrangeDark = '#ffcb05';
-		$myRedLight = '#e56a54';
-		$myRedDark = '#e56a54';
-		$myGreenLight = '#5cb85c';
-		$myGreenDark = '#5cb85c';
-		break;
-}
-
-?>
-
 @charset "utf-8";
 
 @font-face {
@@ -79,27 +26,15 @@ switch ($_SESSION['theme']) {
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: local('Montserrat-Regular'), url(data/montserrat.woff2) format('woff2');
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+	src: local('Montserrat-Regular'), url(montserrat.woff2) format('woff2');
 }
 
-:root {
-	--bg0Color: <?php echo $bg0Color; ?>;
-	--bg1Color: <?php echo $bg1Color; ?>;
-	--bg2Color: <?php echo $bg2Color; ?>;
-	--myBlueLight: <?php echo $myBlueLight; ?>;
-	--myBlueDark: <?php echo $myBlueDark; ?>;
-	--myOrangeLight: <?php echo $myOrangeLight; ?>;
-	--myOrangeDark: <?php echo $myOrangeDark; ?>;
-	--myRedLight: <?php echo $myRedLight; ?>;
-	--myRedDark: <?php echo $myRedDark; ?>;
-	--myGreenLight: <?php echo $myGreenLight; ?>;
-	--myGreenDark: <?php echo $myGreenDark; ?>;
-	--textDarkColor:#444444;
-	--textClearColor:#f5f7f8;
-	--shadowNormal: 6px 6px 6px rgba(0, 0, 0, 0.2);
-	--shadowHover: 2px 2px 2px rgba(0, 0, 0, 0.2);
-	--shadowAuth: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+@font-face {
+	font-family: Raleway;
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: local('Raleway-Regular'), url(raleway.woff2) format('woff2');
 }
 
 * {
@@ -115,7 +50,7 @@ body {
 	height: 100%;
 	margin: 0;
 	background-color: var(--bg0Color);
-	font-family: Montserrat;
+	font-family: var(--defaultFont);
 	font-size: 10pt;
 }
 
@@ -187,7 +122,11 @@ input, select {
 	border-radius: 4px;
 	box-sizing: border-box;
 	font-size: 10pt;
-	font-family: Montserrat;
+	font-family: var(--defaultFont);
+}
+
+option {
+	font-family: var(--defaultFont);
 }
 
 input[type=button],
@@ -290,7 +229,7 @@ textarea {
 	outline: none;
 	box-shadow: var(--shadowHover);
 	font-size: 10pt;
-	font-family: Montserrat;
+	font-family: var(--defaultFont);
 }
 
 .pleft {
@@ -480,14 +419,14 @@ textarea {
 }
 
 .auth input[type=text] {
-	background-image: url('pict/user.png');
+	background-image: url('../pict/user.png');
 	background-position: 5px 10px;
 	background-repeat: no-repeat;
 	background-size: 25px auto;
 }
 
 .auth input[type=password] {
-	background-image: url('pict/cadenas.png');
+	background-image: url('../pict/cadenas.png');
 	background-position: 5px 10px;
 	background-repeat: no-repeat;
 	background-size: 25px auto;
@@ -648,7 +587,7 @@ textarea {
 	margin:0px;
 	padding:0px;
 	background-color: transparent;
-	background-image: url(pict/delete.png);
+	background-image: url(../pict/delete.png);
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 	background-size: 24px auto;

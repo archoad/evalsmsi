@@ -5,6 +5,5 @@
 		$url .= $temp[$i].DIRECTORY_SEPARATOR;
 	}
 	session_destroy();
-	unset($_SESSION);
 	header('Location: '.$url);
 ?>

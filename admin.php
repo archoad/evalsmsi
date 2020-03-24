@@ -23,6 +23,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include("functions.php");
 include("funct_admin.php");
+session_set_cookie_params([
+	'lifetime' => $cookie_timeout,
+	'path' => '/',
+	'domain' => $cookie_domain,
+	'secure' => $session_secure,
+	'httponly' => $cookie_httponly,
+	'samesite' => $cookie_samesite
+]);
 session_start();
 $authorizedRole = array('1');
 isSessionValid($authorizedRole);

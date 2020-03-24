@@ -37,7 +37,8 @@ function headPageAuth() {
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
-	printf("<link nonce='%s' href='styles.php' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce']);
+	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce'], $_SESSION['theme']);
+	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce']);
 	printf("<title>Authentification</title>\n");
 	printf("</head>\n<body>\n");
 }
@@ -53,7 +54,7 @@ function menuAuth($msg='') {
 	genSyslog(__FUNCTION__);
 	initiateNullSession();
 	headPageAuth();
-	$_SESSION['rand'] = genNonce();
+	$_SESSION['rand'] = genNonce(16);
 	printf("<div class='authcont'>\n");
 	printf("<div class='auth'>\n");
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
@@ -169,6 +170,14 @@ function redirectUser($data) {
 }
 
 
+session_set_cookie_params([
+	'lifetime' => $cookie_timeout,
+	'path' => '/',
+	'domain' => $cookie_domain,
+	'secure' => $session_secure,
+	'httponly' => $cookie_httponly,
+	'samesite' => $cookie_samesite
+]);
 session_start();
 if (isset($_GET['rand']) && ($_GET['rand'] === $_SESSION['rand'])) {
 	if (isset($_GET['action'])) {

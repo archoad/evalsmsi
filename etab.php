@@ -23,6 +23,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include("functions.php");
 include("funct_etab.php");
+session_set_cookie_params([
+	'lifetime' => $cookie_timeout,
+	'path' => '/',
+	'domain' => $cookie_domain,
+	'secure' => $session_secure,
+	'httponly' => $cookie_httponly,
+	'samesite' => $cookie_samesite
+]);
 session_start();
 $authorizedRole = array('3', '4');
 isSessionValid($authorizedRole);
@@ -30,7 +38,7 @@ headPage($appli_titre);
 purgeRapportsFiles();
 
 
-
+print_r($_SESSION);
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
@@ -115,6 +123,11 @@ if (isset($_GET['action'])) {
 			linkMsg($_SESSION['curr_script'], "Erreur de référentiel", "alert.png");
 			footPage();
 		}
+		break;
+
+	case 'webauthn':
+		registerYubikey();
+		footPage();
 		break;
 
 	case 'rm_token':
