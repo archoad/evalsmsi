@@ -100,7 +100,7 @@ function generatePublicKeyCredentialCreationOptions() {
 	];
 	$result = array();
 	$result['rp'] = $rp;
-	$result['challenge'] = genNonce(32);
+	$result['challenge'] = base64_encode(random_bytes(32));
 	$result['user'] = $user;
 	$result['pubKeyCredParams'] = $pubKeyCredParams;
 	$result['timeout'] = 60000;

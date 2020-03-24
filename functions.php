@@ -331,7 +331,9 @@ function set_var_utf8(){
 
 function genNonce($length) {
 	$nonce = random_bytes($length);
-	return base64_encode($nonce);
+	$b64 = base64_encode($nonce);
+	$url = strtr($b64, '+/', '-_');
+	return rtrim($url, '=');
 }
 
 
