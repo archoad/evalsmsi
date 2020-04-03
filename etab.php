@@ -32,7 +32,7 @@ session_set_cookie_params([
 	'samesite' => $cookie_samesite
 ]);
 session_start();
-$authorizedRole = array('3', '4');
+$authorizedRole = array('3', '4', '5');
 isSessionValid($authorizedRole);
 headPage($appli_titre);
 purgeRapportsFiles();

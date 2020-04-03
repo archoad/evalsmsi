@@ -908,3 +908,7 @@ textarea {
 .error.active {
 	padding: 10px;
 }
+
+.width25 {
+	width: 25%;
+}

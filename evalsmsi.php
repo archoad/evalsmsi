@@ -161,6 +161,7 @@ function redirectUser($data) {
 			break;
 		case '3': // Directeur
 		case '4': // RSSI
+		case '5': // Opérateur SSI
 			header('Location: etab.php');
 			break;
 		default:

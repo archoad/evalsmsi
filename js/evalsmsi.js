@@ -66,7 +66,7 @@ function userFormValidity() {
 		myAlert('Veuillez sélectionner un établissement');
 		event.preventDefault();
 	}
-	if (((role.value=='3') || (role.value=='4')) && (result.options.length>=2)) {
+	if (((role.value=='3') || (role.value=='4')|| (role.value=='5')) && (result.options.length>=2)) {
 		myAlert('Veuillez sélectionner un seul établissement');
 		event.preventDefault();
 	}

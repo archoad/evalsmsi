@@ -56,6 +56,7 @@ date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
 ini_set('error_reporting', -1);
 ini_set('display_error', 1);
+ini_set('session.name', '__SECURE-PHPSESSID');
 ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.use_trans_sid', 0);
 ini_set('session.cookie_secure', 1);
@@ -131,8 +132,12 @@ function menuEtab() {
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
 	if (isset($_SESSION['quiz'])) {
-		linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
-		linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
+		if (in_array($_SESSION['role'], array('4', '5'))) {
+			linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
+		}
+		if (in_array($_SESSION['role'], array('3', '4'))) {
+			linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
+		}
 	}
 	linkMsg("etab.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	linkMsg("etab.php?action=webauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
@@ -140,9 +145,11 @@ function menuEtab() {
 	printf("</div><div class='column right'>\n");
 	linkMsg("etab.php?action=choose_quiz", "Choisir un référentiel", "quiz.png", 'menu');
 	if (isset($_SESSION['quiz'])) {
-		linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
-		linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
-		linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
+		if (in_array($_SESSION['role'], array('3', '4'))) {
+			linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
+			linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
+			linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
+		}
 	}
 	printf("</div>\n</div>");
 }
@@ -321,7 +328,7 @@ function detectOS() {
 }
 
 
-function set_var_utf8(){
+function set_var_utf8() {
 	ini_set('mbstring.internal_encoding', 'UTF-8');
 	ini_set('mbstring.http_input', 'UTF-8');
 	ini_set('mbstring.http_output', 'UTF-8');
@@ -387,7 +394,7 @@ function headPage($titre, $sousTitre='') {
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
 	header("X-Content-Type-Options: nosniff");
-	header("X-XSS-Protection: 1; mode=block");
+	header("X-XSS-Protection: 1; mode=block;");
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
 	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
@@ -453,6 +460,7 @@ function footPage($link='', $msg=''){
 
 
 function validForms($msg, $url, $back=True) {
+	if (isset($_SESSION['token'])) { unset($_SESSION['token']); }
 	$_SESSION['token'] = generateToken();
 	printf("<fieldset>\n<legend>Validation</legend>\n");
 	printf("<table><tr><td>\n");
@@ -754,8 +762,8 @@ function changePassword() {
 		printf("</fieldset>\n");
 		validForms('Enregistrer', $script);
 		printf("</form>\n");
-		printf("<script nonce='%s'>document.getElementById('new1').addEventListener('change', function(){validatePattern();});</script>\n", $nonce);
-		printf("<script nonce='%s'>document.getElementById('new2').addEventListener('change', function(){validatePassword();});</script>\n", $nonce);
+		printf("<script nonce='%s'>document.getElementById('new1').addEventListener('change', function() {validatePattern();});</script>\n", $nonce);
+		printf("<script nonce='%s'>document.getElementById('new2').addEventListener('change', function() {validatePassword();});</script>\n", $nonce);
 	} else {
 		linkMsg("#", "Erreur de compte.", "alert.png");
 		footPage($script, "Accueil");
@@ -901,7 +909,7 @@ function printSelect($num_dom, $num_sub_dom, $num_quest, $assessment=0) {
 		printf("<option value='%d'>%d - %s</option>\n", $i, $i, textItem($i));
 	}
 	printf("</select>\n");
-	printf("<script nonce='%s'>document.getElementById('%s').addEventListener('change', function(){progresse();});</script>", $nonce, $name);
+	printf("<script nonce='%s'>document.getElementById('%s').addEventListener('change', function() {progresse();});</script>", $nonce, $name);
 }
 
 
@@ -986,7 +994,7 @@ function afficheNotesExplanation() {
 	printf("<div class=event>");
 	printf("<dl>\n");
 	printf("<dt>1: Non Applicable</dt>\n");
-	printf("<dd>La question est sans objet.</dd>\n");
+	printf("<dd>La règle est non applicable ou à fait l'objet d'une dérogation (à préciser dans le commentaire).</dd>\n");
 	printf("<dt>2: Inexistant et investissement important</dt>\n");
 	printf("<dd>La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.).</dd>\n");
 	printf("<dt>3: Inexistant et investissement peu important</dt>\n");
@@ -2235,65 +2243,68 @@ function makeReferentiel() {
 	}
 }
 
+
 function bilanByEtab() {
 	$base = dbConnect();
-	$req_etab = sprintf("SELECT * FROM etablissement");
+	$req_etab = sprintf("SELECT * FROM etablissement ORDER BY nom");
 	$res_etab = mysqli_query($base, $req_etab);
 	printf("<div class='bilan'>");
 	while ($row_etab = mysqli_fetch_object($res_etab)) {
 		printf("<table>\n");
-		printf("<tr><th colspan='3'>%s (%s)</th></tr>\n", $row_etab->nom, $row_etab->abrege);
+		printf("<tr><th colspan='4'>%s - %s - %s %s </th></tr>\n", $row_etab->nom, $row_etab->adresse, $row_etab->code_postal, $row_etab->ville);
 		printf("<tr>\n");
-		printf("<th width='20%%'>Adresse</th>");
-		printf("<td width='40%%'>%s</td>", $row_etab->adresse);
-		printf("<td width='40%%'>%s %s</td>", $row_etab->code_postal, $row_etab->ville);
+		printf("<th class='width25'>&nbsp;</th>");
+		printf("<th class='width25'>Prénom</th>");
+		printf("<th class='width25'>Nom</th>");
+		printf("<th class='width25'>Login</th>");
 		printf("</tr>\n");
-		$req_user = sprintf("SELECT role, nom, prenom, login FROM users WHERE etablissement = '%d'", $row_etab->id);
-		$res_user = mysqli_query($base, $req_user);
-		if (mysqli_num_rows($res_user)) {
-			while ($row_user = mysqli_fetch_object($res_user)) {
-				printf("<tr>\n");
-				printf("<th>Directeur</th>");
-				if ($row_user->role == '3') {
-					printf("<td>%s %s</td>", $row_user->prenom, $row_user->nom);
-					printf("<td>%s</td>", $row_user->login);
-				} else {
-					printf("<td colspan='2' class='notok'>Pas de directeur enregistré</td>");
-				}
-				printf("</tr>\n");
-				printf("<tr>\n");
-				printf("<th>RSSI</th>");
-				if ($row_user->role == '4') {
-					printf("<td>%s %s</td>", $row_user->prenom, $row_user->nom);
-					printf("<td>%s</td>", $row_user->login);
-				} else {
-					printf("<td colspan='2' class='notok'>Pas de RSSI enregistré</td>");
-				}
-				printf("</tr>\n");
-			}
-		} else {
-			printf("<tr>\n<th>Directeur</th>");
-			printf("<td colspan='2' class='notok'>Pas de directeur enregistré</td>");
-			printf("</tr>\n");
-			printf("<tr>\n<th>RSSI</th>");
-			printf("<td colspan='2' class='notok'>Pas de RSSI enregistré</td>");
-			printf("</tr>\n");
-		}
 		$req_auditor = sprintf("SELECT nom, prenom, login, etablissement FROM users WHERE role='2'");
 		$res_auditor = mysqli_query($base, $req_auditor);
-		printf("<tr>\n");
-		printf("<th>Auditeur</th>");
-		while($row_auditor = mysqli_fetch_object($res_auditor)) {
-			$etabs = explode(',', $row_auditor->etablissement);
-			if (in_array($row_etab->id, $etabs)) {
-				printf("<td>%s %s</td>", $row_auditor->prenom, $row_auditor->nom);
-				printf("<td>%s</td>", $row_auditor->login);
-			} else {
-				printf("<td colspan='2' class='notok'>Pas d'auditeur enregistré</td>");
+		$req_user = sprintf("SELECT role, nom, prenom, login FROM users WHERE etablissement = '%d' ORDER BY role", $row_etab->id);
+		$res_user = mysqli_query($base, $req_user);
+		$gotDirecteur = False;
+		$gotRSSI = False;
+		$gotOpeSSI = False;
+		if (mysqli_num_rows($res_user)) {
+			$users = mysqli_fetch_all($res_user, MYSQLI_ASSOC);
+			$roles = array();
+			foreach($users as $user) { $roles[] = $user['role']; }
+			$roles = array_unique($roles);
+			foreach($users as $user) {
+				switch ($user['role']) {
+					case '3':
+						printf("<tr><th>Directeur</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotDirecteur = True;
+						break;
+					case '4':
+						printf("<tr><th>RSSI</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotRSSI = True;
+						break;
+					case '5':
+						printf("<tr><th>Opérateur SSI</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotOpeSSI = True;
+						break;
+				}
 			}
 		}
-		printf("</tr>\n");
-		printf("</table>\n<br />\n");
+		if (mysqli_num_rows($res_auditor)) {
+			$gotAuditor = False;
+			foreach (mysqli_fetch_all($res_auditor, MYSQLI_ASSOC) as $auditor) {
+				if (in_array($row_etab->id, explode(',', $auditor['etablissement']))) {
+					printf("<tr><th>Auditeur</th><td>%s</td><td>%s</td><td>%s</td></tr>", $auditor['prenom'], $auditor['nom'], $auditor['login']);
+					$gotAuditor = True;
+				}
+			}
+		}
+		if (!$gotDirecteur or !$gotRSSI or !$gotOpeSSI or !$gotAuditor) {
+			printf("<tr><th>Problème</th><td colspan='3' class='notok'>");
+			if (!$gotDirecteur) { printf("Directeur "); }
+			if (!$gotRSSI) { printf("RSSI "); }
+			if (!$gotOpeSSI) { printf("Opérateur "); }
+			if (!$gotAuditor) { printf("Auditeur"); }
+			printf("</td></tr>");
+		}
+		printf("</table><br />");
 	}
 	printf("</div>");
 	dbDisconnect($base);
