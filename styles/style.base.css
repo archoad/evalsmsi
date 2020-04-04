@@ -580,6 +580,11 @@ textarea {
 	padding: 0 0 4px 0;
 }
 
+.sticky {
+	position: sticky;
+	top: 20px;
+}
+
 .btn_suppr {
 	width: 24px;
 	height: 24px;

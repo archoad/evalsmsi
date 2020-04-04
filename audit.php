@@ -215,6 +215,11 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
+	case 'webauthn':
+		registerYubikey();
+		footPage();
+		break;
+
 	case 'rm_token':
 		if (isset($_SESSION['token'])) {
 			unset($_SESSION['token']);

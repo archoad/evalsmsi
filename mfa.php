@@ -35,7 +35,7 @@ session_set_cookie_params([
 	'samesite' => $cookie_samesite
 ]);
 session_start();
-$authorizedRole = array('2', '3', '4');
+$authorizedRole = array('2', '3', '4', '5');
 isSessionValid($authorizedRole);
 
 

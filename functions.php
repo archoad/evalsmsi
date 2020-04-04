@@ -165,12 +165,13 @@ function menuAudit() {
 	linkMsg("audit.php?action=office", "Exporter une évaluation", "docx.png", 'menu');
 	linkMsg("audit.php?action=graph", "Graphes par établissement", "piechart.png", 'menu');
 	linkMsg("audit.php?action=objectif", "Gestion des objectifs", "objectifs.png", 'menu');
-	linkMsg("audit.php?action=journal", "Journalisation", "journal.png", 'menu');
+	linkMsg("audit.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
+	linkMsg("audit.php?action=webauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
 	printf("</div><div class='column right'>\n");
 	linkMsg("audit.php?action=audit", "Evaluation auditeur", "audit.png", 'menu');
 	linkMsg("audit.php?action=rap_etab", "Rapport par établissement", "rapport.png", 'menu');
 	linkMsg("audit.php?action=delete", "Supprimer une évaluation", "remove.png", 'menu');
-	linkMsg("audit.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
+	linkMsg("audit.php?action=journal", "Journalisation", "journal.png", 'menu');
 	printf("</div>\n</div>");
 }
 
@@ -428,6 +429,7 @@ function headPage($titre, $sousTitre='') {
 			printf("<link nonce='%s' href='js/vis.min.css' rel='stylesheet' type='text/css' media='all' />\n", $nonce);
 			printf("<script nonce='%s' src='js/vis.min.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
+			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/graphs.js'></script>", $nonce);
 		}
 		if ($script === 'admin.php') {
@@ -1000,8 +1002,8 @@ function subDomainComplete($assessment, $dom, $subdom) {
 
 
 function afficheNotesExplanation() {
-	printf("<div class='column littleright'>\n");
-	printf("<div class=event>");
+	printf("<div class='column littleright sticky'>\n");
+	printf("<div class='event'>");
 	printf("<dl>\n");
 	printf("<dt>1: Non Applicable</dt>\n");
 	printf("<dd>La règle est non applicable ou à fait l'objet d'une dérogation (à préciser dans le commentaire).</dd>\n");

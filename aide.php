@@ -30,7 +30,7 @@ session_set_cookie_params([
 	'samesite' => $cookie_samesite
 ]);
 session_start();
-$authorizedRole = array('3', '4', '100');
+$authorizedRole = array('2', '3', '4', '5', '100');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Aide et documentation");
 
