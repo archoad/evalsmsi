@@ -44,6 +44,7 @@ if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 
 	case 'continue_assess':
+		isAuthorized(array('4', '5'));
 		if (isThereAssessForEtab()) {
 			displayAssessment();
 		} else {
@@ -58,6 +59,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'make_assess':
+		isAuthorized(array('4', '5'));
 		if (writeAssessment()) {
 			linkMsg($_SESSION['curr_script'], "Evaluation mise à jour.", "ok.png");
 		} else {
@@ -67,6 +69,7 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'graph':
+		isAuthorized(array('3', '4'));
 		if (isThereAssessForEtab()) {
 			displayEtablissmentGraphs();
 			footPage($_SESSION['curr_script'], "Accueil");
@@ -78,21 +81,25 @@ if (isset($_GET['action'])) {
 		break;
 
 	case 'print':
+		isAuthorized(array('3', '4'));
 		selectYearRapport();
 		footPage();
 		break;
 
 	case 'do_print':
+		isAuthorized(array('3', '4'));
 		exportRapport(intval($_POST['year']));
 		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'office':
+		isAuthorized(array('3', '4', '5'));
 		exportEval();
 		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'rules':
+		isAuthorized(array('3', '4', '5'));
 		exportRules();
 		footPage($_SESSION['curr_script'], "Accueil");
 		break;

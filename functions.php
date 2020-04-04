@@ -147,6 +147,8 @@ function menuEtab() {
 	if (isset($_SESSION['quiz'])) {
 		if (in_array($_SESSION['role'], array('3', '4'))) {
 			linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
+		}
+		if (in_array($_SESSION['role'], array('3', '4', '5'))) {
 			linkMsg("etab.php?action=office", "Exporter l'évaluation", "docx.png", 'menu');
 			linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
 		}
@@ -245,11 +247,19 @@ function isSessionValid($role) {
 }
 
 
+function isAuthorized($roles) {
+	genSyslog(__FUNCTION__);
+	if (!in_array($_SESSION['role'], $roles)) {
+		header("Location: ".$_SESSION['curr_script']);
+	}
+}
+
+
 function infoSession() {
 	$_SESSION['rand'] = genNonce(16);
 	$infoDay = sprintf("%s - %s", $_SESSION['day'], $_SESSION['hour']);
 	$infoNav = sprintf("%s - %s - %s", $_SESSION['os'], $_SESSION['browser'], $_SESSION['ipaddr']);
-	$infoUser = sprintf("Connecté en tant que <b>%s %s</b>", $_SESSION['prenom'], $_SESSION['nom']);
+	$infoUser = sprintf("Connecté en tant que <b>%s %s</b> (%s)", $_SESSION['prenom'], $_SESSION['nom'], getRole($_SESSION['role']));
 	$logoff = sprintf("<a href='evalsmsi.php?rand=%s&action=disconnect'>Déconnexion&nbsp;<img alt='logoff' src='pict/turnoff.png' width='10'></a>", $_SESSION['rand']);
 	return sprintf("Powered by EvalSMSI - %s - %s - %s - %s", $infoDay, $infoNav, $infoUser, $logoff);
 }
