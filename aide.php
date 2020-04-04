@@ -40,7 +40,7 @@ function about() {
 	genSyslog(__FUNCTION__);
 	printf("<div class='row'>\n");
 	printf("<div class='column left'>\n");
-	printf("<p><img src='pict/logoCerbere.png' alt='logo SSI' /></p>\n");
+	printf("<p><img src='pict/logoCerbere.png' alt='logo SSI' /><img src='pict/archoad.png' alt='Archoad' /></p>\n");
 	printf("<p><b>Remerciements:</b> Merci à Philippe Loudenot pour son aide et son soutien, merci à Ange Ferrari, à Christophe Grenier, à Sébastien Duquette de Corelan Team et à Xavier Beule pour leurs contributions dans la correction de bugs.</p>\n");
 	printf("<p><b>EvalSMSI version %s - %s</b></p>\n", $progVersion, $progDate);
 	printf("</div>\n<div class='column right'>\n");
@@ -51,10 +51,11 @@ function about() {
 	printf("<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>\n");
 	printf("<p><b>You should have received a copy of the GNU General Public License along with this program.</b></p><p>If not, see <a href='http://www.gnu.org/licenses/'>the GNU web site</a>.</p>\n");
 	printf("<table>\n<tr>\n");
-	printf("<td><img src='pict/gplv3.png' alt='logo GPL V3' /></td>\n");
-	printf("<td><img src='pict/phpoffice.png' alt='logo phpoffice' /></td>\n");
+	printf("<td><a htef='https://www.gnu.org/licenses/gpl-3.0.txt'><img src='pict/gplv3.png' alt='logo GPL V3' /></a></td>\n");
+	printf("<td><a href='https://github.com/PHPOffice'><img src='pict/phpoffice.png' alt='logo phpoffice' /></a></td>\n");
 	printf("<td><img src='pict/html5.png' alt='valid html5' /></td>\n");
 	printf("<td><img src='pict/css3.png' alt='valid css3' /></td>\n");
+	printf("<td><a href='https://github.com/lbuchs/WebAuthn'><img src='pict/lbuchs.png' alt='lbuchs' /></a></td>\n");
 	printf("</tr>\n</table>\n</div>\n</div>\n");
 }
 
@@ -146,7 +147,11 @@ switch ($_SESSION['role']) {
 		break;
 	case '3':
 	case '4':
+	case '5':
 		$script = 'etab.php';
+		break;
+	case '2':
+		$script = 'audit.php';
 		break;
 	default:
 		$script = 'evalsmsi.php';

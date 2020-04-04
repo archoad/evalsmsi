@@ -10,11 +10,12 @@ function binToStr(bin) {
 }
 
 
-function displayPublickKey(data) {
+function displayPublicKey(data) {
 	let mydiv = document.getElementById('pubKey');
 	let msg = document.getElementById('msgPubKey');
 	let pre = document.createElement('pre');
 	let txtalgo = '';
+	console.log('displayPublicKey', data);
 	switch (data.alg) {
 		case 'ES256':
 			txtalgo = "ECDSA avec la courbe P-256 et l'algorithme de hashage SHA-256";
@@ -49,7 +50,7 @@ function addReturnMessage() {
 
 function newRegistration() {
 	let msg = document.getElementById('message');
-	let txt = document.createTextNode("Insérer votre clef Yubikey");
+	let txt = document.createTextNode("Insérez votre clef Yubikey");
 	msg.appendChild(txt);
 	setTimeout(getRegistration, 1000)
 }
@@ -66,7 +67,7 @@ function getRegistration() {
 		console.log(credOpt);
 		return credOpt;
 	}).then(function(createCredential) {
-		let txt = document.createTextNode("Toucher votre clef Yubikey");
+		let txt = document.createTextNode("Touchez votre clef Yubikey");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		return navigator.credentials.create(createCredential);
 	}).then(function(attestation) {
@@ -89,10 +90,10 @@ function getRegistration() {
 			return response.json();
 		})
 		.then(function(parameters) {
-			console.log(parameters);
+			console.log('parameters', parameters);
 			let txt = document.createTextNode("Votre clef Yubikey a été enregistrée avec succès");
 			msg.replaceChild(txt, msg.childNodes[0]);
-			displayPublickKey(parameters.credentialPublicKey);
+			displayPublicKey(parameters.credentialPublicKey);
 			addReturnMessage();
 		})
 	}).catch(function(err) {

@@ -26,6 +26,8 @@ include("data/cbor/CborDecoder.php");
 include("data/cbor/AuthenticatorData.php");
 include("data/cbor/FormatBase.php");
 include("data/cbor/U2f.php");
+include("data/cbor/None.php");
+include("data/cbor/Packed.php");
 session_set_cookie_params([
 	'lifetime' => $cookie_timeout,
 	'path' => '/',
@@ -104,7 +106,7 @@ function generatePublicKeyCredentialCreationOptions() {
 	$result['user'] = $user;
 	$result['pubKeyCredParams'] = $pubKeyCredParams;
 	$result['timeout'] = 60000;
-	$result['attestation'] = "direct";
+	$result['attestation'] = "none";
 	$result['extensions'] = $extensions;
 	$result['authenticatorSelection'] = $authenticatorSelection;
 	$result['excludeCredentials'] = [];
@@ -124,43 +126,68 @@ function validateRegistration($clientDataJSON, $attestationObject) {
 	$rpIdHash = hash('sha256', $rpId, true);
 	$clientDataHash = hash('sha256', $clientDataJSON, true);
 	$clientData = json_decode($clientDataJSON);
-	$attestationData = WebAuthn\CBOR\CborDecoder::decode($attestationObject);
-	$authenticatorData = new WebAuthn\Attestation\AuthenticatorData($attestationData['authData']->getBinaryString());
-	$attestationFormat = new WebAuthn\Attestation\Format\U2f($attestationData, $authenticatorData);
 	if (!is_object($clientData)) {
 		genSyslog(__FUNCTION__, $msg='invalid client data');
 		$success = false;
 	}
+	// Verify that the value of C.type is webauthn.create.
 	if (!property_exists($clientData, 'type') || $clientData->type !== 'webauthn.create') {
 		genSyslog(__FUNCTION__, $msg='invalid type');
 		$success = false;
 	}
+	//Verify that the value of C.challenge equals the base64url encoding of options.challenge.
 	if (!property_exists($clientData, 'challenge') || (base64_encode(base64UrlDecode($clientData->challenge)) !== $_SESSION['challenge'])) {
 		genSyslog(__FUNCTION__, $msg='invalid challenge');
 		$success = false;
 	}
+	//Verify that the value of C.origin matches the Relying Party's origin.
 	if (!property_exists($clientData, 'origin') || !checkOrigin($clientData->origin)) {
 		genSyslog(__FUNCTION__, $msg='invalid origin');
 		$success = false;
 	}
+	//Verify CBOR decoding on the attestationObject field of the AuthenticatorAttestationResponse structure.
+	$attestationData = WebAuthn\CBOR\CborDecoder::decode($attestationObject);
+	//Verify the attestation statement format fmt
 	if (!is_array($attestationData) || !array_key_exists('fmt', $attestationData) || !is_string($attestationData['fmt'])) {
 		genSyslog(__FUNCTION__, $msg='invalid attestation format');
 		$success = false;
 	}
-	if (!array_key_exists('attStmt', $attestationData) || !is_array($attestationData['attStmt'])) {
-		genSyslog(__FUNCTION__, $msg='invalid attestation format (attStmt not available)');
-		$success = false;
-	}
+	//Verify the attestation statement format authData
 	if (!array_key_exists('authData', $attestationData) || !is_object($attestationData['authData'])) {
 		genSyslog(__FUNCTION__, $msg='invalid attestation format (authData not available)');
 		$success = false;
 	}
-	if ($attestationData['fmt'] !== "fido-u2f") {
-		genSyslog(__FUNCTION__, $msg='invalid attestation format: '.$enc['fmt']);
+	//Verify the attestation statement format attStmt
+	if (!array_key_exists('attStmt', $attestationData) || !is_array($attestationData['attStmt'])) {
+		genSyslog(__FUNCTION__, $msg='invalid attestation format (attStmt not available)');
 		$success = false;
 	}
+	$authenticatorData = new WebAuthn\Attestation\AuthenticatorData($attestationData['authData']->getBinaryString());
+	switch ($attestationData['fmt']) {
+		case 'packed':
+			$attestationFormat = new WebAuthn\Attestation\Format\Packed($attestationData, $authenticatorData);
+			genSyslog(__FUNCTION__, $msg='packed attestation');
+			break;
+		case 'fido-u2f':
+			$attestationFormat = new WebAuthn\Attestation\Format\U2f($attestationData, $authenticatorData);
+			genSyslog(__FUNCTION__, $msg='fido-u2f attestation');
+			break;
+		case 'none':
+			$attestationFormat = new WebAuthn\Attestation\Format\None($attestationData, $authenticatorData);
+			genSyslog(__FUNCTION__, $msg='none attestation');
+			break;
+		default:
+			genSyslog(__FUNCTION__, $msg='invalid attestation format: '.$attestationData['fmt']);
+			$success = false;
+	}
+	//Verify that the rpIdHash in authData is the SHA-256 hash of the RP ID expected by the Relying Party.
 	if ($authenticatorData->getRpIdHash() !== $rpIdHash) {
 		genSyslog(__FUNCTION__, $msg='invalid rpID hash');
+		$success = false;
+	}
+	// Verify that the User Present bit of the flags in authData is set.
+	if (!$authenticatorData->getUserPresent()) {
+		genSyslog(__FUNCTION__, $msg='user not present during authentication');
 		$success = false;
 	}
 	if (!$attestationFormat->validateAttestation($clientDataHash)) {
@@ -169,10 +196,6 @@ function validateRegistration($clientDataJSON, $attestationObject) {
 	}
 	if (!$attestationFormat->validateRootCertificate($rootCAfile)) {
 		genSyslog(__FUNCTION__, $msg='invalid root signature');
-		$success = false;
-	}
-	if (!$authenticatorData->getUserPresent()) {
-		genSyslog(__FUNCTION__, $msg='user not present during authentication');
 		$success = false;
 	}
 	$attestedCredentialData = [
@@ -186,15 +209,19 @@ function validateRegistration($clientDataJSON, $attestationObject) {
 	$data['attestedCredentialData'] = $attestedCredentialData;
 	$data['credentialPublicKey'] = $authenticatorData->getPubKeyDetails();
 	$certificate = $attestationFormat->getCertificatePem();
-	if ($x509 = openssl_x509_read($certificate)) {
-		$result = openssl_x509_parse($x509);
-		$temp = array();
-		$temp['issuer'] = trim($result['issuer']['CN']);
-		$temp['subject'] = trim($result['subject']['CN']);
-		$temp['signatureTypeSN'] = trim($result['signatureTypeSN']);
-		$temp['signatureTypeLN'] = trim($result['signatureTypeLN']);
-		$temp['signatureTypeNID'] = trim($result['signatureTypeNID']);
-		$data['x509'] = $temp;
+	if ($certificate) {
+		if ($x509 = openssl_x509_read($certificate)) {
+			$result = openssl_x509_parse($x509);
+			$temp = array();
+			$temp['issuer'] = trim($result['issuer']['CN']);
+			$temp['subject'] = trim($result['subject']['CN']);
+			$temp['signatureTypeSN'] = trim($result['signatureTypeSN']);
+			$temp['signatureTypeLN'] = trim($result['signatureTypeLN']);
+			$temp['signatureTypeNID'] = trim($result['signatureTypeNID']);
+			$data['x509'] = $temp;
+		} else {
+			$data['x509'] = false;
+		}
 	} else {
 		$data['x509'] = false;
 	}
@@ -213,6 +240,9 @@ function registerNewCredential($post) {
 		$return['success'] = true;
 		$return['msg'] = 'Successfully created credential';
 		$return['credentialPublicKey'] = $result[1];
+	} else {
+		$return['success'] = false;
+		$return['msg'] = 'No credential created';
 	}
 	return json_encode($return);
 }
