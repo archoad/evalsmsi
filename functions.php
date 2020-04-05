@@ -140,10 +140,11 @@ function menuEtab() {
 		}
 	}
 	linkMsg("etab.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
-	linkMsg("etab.php?action=webauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
+	linkMsg("etab.php?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
 	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
 	printf("</div><div class='column right'>\n");
 	linkMsg("etab.php?action=choose_quiz", "Choisir un référentiel", "quiz.png", 'menu');
+	linkMsg("etab.php?action=webauthnauth", "Authentification", "yubikey.png", 'menu');
 	if (isset($_SESSION['quiz'])) {
 		if (in_array($_SESSION['role'], array('3', '4'))) {
 			linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
@@ -166,7 +167,7 @@ function menuAudit() {
 	linkMsg("audit.php?action=graph", "Graphes par établissement", "piechart.png", 'menu');
 	linkMsg("audit.php?action=objectif", "Gestion des objectifs", "objectifs.png", 'menu');
 	linkMsg("audit.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
-	linkMsg("audit.php?action=webauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
+	linkMsg("audit.php?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
 	printf("</div><div class='column right'>\n");
 	linkMsg("audit.php?action=audit", "Evaluation auditeur", "audit.png", 'menu');
 	linkMsg("audit.php?action=rap_etab", "Rapport par établissement", "rapport.png", 'menu');
@@ -747,10 +748,16 @@ function isRegroupEtab() {
 }
 
 
-function registerYubikey() {
-	printf("<div class='msg'><div><img src='pict/yubikey.png' alt='info' /></div><div><p id='message'></p></div></div>");
+function registerWebauthnCred() {
+	printf("<div class='msg'><div><img src='pict/yubikey.png' alt='info' /></div><div><p id='registerMsg'></p></div></div>");
 	printf("<div class='none' id='pubKey'><div><img src='pict/public_key.png' alt='pubkey' /></div><div id='msgPubKey'></div></div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', newRegistration());</script>", $_SESSION['nonce']);
+}
+
+
+function webauthnAuthenticating() {
+	printf("<div class='msg'><div><img src='pict/yubikey.png' alt='info' /></div><div><p id='authenticateMsg'></p></div></div>");
+	printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
 }
 
 

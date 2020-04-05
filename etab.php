@@ -132,8 +132,13 @@ if (isset($_GET['action'])) {
 		}
 		break;
 
-	case 'webauthn':
-		registerYubikey();
+	case 'regwebauthn':
+		registerWebauthnCred();
+		footPage();
+		break;
+
+	case 'webauthnauth':
+		webauthnAuthenticating();
 		footPage();
 		break;
 

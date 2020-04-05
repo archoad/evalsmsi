@@ -70,7 +70,7 @@ function checkOrigin($origin) {
 }
 
 
-function generatePublicKeyCredentialCreationOptions() {
+function generatePKCCOregistration() {
 	//https://www.iana.org/assignments/cose/cose.xhtml#algorithms
 	$coseAlgoECDSAwSHA256 = -7;
 	$coseAlgoECDSAwSHA384 = -35;
@@ -106,7 +106,7 @@ function generatePublicKeyCredentialCreationOptions() {
 	$result['user'] = $user;
 	$result['pubKeyCredParams'] = $pubKeyCredParams;
 	$result['timeout'] = 60000;
-	$result['attestation'] = "none";
+	$result['attestation'] = "direct";
 	$result['extensions'] = $extensions;
 	$result['authenticatorSelection'] = $authenticatorSelection;
 	$result['excludeCredentials'] = [];
@@ -115,7 +115,23 @@ function generatePublicKeyCredentialCreationOptions() {
 }
 
 
-function validateRegistration($clientDataJSON, $attestationObject) {
+function generatePKCCOauthentication() {
+	$allowCredentials = [
+		'type' => 'public-key',
+		'id' => $_SESSION['credentialId'],
+		'transports' => ['usb', 'ble', 'nfc'],
+	];
+	$result = array();
+	$result['challenge'] = base64_encode(random_bytes(32));
+	$result['allowCredentials'] = [$allowCredentials];
+	$result['timeout'] = 60000;
+	$result['rpId'] = $_SERVER['SERVER_NAME'];
+	$_SESSION['challenge'] = $result['challenge'];
+	return json_encode(array('publicKey' => $result));
+}
+
+
+function validateRegistration($clientDataJSON, $attestationObject, $rawId) {
 	global $cheminDATA;
 	// source: https://w3c.github.io/webauthn/#sctn-registering-a-new-credential
 	$success = true;
@@ -198,18 +214,18 @@ function validateRegistration($clientDataJSON, $attestationObject) {
 		genSyslog(__FUNCTION__, $msg='invalid root signature');
 		$success = false;
 	}
-	$attestedCredentialData = [
-		'aaguid' => base64UrlEncode($authenticatorData->getAAGUID()),
-		'credentialId' => base64UrlEncode($authenticatorData->getCredentialId()),
-		'credentialPublicKey' => base64UrlEncode($authenticatorData->getPublicKeyU2F()),
-	];
 	$data = array();
-	$data['rpIdHash'] = base64UrlEncode($rpIdHash);
+	$data['rpId'] = $rpId;
+	$data['credentialId'] = $rawId;
+	$_SESSION['credentialId'] = $data['credentialId'];
+	$data['credentialPublicKeyDER'] = base64_encode($authenticatorData->getPublicKeyU2F());
+	$data['credentialPublicKeyPEM'] = $authenticatorData->getPublicKeyPem();
 	$data['signCount'] = $authenticatorData->getSignCount();
-	$data['attestedCredentialData'] = $attestedCredentialData;
-	$data['credentialPublicKey'] = $authenticatorData->getPubKeyDetails();
+	$data['aaguid'] = base64_encode($authenticatorData->getAAGUID());
+	$data['publicKeyDetails'] = $authenticatorData->getPubKeyDetails();
 	$certificate = $attestationFormat->getCertificatePem();
 	if ($certificate) {
+		$data['certificate'] = $certificate;
 		if ($x509 = openssl_x509_read($certificate)) {
 			$result = openssl_x509_parse($x509);
 			$temp = array();
@@ -226,7 +242,7 @@ function validateRegistration($clientDataJSON, $attestationObject) {
 		$data['x509'] = false;
 	}
 	file_put_contents('create_credential.json', json_encode($data));
-	return array($success, $data['credentialPublicKey']);
+	return array($success, $data);
 }
 
 
@@ -234,12 +250,13 @@ function registerNewCredential($post) {
 	$post = json_decode($post, true);
 	$attestationObject = $post['response']['attestationObject'];
 	$clientDataJSON = $post['response']['clientDataJSON'];
-	$result = validateRegistration($clientDataJSON, $attestationObject);
+	$rawId = $post['rawId'];
+	$result = validateRegistration($clientDataJSON, $attestationObject, $rawId);
 	$return = array();
 	if ($result[0]) {
 		$return['success'] = true;
 		$return['msg'] = 'Successfully created credential';
-		$return['credentialPublicKey'] = $result[1];
+		$return['credentials'] = $result[1];
 	} else {
 		$return['success'] = false;
 		$return['msg'] = 'No credential created';
@@ -254,20 +271,27 @@ function registerNewCredential($post) {
 
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
-	case 'processCreate':
-		$post = trim(file_get_contents('php://input'));
-		header('Content-Type: application/json');
-		echo registerNewCredential($post);
-		break;
-	case 'registered':
-		header('Location: '.$_SESSION['curr_script']);
-		break;
-	default:
-		break;
+		case 'generatePKCCOreg':
+			header('Content-Type: application/json');
+			echo generatePKCCOregistration();
+			break;
+		case 'generatePKCCOauth':
+			header('Content-Type: application/json');
+			echo generatePKCCOauthentication();
+			break;
+		case 'processCreate':
+			$post = trim(file_get_contents('php://input'));
+			header('Content-Type: application/json');
+			echo registerNewCredential($post);
+			break;
+		case 'registered':
+			header('Location: '.$_SESSION['curr_script']);
+			break;
+		default:
+			break;
 	}
 } else {
-	header('Content-Type: application/json');
-	echo generatePublicKeyCredentialCreationOptions();
+	header("Location: ".$_SESSION['curr_script']);
 }
 
 

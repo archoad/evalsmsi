@@ -15,7 +15,7 @@ function displayPublicKey(data) {
 	let msg = document.getElementById('msgPubKey');
 	let pre = document.createElement('pre');
 	let txtalgo = '';
-	console.log('displayPublicKey', data);
+	console.log('PublicKeyDetails', data);
 	switch (data.alg) {
 		case 'ES256':
 			txtalgo = "ECDSA avec la courbe P-256 et l'algorithme de hashage SHA-256";
@@ -49,7 +49,7 @@ function addReturnMessage() {
 
 
 function newRegistration() {
-	let msg = document.getElementById('message');
+	let msg = document.getElementById('registerMsg');
 	let txt = document.createTextNode("Insérez votre clef Yubikey");
 	msg.appendChild(txt);
 	setTimeout(getRegistration, 1000)
@@ -57,9 +57,9 @@ function newRegistration() {
 
 
 function getRegistration() {
-	let msg = document.getElementById('message');
+	let msg = document.getElementById('registerMsg');
 	console.log('sending attestation request:');
-	window.fetch('mfa.php', { method:'POST', cache:'no-cache' }).then(function(response) {
+	window.fetch('mfa.php?action=generatePKCCOreg', { method:'POST', cache:'no-cache' }).then(function(response) {
 		return response.json();
 	}).then(function(credOpt) {
 		credOpt['publicKey']['challenge'] = strToBin(credOpt['publicKey']['challenge']);
@@ -93,7 +93,7 @@ function getRegistration() {
 			console.log('parameters', parameters);
 			let txt = document.createTextNode("Votre clef Yubikey a été enregistrée avec succès");
 			msg.replaceChild(txt, msg.childNodes[0]);
-			displayPublicKey(parameters.credentialPublicKey);
+			displayPublicKey(parameters.credentials.publicKeyDetails);
 			addReturnMessage();
 		})
 	}).catch(function(err) {
@@ -101,5 +101,34 @@ function getRegistration() {
 		let txt = document.createTextNode("Erreur d'enregistrement de votre clef Yubikey");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		addReturnMessage();
+	});
+}
+
+
+function newAuthentication() {
+	let msg = document.getElementById('authenticateMsg');
+	let txt = document.createTextNode("Insérez votre clef Yubikey");
+	msg.appendChild(txt);
+	setTimeout(webauthnAuthentication, 1000)
+}
+
+
+function webauthnAuthentication() {
+	let msg = document.getElementById('authenticateMsg');
+	console.log('sending credential request:');
+	window.fetch('mfa.php?action=generatePKCCOauth', { method:'POST', cache:'no-cache' }).then(function(response) {
+		return response.json();
+	}).then(function(credOpt) {
+		credOpt['publicKey']['challenge'] = strToBin(credOpt['publicKey']['challenge']);
+		credOpt['publicKey']['allowCredentials'][0]['id'] = strToBin(credOpt['publicKey']['allowCredentials'][0]['id']);
+		console.log(credOpt);
+		return credOpt;
+	}).then(function(getCredentialArgs) {
+		let txt = document.createTextNode("Touchez votre clef Yubikey");
+		msg.replaceChild(txt, msg.childNodes[0]);
+		return navigator.credentials.get(getCredentialArgs);
+	}).then(function(cred) {
+		console.log('received credential:');
+		console.log(cred);
 	});
 }
