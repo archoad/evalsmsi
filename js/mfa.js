@@ -39,7 +39,7 @@ function displayPublicKey(data) {
 function addReturnMessage() {
 	let txt = document.createTextNode("Retour à l'accueil");
 	let anchor = document.createElement('a');
-	anchor.href = "mfa.php?action=registered";
+	anchor.href = "mfa.php?action=endprocess";
 	anchor.appendChild(txt);
 	let mydiv = document.createElement('div');
 	mydiv.classList.add('foot');
@@ -50,7 +50,7 @@ function addReturnMessage() {
 
 function newRegistration() {
 	let msg = document.getElementById('registerMsg');
-	let txt = document.createTextNode("Insérez votre clef Yubikey");
+	let txt = document.createTextNode("Insérez votre clef FIDO2");
 	msg.appendChild(txt);
 	setTimeout(getRegistration, 1000)
 }
@@ -58,7 +58,7 @@ function newRegistration() {
 
 function getRegistration() {
 	let msg = document.getElementById('registerMsg');
-	console.log('sending attestation request:');
+	console.log('Sending attestation request');
 	window.fetch('mfa.php?action=generatePKCCOreg', { method:'POST', cache:'no-cache' }).then(function(response) {
 		return response.json();
 	}).then(function(credOpt) {
@@ -67,11 +67,11 @@ function getRegistration() {
 		console.log(credOpt);
 		return credOpt;
 	}).then(function(createCredential) {
-		let txt = document.createTextNode("Touchez votre clef Yubikey");
+		let txt = document.createTextNode("Touchez votre clef FIDO2");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		return navigator.credentials.create(createCredential);
 	}).then(function(attestation) {
-		console.log('received attestation response:');
+		console.log('Received attestation response');
 		console.log(attestation);
 		const publicKeyCredential = {};
 		publicKeyCredential.id = attestation.id;
@@ -83,22 +83,21 @@ function getRegistration() {
 		publicKeyCredential.response = response;
 		return publicKeyCredential;
 	}).then(function(attestationResponse) {
-		console.log('send attestation response:');
+		console.log('Sending attestation response');
 		console.log(attestationResponse);
 		window.fetch('mfa.php?action=processCreate', { method:'POST', body:JSON.stringify(attestationResponse), cache:'no-cache' })
 		.then(function(response) {
 			return response.json();
-		})
-		.then(function(parameters) {
-			console.log('parameters', parameters);
-			let txt = document.createTextNode("Votre clef Yubikey a été enregistrée avec succès");
+		}).then(function(parameters) {
+			console.log('Parameters', parameters);
+			let txt = document.createTextNode("Votre clef FIDO2 a été enregistrée avec succès");
 			msg.replaceChild(txt, msg.childNodes[0]);
 			displayPublicKey(parameters.credentials.publicKeyDetails);
 			addReturnMessage();
-		})
+		});
 	}).catch(function(err) {
-		console.log(err.message || 'unknown error occured');
-		let txt = document.createTextNode("Erreur d'enregistrement de votre clef Yubikey");
+		console.log(err.message || 'Unknown error occured');
+		let txt = document.createTextNode("Erreur d'enregistrement de votre clef FIDO2");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		addReturnMessage();
 	});
@@ -107,7 +106,7 @@ function getRegistration() {
 
 function newAuthentication() {
 	let msg = document.getElementById('authenticateMsg');
-	let txt = document.createTextNode("Insérez votre clef Yubikey");
+	let txt = document.createTextNode("Insérez votre clef FIDO2");
 	msg.appendChild(txt);
 	setTimeout(webauthnAuthentication, 1000)
 }
@@ -115,7 +114,7 @@ function newAuthentication() {
 
 function webauthnAuthentication() {
 	let msg = document.getElementById('authenticateMsg');
-	console.log('sending credential request:');
+	console.log('Fetching options for new assertion');
 	window.fetch('mfa.php?action=generatePKCCOauth', { method:'POST', cache:'no-cache' }).then(function(response) {
 		return response.json();
 	}).then(function(credOpt) {
@@ -124,11 +123,34 @@ function webauthnAuthentication() {
 		console.log(credOpt);
 		return credOpt;
 	}).then(function(getCredentialArgs) {
-		let txt = document.createTextNode("Touchez votre clef Yubikey");
+		let txt = document.createTextNode("Touchez votre clef FIDO2");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		return navigator.credentials.get(getCredentialArgs);
-	}).then(function(cred) {
-		console.log('received credential:');
-		console.log(cred);
+	}).then(function(assertion) {
+		console.log('Received assertion');
+		console.log(assertion);
+		const publicKeyCredential = {};
+		publicKeyCredential.id = binToStr(assertion.rawId);
+		publicKeyCredential.clientDataJSON = binToStr(assertion.response.clientDataJSON);
+		publicKeyCredential.authenticatorData = binToStr(assertion.response.authenticatorData);
+		publicKeyCredential.signature = binToStr(assertion.response.signature);
+		return publicKeyCredential;
+	}).then(function(assertionResponse) {
+		console.log('Sending assertion response');
+		console.log(assertionResponse);
+		window.fetch('mfa.php?action=processGet', { method:'POST', body:JSON.stringify(assertionResponse), cache:'no-cache' })
+		.then(function(response) {
+			return response.json();
+		}).then(function(parameters) {
+			console.log('Parameters', parameters);
+			let txt = document.createTextNode("Authentification validée");
+			msg.replaceChild(txt, msg.childNodes[0]);
+			addReturnMessage();
+		});
+	}).catch(function(err) {
+		console.log(err.message || 'Unknown error occured');
+		let txt = document.createTextNode("Erreur d'authentification");
+		msg.replaceChild(txt, msg.childNodes[0]);
+		addReturnMessage();
 	});
 }

@@ -118,7 +118,7 @@ function generatePKCCOregistration() {
 function generatePKCCOauthentication() {
 	$allowCredentials = [
 		'type' => 'public-key',
-		'id' => $_SESSION['credentialId'],
+		'id' => $_SESSION['registration']['credentialId'],
 		'transports' => ['usb', 'ble', 'nfc'],
 	];
 	$result = array();
@@ -126,12 +126,13 @@ function generatePKCCOauthentication() {
 	$result['allowCredentials'] = [$allowCredentials];
 	$result['timeout'] = 60000;
 	$result['rpId'] = $_SERVER['SERVER_NAME'];
+	$result['userVerification'] = 'discouraged';
 	$_SESSION['challenge'] = $result['challenge'];
 	return json_encode(array('publicKey' => $result));
 }
 
 
-function validateRegistration($clientDataJSON, $attestationObject, $rawId) {
+function verifyRegistration($clientDataJSON, $attestationObject, $rawId) {
 	global $cheminDATA;
 	// source: https://w3c.github.io/webauthn/#sctn-registering-a-new-credential
 	$success = true;
@@ -215,13 +216,13 @@ function validateRegistration($clientDataJSON, $attestationObject, $rawId) {
 		$success = false;
 	}
 	$data = array();
-	$data['rpId'] = $rpId;
+	//$data['credentialPublicKeyDER'] = base64_encode($authenticatorData->getPublicKeyU2F());
+	//$data['aaguid'] = base64_encode($authenticatorData->getAAGUID());
+	//$data['rpId'] = $rpId;
 	$data['credentialId'] = $rawId;
-	$_SESSION['credentialId'] = $data['credentialId'];
-	$data['credentialPublicKeyDER'] = base64_encode($authenticatorData->getPublicKeyU2F());
 	$data['credentialPublicKeyPEM'] = $authenticatorData->getPublicKeyPem();
 	$data['signCount'] = $authenticatorData->getSignCount();
-	$data['aaguid'] = base64_encode($authenticatorData->getAAGUID());
+	$_SESSION['registration'] = $data;
 	$data['publicKeyDetails'] = $authenticatorData->getPubKeyDetails();
 	$certificate = $attestationFormat->getCertificatePem();
 	if ($certificate) {
@@ -241,7 +242,7 @@ function validateRegistration($clientDataJSON, $attestationObject, $rawId) {
 	} else {
 		$data['x509'] = false;
 	}
-	file_put_contents('create_credential.json', json_encode($data));
+	//file_put_contents('create_credential.json', json_encode($data));
 	return array($success, $data);
 }
 
@@ -251,7 +252,7 @@ function registerNewCredential($post) {
 	$attestationObject = $post['response']['attestationObject'];
 	$clientDataJSON = $post['response']['clientDataJSON'];
 	$rawId = $post['rawId'];
-	$result = validateRegistration($clientDataJSON, $attestationObject, $rawId);
+	$result = verifyRegistration($clientDataJSON, $attestationObject, $rawId);
 	$return = array();
 	if ($result[0]) {
 		$return['success'] = true;
@@ -265,6 +266,94 @@ function registerNewCredential($post) {
 }
 
 
+function verifyAssertion($clientDataJSON, $authenticatorData, $signature, $credentialPublicKey) {
+	$success = true;
+	$clientDataJSON = base64_decode($clientDataJSON);
+	$authenticatorData = base64_decode($authenticatorData);
+	$signature = base64_decode($signature);
+	$authenticatorObject = new WebAuthn\Attestation\AuthenticatorData($authenticatorData);
+	$rpId = $_SERVER['SERVER_NAME'];
+	$rpIdHash = hash('sha256', $rpId, true);
+	$clientDataHash = hash('sha256', $clientDataJSON, true);
+	$clientData = json_decode($clientDataJSON);
+	// Let JSONtext be the result of running UTF-8 decode on the value of cData.
+	if (!is_object($clientData)) {
+		genSyslog(__FUNCTION__, $msg='invalid client data');
+		$success = false;
+	}
+	// Verify that the value of C.type is the string webauthn.get.
+	if (!property_exists($clientData, 'type') || $clientData->type !== 'webauthn.get') {
+		genSyslog(__FUNCTION__, $msg='invalid type');
+		$success = false;
+	}
+	// Verify that the value of C.challenge matches the challenge that was sent to the authenticator in the PublicKeyCredentialRequestOptions passed to the get() call.
+	if (!property_exists($clientData, 'challenge') || (base64_encode(base64UrlDecode($clientData->challenge)) !== $_SESSION['challenge'])) {
+		genSyslog(__FUNCTION__, $msg='invalid challenge');
+		$success = false;
+	}
+	//Verify that the value of C.origin matches the Relying Party's origin.
+	if (!property_exists($clientData, 'origin') || !checkOrigin($clientData->origin)) {
+		genSyslog(__FUNCTION__, $msg='invalid origin');
+		$success = false;
+	}
+	// Verify that the rpIdHash in authData is the SHA-256 hash of the RP ID expected by the Relying Party.
+	if ($authenticatorObject->getRpIdHash() !== $rpIdHash) {
+		genSyslog(__FUNCTION__, $msg='invalid rpID hash');
+		$success = false;
+	}
+	// Verify that the User Present bit of the flags in authData is set.
+	if (!$authenticatorObject->getUserPresent()) {
+		genSyslog(__FUNCTION__, $msg='user not present during authentication');
+		$success = false;
+	}
+	// Let hash be the result of computing a hash over the cData using SHA-256.
+	// Using the credential public key looked up in step 3, verify that sig is a valid signature over the binary concatenation of authData and hash.
+	$publicKey = openssl_pkey_get_public($credentialPublicKey);
+	if ($publicKey === false) {
+		genSyslog(__FUNCTION__, $msg='public key invalid');
+		$success = false;
+	}
+	if (openssl_verify($authenticatorData.$clientDataHash, $signature, $publicKey, OPENSSL_ALGO_SHA256) !== 1) {
+		genSyslog(__FUNCTION__, $msg='invalid signature');
+		$success = false;
+	}
+	$signatureCounter = $authenticatorObject->getSignCount();
+	/*
+	if ($signatureCounter > 0) {
+		if ($prevSignatureCnt !== null && $prevSignatureCnt >= $signatureCounter) {
+			genSyslog(__FUNCTION__, $msg='signature counter not valid');
+			$success = false;
+		}
+	}
+	*/
+	return $success;
+}
+
+
+function validateNewAssertion($post) {
+	$post = json_decode($post, true);
+	$success = true;
+	$return = array();
+	$clientDataJSON = $post['clientDataJSON'];
+	$authenticatorData = $post['authenticatorData'];
+	$signature = $post['signature'];
+	$credentialPublicKey = null;
+	if ($_SESSION['registration']['credentialId'] === $post['id']) {
+		$credentialPublicKey = $_SESSION['registration']['credentialPublicKeyPEM'];
+	}
+	if ($credentialPublicKey === null) {
+		$success = false;
+	} else {
+		$success = verifyAssertion($clientDataJSON, $authenticatorData, $signature, $credentialPublicKey);
+	}
+	$return['success'] = $success;
+	if ($success) {
+		$return['msg'] = "Authentification réussie";
+	} else {
+		$return['msg'] = "Erreur d'authentification réussie";
+	}
+	return json_encode($return);
+}
 
 
 
@@ -284,7 +373,12 @@ if (isset($_GET['action'])) {
 			header('Content-Type: application/json');
 			echo registerNewCredential($post);
 			break;
-		case 'registered':
+		case 'processGet':
+			$post = trim(file_get_contents('php://input'));
+			header('Content-Type: application/json');
+			echo validateNewAssertion($post);
+			break;
+		case 'endprocess':
 			header('Location: '.$_SESSION['curr_script']);
 			break;
 		default:
