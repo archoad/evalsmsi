@@ -1,8 +1,6 @@
 <?php
 
-//header('Content-Type: application/json');
-
-include("functions.php");
+include("../functions.php");
 
 function getDomains() {
 	$base = dbConnect();
@@ -70,7 +68,7 @@ function readFromFile() {
 }
 
 
-
+//header('Content-Type: application/json');
 //echo readFromBDD();
 echo readFromFile();
 ?>
