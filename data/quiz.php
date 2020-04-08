@@ -4,7 +4,7 @@ include("../functions.php");
 
 function getDomains() {
 	$base = dbConnect();
-	$request = sprintf("SELECT id, libelle, abrege FROM paragraphe");
+	$request = sprintf("SELECT id, libelle, abrege FROM paragraphe ORDER BY id");
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	return $result;
@@ -13,7 +13,7 @@ function getDomains() {
 
 function getSubDomains($id_domain) {
 	$base = dbConnect();
-	$request = sprintf("SELECT id, numero, libelle, comment FROM sub_paragraphe WHERE id_paragraphe='%d'", $id_domain);
+	$request = sprintf("SELECT id, numero, libelle, comment FROM sub_paragraphe WHERE id_paragraphe='%d' ORDER BY id", $id_domain);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	return $result;
@@ -22,7 +22,7 @@ function getSubDomains($id_domain) {
 
 function getQuestion($id_sub_domain) {
 	$base = dbConnect();
-	$request = sprintf("SELECT numero, libelle, mesure, poids FROM question WHERE id_sub_paragraphe='%d'", $id_sub_domain);
+	$request = sprintf("SELECT numero, libelle, mesure, poids FROM question WHERE id_sub_paragraphe='%d' ORDER BY id", $id_sub_domain);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
 	return $result;
