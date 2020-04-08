@@ -38,9 +38,6 @@ headPage($appli_titre);
 purgeRapportsFiles();
 
 
-if (isset($_SESSION['registration'])) {
-	print_r($_SESSION['registration']);
-}
 
 
 if (isset($_GET['action'])) {
