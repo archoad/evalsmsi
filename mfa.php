@@ -170,9 +170,22 @@ function getCertificatePem($publicKey) {
 }
 
 
+function getCredentialFromDb() {
+	$base = dbConnect();
+	$request = sprintf("SELECT credential_id, public_key, sign_count FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	$_SESSION['registration']['credentialId'] = $row->credential_id;
+	$_SESSION['registration']['credentialPublicKeyPEM'] = $row->public_key;
+	$_SESSION['registration']['signCount'] = $row->sign_count;
+	return $result;
+}
+
+
 function generatePKCCOregistration() {
 	global $coseAlgoECDSAwSHA256;
-
+	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
 	$authenticatorSelection = [
 		'authenticatorAttachment' => 'cross-platform',
 		'requireResidentKey' => false,
@@ -188,7 +201,6 @@ function generatePKCCOregistration() {
 	$user = [
 		'displayName' => $_SESSION['login'],
 		'name' => $_SESSION['prenom']." ".$_SESSION['nom'],
-		//'id' => $_SESSION['uid'],
 		'id' => base64_encode(random_bytes(16)),
 	];
 	$extensions = [
@@ -212,6 +224,8 @@ function generatePKCCOregistration() {
 
 
 function generatePKCCOauthentication() {
+	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
+	getCredentialFromDb();
 	$allowCredentials = [
 		'type' => 'public-key',
 		'id' => $_SESSION['registration']['credentialId'],
@@ -505,13 +519,12 @@ function verifyRegistration($clientDataJSON, $attestationObject) {
 	$data['credentialId'] = $attestationData['authData']['credentialData']['credentialId'];
 	$data['credentialPublicKeyPEM'] = $attestationData['credentialPublicKeyPEM'];
 	$data['signCount'] = $attestationData['authData']['signatureCounter'];
-	$_SESSION['registration'] = $data;
 	$data['rpIdHash'] = $attestationData['authData']['rpIdHash'];
 	$data['aaguid'] = $attestationData['authData']['credentialData']['aaguid'];
 	$data['publicKey']['x'] = $attestationData['authData']['credentialData']['publicKey']['x'];
 	$data['publicKey']['y'] = $attestationData['authData']['credentialData']['publicKey']['y'];
 	$data['fmt'] = $attestationData['fmt'];
-	file_put_contents('attestation_data.json', json_encode($attestationData));
+	//file_put_contents('attestation_data.json', json_encode($attestationData));
 	//file_put_contents('create_credential.json', json_encode($data));
 	return array($success, $data);
 }
@@ -524,9 +537,18 @@ function registerNewCredential($post) {
 	$result = verifyRegistration($clientDataJSON, $attestationObject);
 	$return = array();
 	if ($result[0]) {
-		$return['success'] = true;
-		$return['msg'] = 'Successfully created credential';
-		$return['credentials'] = $result[1];
+		$base = dbConnect();
+		$request = sprintf("UPDATE users SET credential_id='%s', public_key='%s', sign_count='%d' WHERE login='%s'", $result[1]['credentialId'], $result[1]['credentialPublicKeyPEM'], $result[1]['signCount'], $_SESSION['login']);
+		$query = mysqli_query($base, $request);
+		dbDisconnect($base);
+		if ($query) {
+			$return['success'] = true;
+			$return['msg'] = 'Successfully created credential';
+			$return['credentials'] = $result[1];
+		} else {
+			$return['success'] = false;
+			$return['msg'] = 'No credential created';
+		}
 	} else {
 		$return['success'] = false;
 		$return['msg'] = 'No credential created';
@@ -609,19 +631,23 @@ function validateNewAssertion($post) {
 	$authenticatorData = $post['authenticatorData'];
 	$signature = $post['signature'];
 	$credentialPublicKey = null;
-	if ($_SESSION['registration']['credentialId'] === $post['id']) {
-		$credentialPublicKey = $_SESSION['registration']['credentialPublicKeyPEM'];
-	}
-	if ($credentialPublicKey === null) {
-		$success = false;
+	if (getCredentialFromDb()) {
+		if ($_SESSION['registration']['credentialId'] === $post['id']) {
+			$credentialPublicKey = $_SESSION['registration']['credentialPublicKeyPEM'];
+		}
+		if ($credentialPublicKey === null) {
+			$success = false;
+		} else {
+			$success = verifyAssertion($clientDataJSON, $authenticatorData, $signature, $credentialPublicKey);
+		}
+		$return['success'] = $success;
+		if ($success) {
+			$return['msg'] = "Authentification réussie";
+		} else {
+			$return['msg'] = "Erreur d'authentification";
+		}
 	} else {
-		$success = verifyAssertion($clientDataJSON, $authenticatorData, $signature, $credentialPublicKey);
-	}
-	$return['success'] = $success;
-	if ($success) {
-		$return['msg'] = "Authentification réussie";
-	} else {
-		$return['msg'] = "Erreur d'authentification réussie";
+		$return['msg'] = "Erreur d'authentification";
 	}
 	return json_encode($return);
 }
@@ -630,6 +656,7 @@ function validateNewAssertion($post) {
 
 
 if (isset($_GET['action'])) {
+	if (isset($_SESSION['registration'])) { unset($_SESSION['registration']); }
 	switch ($_GET['action']) {
 		case 'generatePKCCOreg':
 			header('Content-Type: application/json');
