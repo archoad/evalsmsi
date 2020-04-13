@@ -79,10 +79,12 @@ function getRegistration() {
 		}).then(function(parameters) {
 			console.log('Parameters', parameters);
 			if (parameters.success) {
+				document.getElementById('registerImg').src = 'pict/valid.png';
 				let txt = document.createTextNode("Votre clef FIDO2 a été enregistrée avec succès");
 				msg.replaceChild(txt, msg.childNodes[0]);
 				displayPublicKey(parameters.credentials.publicKey);
 			} else {
+				document.getElementById('registerImg').src = 'pict/invalid.png';
 				let txt = document.createTextNode("Erreur d'enregistrement de votre clef FIDO2");
 				msg.replaceChild(txt, msg.childNodes[0]);
 			}
@@ -90,6 +92,7 @@ function getRegistration() {
 		});
 	}).catch(function(err) {
 		console.log(err.message || 'Unknown error occured');
+		document.getElementById('registerImg').src = 'pict/invalid.png';
 		let txt = document.createTextNode("Erreur d'enregistrement de votre clef FIDO2");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		addReturnMessage();
@@ -137,9 +140,11 @@ function webauthnAuthentication() {
 		}).then(function(parameters) {
 			console.log('Parameters', parameters);
 			if (parameters.success) {
+				document.getElementById('authenticateImg').src = 'pict/valid.png';
 				let txt = document.createTextNode("Authentification validée");
 				msg.replaceChild(txt, msg.childNodes[0]);
 			} else {
+				document.getElementById('authenticateImg').src = 'pict/invalid.png';
 				let txt = document.createTextNode("Erreur d'authentification");
 				msg.replaceChild(txt, msg.childNodes[0]);
 			}
@@ -147,6 +152,7 @@ function webauthnAuthentication() {
 		});
 	}).catch(function(err) {
 		console.log(err.message || 'Unknown error occured');
+		document.getElementById('authenticateImg').src = 'pict/invalid.png';
 		let txt = document.createTextNode("Erreur d'authentification");
 		msg.replaceChild(txt, msg.childNodes[0]);
 		addReturnMessage();

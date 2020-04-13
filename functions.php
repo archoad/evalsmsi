@@ -179,8 +179,8 @@ function menuAuthentication() {
 	printf("<div class='column left'>");
 	linkMsg($_SESSION['curr_script']."?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	printf("</div><div class='column right'>");
-	linkMsg($_SESSION['curr_script']."?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
-	linkMsg($_SESSION['curr_script']."?action=webauthnauth", "Authentification", "yubikey.png", 'menu');
+	linkMsg($_SESSION['curr_script']."?action=regwebauthn", "Enregistrer une clef d'authentification", "fido2key.png", 'menu');
+	linkMsg($_SESSION['curr_script']."?action=webauthnauth", "Authentification", "fido2key.png", 'menu');
 	printf("</div></div>");
 }
 
@@ -758,14 +758,14 @@ function isRegroupEtab() {
 
 
 function registerWebauthnCred() {
-	printf("<div class='msg'><div><img src='pict/yubikey.png' alt='info' /></div><div><p id='registerMsg'></p></div></div>");
+	printf("<div class='msg'><div><img id='registerImg' src='pict/fido2key.png' alt='info' /></div><div><p id='registerMsg'></p></div></div>");
 	printf("<div class='none' id='pubKey'><div><img src='pict/public_key.png' alt='pubkey' /></div><div id='msgPubKey'></div></div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', newRegistration());</script>", $_SESSION['nonce']);
 }
 
 
 function webauthnAuthenticating() {
-	printf("<div class='msg'><div><img src='pict/yubikey.png' alt='info' /></div><div><p id='authenticateMsg'></p></div></div>");
+	printf("<div class='msg'><div><img id='authenticateImg' src='pict/fido2key.png' alt='info' /></div><div><p id='authenticateMsg'></p></div></div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
 }
 
