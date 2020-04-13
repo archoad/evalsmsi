@@ -158,7 +158,8 @@ class ByteBuffer implements \JsonSerializable, \Serializable {
 	 * @return \stdClass
 	 */
 	public function jsonSerialize() {
-		return '?BINARY?B?' . \base64_encode($this->data) . '?=';
+		//return '?BINARY?B?' . \base64_encode($this->data) . '?=';
+		return \base64_encode($this->data);
 	}
 
 	/**

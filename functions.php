@@ -111,26 +111,26 @@ $colors = array('darkslateblue', 'darkorange', 'darkorchid', 'bisque4', 'aquamar
 function menuAdmin() {
 	genSyslog(__FUNCTION__);
 	$_SESSION['curr_script'] = 'admin.php';
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
 	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
 	linkMsg("admin.php?action=select_quiz", "Modifications du questionnaire", "eval_continue.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
-	printf("</div>\n<div class='column right'>\n");
+	printf("</div><div class='column right'>");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
 	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
 	linkMsg("admin.php?action=bilan_etab", "Bilan global", "bilan.png", 'menu');
-	printf("</div>\n</div>");
+	printf("</div></div>");
 }
 
 
 function menuEtab() {
 	genSyslog(__FUNCTION__);
 	$_SESSION['curr_script'] = 'etab.php';
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
 	if (isset($_SESSION['quiz'])) {
 		if (in_array($_SESSION['role'], array('4', '5'))) {
 			linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
@@ -139,12 +139,10 @@ function menuEtab() {
 			linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
 		}
 	}
-	linkMsg("etab.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
-	linkMsg("etab.php?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
+	linkMsg("etab.php?action=authentication", "Gestion de l'authentification", "fingerprint.png", 'menu');
 	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
-	printf("</div><div class='column right'>\n");
+	printf("</div><div class='column right'>");
 	linkMsg("etab.php?action=choose_quiz", "Choisir un référentiel", "quiz.png", 'menu');
-	linkMsg("etab.php?action=webauthnauth", "Authentification", "yubikey.png", 'menu');
 	if (isset($_SESSION['quiz'])) {
 		if (in_array($_SESSION['role'], array('3', '4'))) {
 			linkMsg("etab.php?action=graph", "Graphes établissement", "piechart.png", 'menu');
@@ -154,26 +152,36 @@ function menuEtab() {
 			linkMsg("etab.php?action=rules", "Exporter le référentiel", "pdf.png", 'menu');
 		}
 	}
-	printf("</div>\n</div>");
+	printf("</div></div>");
 }
 
 
 function menuAudit() {
 	genSyslog(__FUNCTION__);
 	$_SESSION['curr_script'] = 'audit.php';
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
 	linkMsg("audit.php?action=office", "Exporter une évaluation", "docx.png", 'menu');
 	linkMsg("audit.php?action=graph", "Graphes par établissement", "piechart.png", 'menu');
 	linkMsg("audit.php?action=objectif", "Gestion des objectifs", "objectifs.png", 'menu');
-	linkMsg("audit.php?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
-	linkMsg("audit.php?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
-	printf("</div><div class='column right'>\n");
+	linkMsg("audit.php?action=authentication", "Gestion de l'authentification", "fingerprint.png", 'menu');
+	printf("</div><div class='column right'>");
 	linkMsg("audit.php?action=audit", "Evaluation auditeur", "audit.png", 'menu');
 	linkMsg("audit.php?action=rap_etab", "Rapport par établissement", "rapport.png", 'menu');
 	linkMsg("audit.php?action=delete", "Supprimer une évaluation", "remove.png", 'menu');
 	linkMsg("audit.php?action=journal", "Journalisation", "journal.png", 'menu');
-	printf("</div>\n</div>");
+	printf("</div></div>");
+}
+
+
+function menuAuthentication() {
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
+	linkMsg($_SESSION['curr_script']."?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
+	printf("</div><div class='column right'>");
+	linkMsg($_SESSION['curr_script']."?action=regwebauthn", "Enregistrer une clef d'authentification", "yubikey.png", 'menu');
+	linkMsg($_SESSION['curr_script']."?action=webauthnauth", "Authentification", "yubikey.png", 'menu');
+	printf("</div></div>");
 }
 
 
@@ -409,25 +417,25 @@ function headPage($titre, $sousTitre='') {
 	header("X-XSS-Protection: 1; mode=block;");
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
-	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
-	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
-	printf("<meta name='author' content='Michel Dubois' />\n");
-	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
-	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />\n", $nonce, $_SESSION['theme']);
-	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />\n", $nonce);
+	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
+	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
+	printf("<meta name='author' content='Michel Dubois' />");
+	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
+	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $nonce, $_SESSION['theme']);
+	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $nonce);
 	if (isset($_SESSION['curr_script'])) {
 		$script = $_SESSION['curr_script'];
 		if ($script === 'etab.php') {
-			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />\n", $nonce);
+			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
 			printf("<script nonce='%s' src='js/chart.min.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/graphs.js'></script>", $nonce);
 		}
 		if ($script === 'audit.php') {
-			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />\n", $nonce);
+			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
 			printf("<script nonce='%s' src='js/chart.min.js'></script>", $nonce);
-			printf("<link nonce='%s' href='js/vis.min.css' rel='stylesheet' type='text/css' media='all' />\n", $nonce);
+			printf("<link nonce='%s' href='js/vis.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
 			printf("<script nonce='%s' src='js/vis.min.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
@@ -436,16 +444,17 @@ function headPage($titre, $sousTitre='') {
 		if ($script === 'admin.php') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 		}
+		print_r($_SESSION);
 	}
-	printf("<title>%s</title>\n", $titre);
-	printf("</head>\n<body>\n<h1>%s</h1>\n", $titre);
+	printf("<title>%s</title>", $titre);
+	printf("</head><body><h1>%s</h1>", $titre);
 	if ($sousTitre !== '') {
-		printf("<h2>%s</h2>\n", $sousTitre);
+		printf("<h2>%s</h2>", $sousTitre);
 	} else {
-		printf("<h2>%s</h2>\n", uidToEtbs());
+		printf("<h2>%s</h2>", uidToEtbs());
 	}
 	if (isset($_SESSION['quiz']) && intval($_SESSION['role'])!=2) {
-		printf("<h4>%s</h4>\n", getQuizName());
+		printf("<h4>%s</h4>", getQuizName());
 	}
 }
 
@@ -453,21 +462,21 @@ function headPage($titre, $sousTitre='') {
 function footPage($link='', $msg=''){
 	genSyslog(__FUNCTION__);
 	if ($_SESSION['role']==='100') {
-		printf("<div class='footer'>\n");
-		printf("Aide en ligne - Retour à la page d'accueil <a href='evalsmsi.php' class='btnWarning'>cliquer ici</a>\n");
-		printf("</div>\n");
-		printf("</body>\n</html>\n");
+		printf("<div class='footer'>");
+		printf("Aide en ligne - Retour à la page d'accueil <a href='evalsmsi.php' class='btnWarning'>cliquer ici</a>");
+		printf("</div>");
+		printf("</body></html>");
 	} else {
 		if (strlen($link) AND strlen($msg)) {
-			printf("<div class='foot'>\n");
-			printf("<a href='%s'>%s</a>\n", $link, $msg);
-			printf("</div>\n");
+			printf("<div class='foot'>");
+			printf("<a href='%s'>%s</a>", $link, $msg);
+			printf("</div>");
 			printf("<p>&nbsp;</p>");
 		}
-		printf("<div class='footer'>\n");
-		printf("%s\n", infoSession());
-		printf("</div>\n");
-		printf("</body>\n</html>\n");
+		printf("<div class='footer'>");
+		printf("%s", infoSession());
+		printf("</div>");
+		printf("</body></html>");
 	}
 }
 
@@ -475,26 +484,26 @@ function footPage($link='', $msg=''){
 function validForms($msg, $url, $back=True) {
 	if (isset($_SESSION['token'])) { unset($_SESSION['token']); }
 	$_SESSION['token'] = generateToken();
-	printf("<fieldset>\n<legend>Validation</legend>\n");
-	printf("<table><tr><td>\n");
-	printf("<input type='submit' value='%s' />\n", $msg);
+	printf("<fieldset><legend>Validation</legend>");
+	printf("<table><tr><td>");
+	printf("<input type='submit' value='%s' />", $msg);
 	if ($back) {
-		printf("<input type='reset' value='Effacer' />\n");
+		printf("<input type='reset' value='Effacer' />");
 	}
-	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>\n", $url);
-	printf("</td></tr>\n</table>\n</fieldset>\n");
+	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
+	printf("</td></tr></table></fieldset>");
 }
 
 
 function linkMsg($link, $msg, $img, $class='msg') {
-	printf("<div class='%s'>\n", $class);
-	printf("<div><img src='pict/%s' alt='info' /></div>\n", $img);
+	printf("<div class='%s'>", $class);
+	printf("<div><img src='pict/%s' alt='info' /></div>", $img);
 	if ($link==='#') {
-		printf("<div><p>%s</p></div>\n", $msg);
+		printf("<div><p>%s</p></div>", $msg);
 	} else {
-		printf("<div><a href='%s'>%s</a></div>\n", $link, $msg);
+		printf("<div><a href='%s'>%s</a></div>", $link, $msg);
 	}
-	printf("</div>\n");
+	printf("</div>");
 }
 
 
@@ -600,19 +609,19 @@ function chooseQuiz() {
 	$request = sprintf("SELECT * FROM quiz");
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
-	printf("<form method='post' id='quiz' action='%s?action=set_quiz'>\n", $script);
-	printf("<fieldset>\n<legend>Choix d'un questionnaire d'audit</legend>\n");
-	printf("<table>\n<tr><td>\n");
-	printf("Questionnaire:&nbsp;\n");
-	printf("<select name='id_quiz' id='id_quiz' required>\n");
-	printf("<option selected='selected' value=''>&nbsp;</option>\n");
+	printf("<form method='post' id='quiz' action='%s?action=set_quiz'>", $script);
+	printf("<fieldset><legend>Choix d'un questionnaire d'audit</legend>");
+	printf("<table><tr><td>");
+	printf("Questionnaire:&nbsp;");
+	printf("<select name='id_quiz' id='id_quiz' required>");
+	printf("<option selected='selected' value=''>&nbsp;</option>");
 	while($row = mysqli_fetch_object($result)) {
-		printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);
+		printf("<option value='%s'>%s</option>", $row->id, $row->nom);
 	}
-	printf("</select>\n");
-	printf("</td>\n</tr>\n</table>\n</fieldset>\n");
+	printf("</select>");
+	printf("</td></tr></table></fieldset>");
 	validForms('Continuer', $script);
-	printf("</form>\n");
+	printf("</form>");
 }
 
 
@@ -771,18 +780,18 @@ function changePassword() {
 	dbDisconnect($base);
 	if (mysqli_num_rows($result)) {
 		$row = mysqli_fetch_array($result);
-		printf("<form method='post' id='chg_password' action='%s?action=chg_password'>\n", $script);
-		printf("<fieldset>\n<legend>Changement de mot de passe</legend>\n");
-		printf("<table>\n<tr><td>\n");
-		printf("<input type='password' size='30' maxlength='30' name='new1' id='new1' placeholder='Nouveau mot de passe' autocomplete='new-password' required />\n");
-		printf("</td></tr>\n<tr><td>\n");
-		printf("<input type='password' size='30' maxlength='30' name='new2' id='new2' placeholder='Saisissez à nouveau le mot de passe' autocomplete='new-password' required />\n");
-		printf("</td></tr>\n</table>\n");
-		printf("</fieldset>\n");
+		printf("<form method='post' id='chg_password' action='%s?action=chg_password'>", $script);
+		printf("<fieldset><legend>Changement de mot de passe</legend>");
+		printf("<table><tr><td>");
+		printf("<input type='password' size='30' maxlength='30' name='new1' id='new1' placeholder='Nouveau mot de passe' autocomplete='new-password' required />");
+		printf("</td></tr><tr><td>");
+		printf("<input type='password' size='30' maxlength='30' name='new2' id='new2' placeholder='Saisissez à nouveau le mot de passe' autocomplete='new-password' required />");
+		printf("</td></tr></table>");
+		printf("</fieldset>");
 		validForms('Enregistrer', $script);
-		printf("</form>\n");
-		printf("<script nonce='%s'>document.getElementById('new1').addEventListener('change', function() {validatePattern();});</script>\n", $nonce);
-		printf("<script nonce='%s'>document.getElementById('new2').addEventListener('change', function() {validatePassword();});</script>\n", $nonce);
+		printf("</form>");
+		printf("<script nonce='%s'>document.getElementById('new1').addEventListener('change', function() {validatePattern();});</script>", $nonce);
+		printf("<script nonce='%s'>document.getElementById('new2').addEventListener('change', function() {validatePassword();});</script>", $nonce);
 	} else {
 		linkMsg("#", "Erreur de compte.", "alert.png");
 		footPage($script, "Accueil");
@@ -913,21 +922,21 @@ function questionsCount() {
 function printSelect($num_dom, $num_sub_dom, $num_quest, $assessment=0) {
 	$nonce = $_SESSION['nonce'];
 	$name = 'question'.$num_dom.'_'.$num_sub_dom.'_'.$num_quest;
-	printf("<select name='%s' id='%s' >\n", $name, $name);
+	printf("<select name='%s' id='%s' >", $name, $name);
 	if ($assessment) {
 		if ($assessment[$name] == 0) {
-			printf("<option selected='selected' value='0'>&nbsp;</option>\n");
+			printf("<option selected='selected' value='0'>&nbsp;</option>");
 		} else {
-			printf("<option selected='selected' value='%d'>%d - %s</option>\n",$assessment[$name], $assessment[$name], textItem($assessment[$name]));
-			printf("<option value='0'>&nbsp;</option>\n");
+			printf("<option selected='selected' value='%d'>%d - %s</option>",$assessment[$name], $assessment[$name], textItem($assessment[$name]));
+			printf("<option value='0'>&nbsp;</option>");
 		}
 	} else {
-		printf("<option selected='selected' value='0'>&nbsp;</option>\n");
+		printf("<option selected='selected' value='0'>&nbsp;</option>");
 	}
 	for ($i=1; $i<8; $i++) {
-		printf("<option value='%d'>%d - %s</option>\n", $i, $i, textItem($i));
+		printf("<option value='%d'>%d - %s</option>", $i, $i, textItem($i));
 	}
-	printf("</select>\n");
+	printf("</select>");
 	printf("<script nonce='%s'>document.getElementById('%s').addEventListener('change', function() {progresse();});</script>", $nonce, $name);
 }
 
@@ -1009,25 +1018,25 @@ function subDomainComplete($assessment, $dom, $subdom) {
 
 
 function afficheNotesExplanation() {
-	printf("<div class='column littleright sticky'>\n");
+	printf("<div class='column littleright sticky'>");
 	printf("<div class='event'>");
-	printf("<dl>\n");
-	printf("<dt>1: Non Applicable</dt>\n");
-	printf("<dd>La règle est non applicable ou à fait l'objet d'une dérogation (à préciser dans le commentaire).</dd>\n");
-	printf("<dt>2: Inexistant et investissement important</dt>\n");
-	printf("<dd>La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.).</dd>\n");
-	printf("<dt>3: Inexistant et investissement peu important</dt>\n");
-	printf("<dd>La disposition proposée n’est pas appliquée actuellement, mais le sera rapidement, car sa mise en oeuvre est facile et/ou rapide.</dd>\n");
-	printf("<dt>4: En cours et demande un ajustement</dt>\n");
-	printf("<dd>La disposition proposée est en cours de réalisation, mais des difficultés sont rencontrées et les plans prévus de réalisation doivent être modifiés.</dd>\n");
-	printf("<dt>5: En cours</dt>\n");
-	printf("<dd>La disposition proposée est en cours de réalisation et se déroule sans encombre.</dd>\n");
-	printf("<dt>6: Existant et demande un ajustement</dt>\n");
-	printf("<dd>La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle.</dd>\n");
-	printf("<dt>7: Opérationnel</dt>\n");
-	printf("<dd>La disposition est opérationnelle et remplit entièrement les besoins demandés</dd>\n");
-	printf("</dl>\n</div>\n");
-	printf("</div>\n");
+	printf("<dl>");
+	printf("<dt>1: Non Applicable</dt>");
+	printf("<dd>La règle est non applicable ou à fait l'objet d'une dérogation (à préciser dans le commentaire).</dd>");
+	printf("<dt>2: Inexistant et investissement important</dt>");
+	printf("<dd>La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.).</dd>");
+	printf("<dt>3: Inexistant et investissement peu important</dt>");
+	printf("<dd>La disposition proposée n’est pas appliquée actuellement, mais le sera rapidement, car sa mise en oeuvre est facile et/ou rapide.</dd>");
+	printf("<dt>4: En cours et demande un ajustement</dt>");
+	printf("<dd>La disposition proposée est en cours de réalisation, mais des difficultés sont rencontrées et les plans prévus de réalisation doivent être modifiés.</dd>");
+	printf("<dt>5: En cours</dt>");
+	printf("<dd>La disposition proposée est en cours de réalisation et se déroule sans encombre.</dd>");
+	printf("<dt>6: Existant et demande un ajustement</dt>");
+	printf("<dd>La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle.</dd>");
+	printf("<dt>7: Opérationnel</dt>");
+	printf("<dd>La disposition est opérationnelle et remplit entièrement les besoins demandés</dd>");
+	printf("</dl></div>");
+	printf("</div>");
 }
 
 
@@ -1313,18 +1322,18 @@ function displayEtablissmentGraphs() {
 		} else {
 			linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
 		}
-		printf("<div class='onecolumn' id='graphs'>\n");
+		printf("<div class='onecolumn' id='graphs'>");
 		assessSynthese();
-		printf("<canvas id='currentYearGraphBar'></canvas>\n");
-		printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
-		printf("<p class='separation'>&nbsp;</p>\n");
-		printf("<canvas id='currentYearGraphPolar'></canvas>\n");
-		printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
-		printf("<p class='separation'>&nbsp;</p>\n");
-		printf("<canvas id='currentYearGraphScatter'></canvas><br />\n");
-		printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>\n");
-		printf("<p class='separation'>&nbsp;</p>\n");
-		printf("</div>\n");
+		printf("<canvas id='currentYearGraphBar'></canvas>");
+		printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
+		printf("<p class='separation'>&nbsp;</p>");
+		printf("<canvas id='currentYearGraphPolar'></canvas>");
+		printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
+		printf("<p class='separation'>&nbsp;</p>");
+		printf("<canvas id='currentYearGraphScatter'></canvas><br />");
+		printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
+		printf("<p class='separation'>&nbsp;</p>");
+		printf("</div>");
 		printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 	} else {
 		$msg = sprintf("L'évaluation %d est vide.", $annee);
@@ -1354,8 +1363,8 @@ function assessSynthese() {
 		}
 	}
 
-	printf("<table>\n<tr><th colspan='3'>Notes finale des établissements</th></tr>\n");
-	printf("<tr><th>Etablissement</th><th>Détail des notes</th><th>Note finale</th></tr>\n");
+	printf("<table><tr><th colspan='3'>Notes finale des établissements</th></tr>");
+	printf("<tr><th>Etablissement</th><th>Détail des notes</th><th>Note finale</th></tr>");
 	$name_etab = getEtablissement($id_etab);
 	$notes = calculNotes($reponses);
 	$text_note = "";
@@ -1370,8 +1379,8 @@ function assessSynthese() {
 		}
 	}
 	$noteFinale = 20 * $noteSum / (sizeof($titles_par)*20);
-	printf("<tr>\n<td class='assesssynth'><b>%s</b></td><td><ul>%s</ul></td><td><b class='fontvingt'>%d/20</b></td>\n</tr>\n", $name_etab, $text_note, $noteFinale);
-	printf("</table>\n");
+	printf("<tr><td class='assesssynth'><b>%s</b></td><td><ul>%s</ul></td><td><b class='fontvingt'>%d/20</b></td></tr>", $name_etab, $text_note, $noteFinale);
+	printf("</table>");
 }
 
 
@@ -1997,18 +2006,18 @@ function exportEval() {
 			}
 			$sheet->fromArray($eval, NULL, 'A1');
 
-			printf("<div class='row'>\n");
-			printf("<div class='column left'>\n");
+			printf("<div class='row'>");
+			printf("<div class='column left'>");
 			$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 			$objWriter->save($fileDoc);
 			$msg = "Télécharger l'évaluation (Word)";
 			linkMsg($dir."/".$fileDoc, $msg, "docx.png", 'menu');
-			printf("</div>\n<div class='column right'>\n");
+			printf("</div><div class='column right'>");
 			$objWriter = new Xlsx($spreadsheet);
 			$objWriter->save($fileXlsx);
 			$msg = "Télécharger l'évaluation (Excel)";
 			linkMsg($dir."/".$fileXlsx, $msg, "xlsx.png", 'menu');
-			printf("</div>\n</div>\n");
+			printf("</div></div>");
 		} else {
 			$msg = sprintf("L'évaluation pour l'année %d est vide", $annee);
 			linkMsg($script, $msg, "alert.png");
@@ -2178,17 +2187,17 @@ function exportRules() {
 		}
 	}
 
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
 	$objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 	$objWriter->save($fileDoc);
 	$msg = "Télécharger le référentiel (Word)";
 	linkMsg($script."/".$fileDoc, $msg, "docx.png", 'menu');
-	printf("</div>\n<div class='column right'>\n");
+	printf("</div><div class='column right'>");
 	makeReferentiel();
 	$msg = "Télécharger le référentiel (Adobe PDF)";
 	linkMsg($script."/".$filePdf, $msg, "pdf.png", 'menu');
-	printf("</div>\n</div>\n");
+	printf("</div></div>");
 }
 
 
@@ -2269,14 +2278,14 @@ function bilanByEtab() {
 	$res_etab = mysqli_query($base, $req_etab);
 	printf("<div class='bilan'>");
 	while ($row_etab = mysqli_fetch_object($res_etab)) {
-		printf("<table>\n");
-		printf("<tr><th colspan='4'>%s - %s - %s %s </th></tr>\n", $row_etab->nom, $row_etab->adresse, $row_etab->code_postal, $row_etab->ville);
-		printf("<tr>\n");
+		printf("<table>");
+		printf("<tr><th colspan='4'>%s - %s - %s %s </th></tr>", $row_etab->nom, $row_etab->adresse, $row_etab->code_postal, $row_etab->ville);
+		printf("<tr>");
 		printf("<th class='width25'>&nbsp;</th>");
 		printf("<th class='width25'>Prénom</th>");
 		printf("<th class='width25'>Nom</th>");
 		printf("<th class='width25'>Login</th>");
-		printf("</tr>\n");
+		printf("</tr>");
 		$req_auditor = sprintf("SELECT nom, prenom, login, etablissement FROM users WHERE role='2'");
 		$res_auditor = mysqli_query($base, $req_auditor);
 		$req_user = sprintf("SELECT role, nom, prenom, login FROM users WHERE etablissement = '%d' ORDER BY role", $row_etab->id);

@@ -142,6 +142,11 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
+	case 'authentication':
+		menuAuthentication();
+		footPage($_SESSION['curr_script'], "Accueil");
+		break;
+
 	case 'rm_token':
 		if (isset($_SESSION['token'])) {
 			unset($_SESSION['token']);

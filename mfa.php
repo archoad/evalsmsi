@@ -1,9 +1,9 @@
 <?php
 /*=========================================================
-// File:        mfa.php
+// File:		mfa.php
 // Description: multi factor authentication process of EvalSMSI
-// Created:     2009-01-01
-// Licence:     GPL-3.0-or-later
+// Created:	 2009-01-01
+// Licence:	 GPL-3.0-or-later
 // Copyright 2009-2019 Michel Dubois
 
 This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 include("functions.php");
 include("data/cbor/ByteBuffer.php");
 include("data/cbor/CborDecoder.php");
-include("data/cbor/AuthenticatorData.php");
-include("data/cbor/FormatBase.php");
-include("data/cbor/U2f.php");
-include("data/cbor/None.php");
-include("data/cbor/Packed.php");
 session_set_cookie_params([
 	'lifetime' => $cookie_timeout,
 	'path' => '/',
@@ -39,6 +34,10 @@ session_set_cookie_params([
 session_start();
 $authorizedRole = array('2', '3', '4', '5');
 isSessionValid($authorizedRole);
+
+
+//https://www.iana.org/assignments/cose/cose.xhtml#algorithms
+$coseAlgoECDSAwSHA256 = -7;
 
 
 function base64UrlEncode($data) {
@@ -70,11 +69,109 @@ function checkOrigin($origin) {
 }
 
 
+
+function readFlags($binFlag) {
+	$flags = array();
+	$flags['userPresent'] = !!($binFlag & 1);
+	$flags['bit_1'] = !!($binFlag & 2);
+	$flags['userVerified'] = !!($binFlag & 4);
+	$flags['bit_3'] = !!($binFlag & 8);
+	$flags['bit_4'] = !!($binFlag & 16);
+	$flags['bit_5'] = !!($binFlag & 32);
+	$flags['attestedDataIncluded'] = !!($binFlag & 64); // bit 6 - AT
+	$flags['extensionDataIncluded'] = !!($binFlag & 128); // bit 7 - ED
+	return $flags;
+}
+
+
+function readCredentialPublicKey($binary, $offset, &$endOffset) {
+	$_COSE_KTY = 1;
+	$_COSE_ALG = 3;
+	$_COSE_CRV = -1;
+	$_COSE_X = -2;
+	$_COSE_Y = -3;
+	$enc = WebAuthn\CBOR\CborDecoder::decodeInPlace($binary, $offset, $endOffset);
+	$credPKey = array();
+	$credPKey['kty'] = $enc[$_COSE_KTY];
+	$credPKey['alg'] = $enc[$_COSE_ALG];
+	$credPKey['crv'] = $enc[$_COSE_CRV];
+	$credPKey['x'] = $enc[$_COSE_X]->getBinaryString();
+	$credPKey['y'] = $enc[$_COSE_Y]->getBinaryString();
+	unset($enc);
+	return $credPKey;
+}
+
+
+function readAttestData($binary, &$endOffset) {
+	$attestationData = array();
+	$attestationData['aaguid'] = substr($binary, 37, 16);
+	$length = unpack('nlength', substr($binary, 53, 2))['length'];
+	$attestationData['credentialId'] = substr($binary, 55, $length);
+	$endOffset = 55 + $length;
+	$attestationData['length'] = $length;
+	return $attestationData;
+}
+
+
+function readExtensionData($binary) {
+	$ext = WebAuthn\CBOR\CborDecoder::decode($binary);
+	return $ext;
+}
+
+
+function DER_length($len) {
+	if ($len < 128) {
+		return chr($len);
+	}
+	$lenBytes = '';
+	while ($len > 0) {
+		$lenBytes = chr($len % 256) . $lenBytes;
+		$len = intdiv($len, 256);
+	}
+	return chr(0x80 | strlen($lenBytes)) . $lenBytes;
+}
+
+
+function DER_bitString($bytes) {
+	return "\x03" . DER_length(strlen($bytes) + 1) . "\x00" . $bytes;
+}
+
+
+function DER_oid($bytes) {
+	return "\x06" . DER_length(strlen($bytes)) . $bytes;
+}
+
+
+function DER_sequence($bytes) {
+	return "\x30" . DER_length(strlen($bytes)) . $bytes;
+}
+
+
+function getPublicKeyPem($credPKey) {
+	$u2f = "\x04".$credPKey['x'].$credPKey['y'];
+	$der = DER_sequence(
+		DER_sequence(
+			DER_oid("\x2A\x86\x48\xCE\x3D\x02\x01") . // OID 1.2.840.10045.2.1 ecPublicKey
+			DER_oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
+		). DER_bitString($u2f)
+	);
+	$pem = '-----BEGIN PUBLIC KEY-----'."\n";
+	$pem .= chunk_split(base64_encode($der), 64, "\n");
+	$pem .= '-----END PUBLIC KEY-----'."\n";
+	return $pem;
+}
+
+
+function getCertificatePem($publicKey) {
+	$pem = '-----BEGIN CERTIFICATE-----' . "\n";
+	$pem .= chunk_split($publicKey, 64, "\n");
+	$pem .= '-----END CERTIFICATE-----' . "\n";
+	return $pem;
+}
+
+
 function generatePKCCOregistration() {
-	//https://www.iana.org/assignments/cose/cose.xhtml#algorithms
-	$coseAlgoECDSAwSHA256 = -7;
-	$coseAlgoECDSAwSHA384 = -35;
-	$coseAlgoECDSAwSHA512 = -36;
+	global $coseAlgoECDSAwSHA256;
 
 	$authenticatorSelection = [
 		'authenticatorAttachment' => 'cross-platform',
@@ -83,8 +180,6 @@ function generatePKCCOregistration() {
 	];
 	$pubKeyCredParams = [
 		['type' => 'public-key', 'alg' => $coseAlgoECDSAwSHA256],
-		['type' => 'public-key', 'alg' => $coseAlgoECDSAwSHA384],
-		['type' => 'public-key', 'alg' => $coseAlgoECDSAwSHA512],
 	];
 	$rp = [
 		'name' => 'Archoad WebAuthn',
@@ -93,7 +188,8 @@ function generatePKCCOregistration() {
 	$user = [
 		'displayName' => $_SESSION['login'],
 		'name' => $_SESSION['prenom']." ".$_SESSION['nom'],
-		'id' => $_SESSION['uid'],
+		//'id' => $_SESSION['uid'],
+		'id' => base64_encode(random_bytes(16)),
 	];
 	$extensions = [
 		'txAuthSimple' => "Authentification EvalSMSI",
@@ -132,11 +228,174 @@ function generatePKCCOauthentication() {
 }
 
 
-function verifyRegistration($clientDataJSON, $attestationObject, $rawId) {
-	global $cheminDATA;
+function verifyAttestationData($attestationObject) {
+	global $coseAlgoECDSAwSHA256;
+	$_EC2_TYPE = 2;
+	$_EC2_ES256 = -7;
+	$_EC2_P256 = 1;
+	$success = true;
+	$offset = 37;
+	//Verify the attestation statement format fmt
+	if (!is_array($attestationObject) || !array_key_exists('fmt', $attestationObject) || !is_string($attestationObject['fmt'])) {
+		genSyslog(__FUNCTION__, $msg='invalid attestation format');
+		$success = false;
+	}
+	$fmt = $attestationObject['fmt'];
+	$allowedFormats = array('fido-u2f', 'packed');
+	if (!in_array($fmt, $allowedFormats)) {
+		genSyslog(__FUNCTION__, $msg='format not supported');
+		$success = false;
+	}
+	//Verify the attestation statement format authData
+	if (!array_key_exists('authData', $attestationObject) || !is_object($attestationObject['authData'])) {
+		genSyslog(__FUNCTION__, $msg='invalid attestation format (authData not available)');
+		$success = false;
+	}
+	$binAuthData = $attestationObject['authData']->getBinaryString();
+	//Verify the attestation statement format attStmt
+	if (!array_key_exists('attStmt', $attestationObject) || !is_array($attestationObject['attStmt'])) {
+		genSyslog(__FUNCTION__, $msg='invalid attestation format (attStmt not available)');
+		$success = false;
+	}
+	$attStmt = $attestationObject['attStmt'];
+	$signature = base64_encode($attStmt['sig']->getBinaryString());
+	$x5c = array();
+	for ($i=0; $i<count($attStmt['x5c']); $i++) {
+		$temp = $attStmt['x5c'][$i]->getBinaryString();
+		$x5c[] = base64_encode($temp);
+	}
+	$certificate = getCertificatePem($x5c[0]);
+	if (openssl_pkey_get_public($certificate) === false) {
+		genSyslog(__FUNCTION__, $msg='invalid public key');
+		$success = false;
+	}
+	$rpIdHash = base64_encode(substr($binAuthData, 0, 32));
+	$flags = unpack('Cflags', substr($binAuthData, 32, 1))['flags'];
+	$flags = readFlags($flags);
+	$signCount = unpack('Nsigncount', substr($binAuthData, 33, 4))['signcount'];
+
+	if (array_key_exists('alg', $attStmt) && $attStmt['alg'] !== $coseAlgoECDSAwSHA256) {
+		genSyslog(__FUNCTION__, $msg='only SHA256 acceptable');
+		$success = false;
+	}
+	if (!array_key_exists('sig', $attStmt) || !is_object($attStmt['sig'])) {
+		genSyslog(__FUNCTION__, $msg='no signature found');
+		$success = false;
+	}
+	if (!array_key_exists('x5c', $attStmt) || !is_array($attStmt['x5c'])) {
+		genSyslog(__FUNCTION__, $msg='invalid x5c certificate');
+		$success = false;
+	}
+	if (($fmt === 'packed') && (count($attStmt['x5c']) < 1)) {
+		genSyslog(__FUNCTION__, $msg='invalid x5c length (packed)');
+		$success = false;
+	}
+	for ($i=0; $i<count($attStmt['x5c']); $i++) {
+		if (!is_object($attStmt['x5c'][$i])) {
+			genSyslog(__FUNCTION__, $msg='invalid x5c certificate '.$i);
+			$success = false;
+		}
+	}
+	if ($flags['attestedDataIncluded']) {
+		if (strlen($binAuthData) <= 55) {
+			genSyslog(__FUNCTION__, $msg='attested data should be present but is missing');
+			$success = false;
+		}
+		$attestationData = readAttestData($binAuthData, $offset);
+		$credPKey = readCredentialPublicKey($binAuthData, 55+$attestationData['length'], $offset);
+		if ($credPKey['kty'] !== $_EC2_TYPE) {
+			genSyslog(__FUNCTION__, $msg='public key not in EC2 format');
+			$success = false;
+		}
+		if ($credPKey['alg'] !== $_EC2_ES256) {
+			genSyslog(__FUNCTION__, $msg='signature algorithm not ES256');
+			$success = false;
+		}
+		if ($credPKey['crv'] !== $_EC2_P256) {
+			genSyslog(__FUNCTION__, $msg='curve not P-256');
+			$success = false;
+		}
+		if (strlen($credPKey['x']) !== 32) {
+			genSyslog(__FUNCTION__, $msg='invalid x-coordinate');
+			$success = false;
+		}
+		if (strlen($credPKey['y']) !== 32) {
+			genSyslog(__FUNCTION__, $msg='invalid y-coordinate');
+			$success = false;
+		}
+	}
+	if ($flags['extensionDataIncluded']) {
+		$ext = readExtensionData(substr($binAuthData, $offset));
+		if (!is_array($ext)) {
+			genSyslog(__FUNCTION__, $msg='invalid extension data');
+			$success = false;
+		}
+	}
+	$aaguid = base64_encode($attestationData['aaguid']);
+	$credentialId = base64_encode($attestationData['credentialId']);
+
+	$data = array();
+	$data['success'] = $success;
+	$data['attStmt']['alg'] = $coseAlgoECDSAwSHA256;
+	$data['attStmt']['sig'] = $signature;
+	$data['attStmt']['x5c'] = $x5c;
+	$data['authData']['credentialData']['aaguid'] = $aaguid;
+	$data['authData']['credentialData']['credentialId'] = $credentialId;
+	$data['authData']['credentialData']['publicKey']['kty'] = $credPKey['kty'];
+	$data['authData']['credentialData']['publicKey']['alg'] = $credPKey['alg'];
+	$data['authData']['credentialData']['publicKey']['crv'] = $credPKey['crv'];
+	$data['authData']['credentialData']['publicKey']['x'] = base64_encode($credPKey['x']);
+	$data['authData']['credentialData']['publicKey']['y'] = base64_encode($credPKey['y']);
+	$data['authData']['flags']['ED'] = $flags['extensionDataIncluded'];
+	$data['authData']['flags']['AT'] = $flags['attestedDataIncluded'];
+	$data['authData']['flags']['UV'] = $flags['userVerified'];
+	$data['authData']['flags']['UP'] = $flags['userPresent'];
+	$data['authData']['rpIdHash'] = $rpIdHash;
+	$data['authData']['signatureCounter'] = $signCount;
+	$data['fmt'] = $fmt;
+	$data['certificate'] = $certificate;
+	if ($x509 = openssl_x509_read($certificate)) {
+		$result = openssl_x509_parse($x509);
+		$temp = array();
+		$temp['issuer'] = trim($result['issuer']['CN']);
+		$temp['subject'] = trim($result['subject']['CN']);
+		$temp['signatureTypeSN'] = trim($result['signatureTypeSN']);
+		$temp['signatureTypeLN'] = trim($result['signatureTypeLN']);
+		$temp['signatureTypeNID'] = trim($result['signatureTypeNID']);
+		$data['x509'] = $temp;
+	}
+	$data['credentialPublicKeyPEM'] = getPublicKeyPem($credPKey);
+	$data['binAuthData'] = base64_encode($binAuthData);
+	return $data;
+}
+
+
+function validateAttestation($clientDataHash, $attestationData) {
+	$fmt = $attestationData['fmt'];
+	if ($fmt === 'packed') {
+		$publicKey = openssl_pkey_get_public($attestationData['certificate']);
+		$signature = base64_decode($attestationData['attStmt']['sig']);
+		$dataToVerify = base64_decode($attestationData['binAuthData']);
+		$dataToVerify .= $clientDataHash;
+	} else {
+		$publicKey = openssl_pkey_get_public($attestationData['certificate']);
+		$x = base64_decode($attestationData['authData']['credentialData']['publicKey']['x']);
+		$y = base64_decode($attestationData['authData']['credentialData']['publicKey']['y']);
+		$signature = base64_decode($attestationData['attStmt']['sig']);
+		$dataToVerify = "\x00";
+		$dataToVerify .= base64_decode($attestationData['authData']['rpIdHash']);
+		$dataToVerify .= $clientDataHash;
+		$dataToVerify .= base64_decode($attestationData['authData']['credentialData']['credentialId']);
+		$dataToVerify .= "\x04".$x.$y;
+	}
+	return openssl_verify($dataToVerify, $signature, $publicKey, OPENSSL_ALGO_SHA256);
+}
+
+
+function verifyRegistration($clientDataJSON, $attestationObject) {
 	// source: https://w3c.github.io/webauthn/#sctn-registering-a-new-credential
 	$success = true;
-	$rootCAfile = [$cheminDATA.'yubico_ca.pem'];
+	$data = array();
 	$clientDataJSON = base64_decode($clientDataJSON);
 	$attestationObject = base64_decode($attestationObject);
 	$rpId = $_SERVER['SERVER_NAME'];
@@ -162,86 +421,32 @@ function verifyRegistration($clientDataJSON, $attestationObject, $rawId) {
 		genSyslog(__FUNCTION__, $msg='invalid origin');
 		$success = false;
 	}
-	//Verify CBOR decoding on the attestationObject field of the AuthenticatorAttestationResponse structure.
-	$attestationData = WebAuthn\CBOR\CborDecoder::decode($attestationObject);
-	//Verify the attestation statement format fmt
-	if (!is_array($attestationData) || !array_key_exists('fmt', $attestationData) || !is_string($attestationData['fmt'])) {
-		genSyslog(__FUNCTION__, $msg='invalid attestation format');
-		$success = false;
-	}
-	//Verify the attestation statement format authData
-	if (!array_key_exists('authData', $attestationData) || !is_object($attestationData['authData'])) {
-		genSyslog(__FUNCTION__, $msg='invalid attestation format (authData not available)');
-		$success = false;
-	}
-	//Verify the attestation statement format attStmt
-	if (!array_key_exists('attStmt', $attestationData) || !is_array($attestationData['attStmt'])) {
-		genSyslog(__FUNCTION__, $msg='invalid attestation format (attStmt not available)');
-		$success = false;
-	}
-	$authenticatorData = new WebAuthn\Attestation\AuthenticatorData($attestationData['authData']->getBinaryString());
-	switch ($attestationData['fmt']) {
-		case 'packed':
-			$attestationFormat = new WebAuthn\Attestation\Format\Packed($attestationData, $authenticatorData);
-			genSyslog(__FUNCTION__, $msg='packed attestation');
-			break;
-		case 'fido-u2f':
-			$attestationFormat = new WebAuthn\Attestation\Format\U2f($attestationData, $authenticatorData);
-			genSyslog(__FUNCTION__, $msg='fido-u2f attestation');
-			break;
-		case 'none':
-			$attestationFormat = new WebAuthn\Attestation\Format\None($attestationData, $authenticatorData);
-			genSyslog(__FUNCTION__, $msg='none attestation');
-			break;
-		default:
-			genSyslog(__FUNCTION__, $msg='invalid attestation format: '.$attestationData['fmt']);
-			$success = false;
-	}
+	$attestationData = verifyAttestationData(readExtensionData($attestationObject));
+	$success = $attestationData['success'];
 	//Verify that the rpIdHash in authData is the SHA-256 hash of the RP ID expected by the Relying Party.
-	if ($authenticatorData->getRpIdHash() !== $rpIdHash) {
+	if (base64_decode($attestationData['authData']['rpIdHash']) !== $rpIdHash) {
 		genSyslog(__FUNCTION__, $msg='invalid rpID hash');
 		$success = false;
 	}
 	// Verify that the User Present bit of the flags in authData is set.
-	if (!$authenticatorData->getUserPresent()) {
+	if (!$attestationData['authData']['flags']['UP']) {
 		genSyslog(__FUNCTION__, $msg='user not present during authentication');
 		$success = false;
 	}
-	if (!$attestationFormat->validateAttestation($clientDataHash)) {
-		genSyslog(__FUNCTION__, $msg='invalid certificate signature');
+	if (validateAttestation($clientDataHash, $attestationData) !== 1) {
+		genSyslog(__FUNCTION__, $msg='invalid certificate signature: '.openssl_error_string());
 		$success = false;
 	}
-	if (!$attestationFormat->validateRootCertificate($rootCAfile)) {
-		genSyslog(__FUNCTION__, $msg='invalid root signature');
-		$success = false;
-	}
-	$data = array();
-	//$data['credentialPublicKeyDER'] = base64_encode($authenticatorData->getPublicKeyU2F());
-	//$data['aaguid'] = base64_encode($authenticatorData->getAAGUID());
-	//$data['rpId'] = $rpId;
-	$data['credentialId'] = $rawId;
-	$data['credentialPublicKeyPEM'] = $authenticatorData->getPublicKeyPem();
-	$data['signCount'] = $authenticatorData->getSignCount();
+	$data['credentialId'] = $attestationData['authData']['credentialData']['credentialId'];
+	$data['credentialPublicKeyPEM'] = $attestationData['credentialPublicKeyPEM'];
+	$data['signCount'] = $attestationData['authData']['signatureCounter'];
 	$_SESSION['registration'] = $data;
-	$data['publicKeyDetails'] = $authenticatorData->getPubKeyDetails();
-	$certificate = $attestationFormat->getCertificatePem();
-	if ($certificate) {
-		$data['certificate'] = $certificate;
-		if ($x509 = openssl_x509_read($certificate)) {
-			$result = openssl_x509_parse($x509);
-			$temp = array();
-			$temp['issuer'] = trim($result['issuer']['CN']);
-			$temp['subject'] = trim($result['subject']['CN']);
-			$temp['signatureTypeSN'] = trim($result['signatureTypeSN']);
-			$temp['signatureTypeLN'] = trim($result['signatureTypeLN']);
-			$temp['signatureTypeNID'] = trim($result['signatureTypeNID']);
-			$data['x509'] = $temp;
-		} else {
-			$data['x509'] = false;
-		}
-	} else {
-		$data['x509'] = false;
-	}
+	$data['rpIdHash'] = $attestationData['authData']['rpIdHash'];
+	$data['aaguid'] = $attestationData['authData']['credentialData']['aaguid'];
+	$data['publicKey']['x'] = $attestationData['authData']['credentialData']['publicKey']['x'];
+	$data['publicKey']['y'] = $attestationData['authData']['credentialData']['publicKey']['y'];
+	$data['fmt'] = $attestationData['fmt'];
+	//file_put_contents('attestation_data.json', json_encode($attestationData));
 	//file_put_contents('create_credential.json', json_encode($data));
 	return array($success, $data);
 }
@@ -251,8 +456,7 @@ function registerNewCredential($post) {
 	$post = json_decode($post, true);
 	$attestationObject = $post['response']['attestationObject'];
 	$clientDataJSON = $post['response']['clientDataJSON'];
-	$rawId = $post['rawId'];
-	$result = verifyRegistration($clientDataJSON, $attestationObject, $rawId);
+	$result = verifyRegistration($clientDataJSON, $attestationObject);
 	$return = array();
 	if ($result[0]) {
 		$return['success'] = true;
@@ -271,7 +475,6 @@ function verifyAssertion($clientDataJSON, $authenticatorData, $signature, $crede
 	$clientDataJSON = base64_decode($clientDataJSON);
 	$authenticatorData = base64_decode($authenticatorData);
 	$signature = base64_decode($signature);
-	$authenticatorObject = new WebAuthn\Attestation\AuthenticatorData($authenticatorData);
 	$rpId = $_SERVER['SERVER_NAME'];
 	$rpIdHash = hash('sha256', $rpId, true);
 	$clientDataHash = hash('sha256', $clientDataJSON, true);
@@ -297,12 +500,14 @@ function verifyAssertion($clientDataJSON, $authenticatorData, $signature, $crede
 		$success = false;
 	}
 	// Verify that the rpIdHash in authData is the SHA-256 hash of the RP ID expected by the Relying Party.
-	if ($authenticatorObject->getRpIdHash() !== $rpIdHash) {
+	if (substr($authenticatorData, 0, 32) !== $rpIdHash) {
 		genSyslog(__FUNCTION__, $msg='invalid rpID hash');
 		$success = false;
 	}
 	// Verify that the User Present bit of the flags in authData is set.
-	if (!$authenticatorObject->getUserPresent()) {
+	$flags = unpack('Cflags', substr($authenticatorData, 32, 1))['flags'];
+	$flags = readFlags($flags);
+	if (!$flags['userPresent']) {
 		genSyslog(__FUNCTION__, $msg='user not present during authentication');
 		$success = false;
 	}
@@ -317,7 +522,8 @@ function verifyAssertion($clientDataJSON, $authenticatorData, $signature, $crede
 		genSyslog(__FUNCTION__, $msg='invalid signature');
 		$success = false;
 	}
-	$signatureCounter = $authenticatorObject->getSignCount();
+
+	$signatureCounter = unpack('Nsigncount', substr($authenticatorData, 33, 4))['signcount'];
 	/*
 	if ($signatureCounter > 0) {
 		if ($prevSignatureCnt !== null && $prevSignatureCnt >= $signatureCounter) {
@@ -387,11 +593,5 @@ if (isset($_GET['action'])) {
 } else {
 	header("Location: ".$_SESSION['curr_script']);
 }
-
-
-
-
-
-
 
 ?>

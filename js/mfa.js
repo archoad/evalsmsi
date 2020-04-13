@@ -16,19 +16,7 @@ function displayPublicKey(data) {
 	let pre = document.createElement('pre');
 	let txtalgo = '';
 	console.log('PublicKeyDetails', data);
-	switch (data.alg) {
-		case 'ES256':
-			txtalgo = "ECDSA avec la courbe P-256 et l'algorithme de hashage SHA-256";
-			break;
-		case 'ES384':
-			txtalgo = "ECDSA avec la courbe P-384 et l'algorithme de hashage SHA-384";
-			break;
-		case 'ES512':
-			txtalgo = "ECDSA avec la courbe P-521 et l'algorithme de hashage SHA-512";
-			break;
-	}
 	pre.appendChild(document.createTextNode("Clef publique\n"));
-	pre.appendChild(document.createTextNode(txtalgo+"\n"));
 	pre.appendChild(document.createTextNode("x: "+data.x+"\n"));
 	pre.appendChild(document.createTextNode("y: "+data.y+"\n"));
 	msg.appendChild(pre);
@@ -90,9 +78,14 @@ function getRegistration() {
 			return response.json();
 		}).then(function(parameters) {
 			console.log('Parameters', parameters);
-			let txt = document.createTextNode("Votre clef FIDO2 a été enregistrée avec succès");
-			msg.replaceChild(txt, msg.childNodes[0]);
-			displayPublicKey(parameters.credentials.publicKeyDetails);
+			if (parameters.success) {
+				let txt = document.createTextNode("Votre clef FIDO2 a été enregistrée avec succès");
+				msg.replaceChild(txt, msg.childNodes[0]);
+				displayPublicKey(parameters.credentials.publicKey);
+			} else {
+				let txt = document.createTextNode("Erreur d'enregistrement de votre clef FIDO2");
+				msg.replaceChild(txt, msg.childNodes[0]);
+			}
 			addReturnMessage();
 		});
 	}).catch(function(err) {
@@ -143,8 +136,13 @@ function webauthnAuthentication() {
 			return response.json();
 		}).then(function(parameters) {
 			console.log('Parameters', parameters);
-			let txt = document.createTextNode("Authentification validée");
-			msg.replaceChild(txt, msg.childNodes[0]);
+			if (parameters.success) {
+				let txt = document.createTextNode("Authentification validée");
+				msg.replaceChild(txt, msg.childNodes[0]);
+			} else {
+				let txt = document.createTextNode("Erreur d'authentification");
+				msg.replaceChild(txt, msg.childNodes[0]);
+			}
 			addReturnMessage();
 		});
 	}).catch(function(err) {
