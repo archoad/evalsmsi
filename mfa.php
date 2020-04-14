@@ -184,7 +184,7 @@ function getCredentialFromDb() {
 
 
 function generatePKCCOregistration() {
-	global $coseAlgoECDSAwSHA256;
+	global $coseAlgoECDSAwSHA256, $attestationMode;
 	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
 	$authenticatorSelection = [
 		'authenticatorAttachment' => 'cross-platform',
@@ -214,7 +214,7 @@ function generatePKCCOregistration() {
 	$result['user'] = $user;
 	$result['pubKeyCredParams'] = $pubKeyCredParams;
 	$result['timeout'] = 60000;
-	$result['attestation'] = "none";
+	$result['attestation'] = $attestationMode;
 	$result['extensions'] = $extensions;
 	$result['authenticatorSelection'] = $authenticatorSelection;
 	$result['excludeCredentials'] = [];
@@ -609,16 +609,13 @@ function verifyAssertion($clientDataJSON, $authenticatorData, $signature, $crede
 		genSyslog(__FUNCTION__, $msg='invalid signature');
 		$success = false;
 	}
-
 	$signatureCounter = unpack('Nsigncount', substr($authenticatorData, 33, 4))['signcount'];
-	/*
 	if ($signatureCounter > 0) {
-		if ($prevSignatureCnt !== null && $prevSignatureCnt >= $signatureCounter) {
+		if (($_SESSION['registration']['signCount'] !== null) && ($_SESSION['registration']['signCount'] >= $signatureCounter)) {
 			genSyslog(__FUNCTION__, $msg='signature counter not valid');
 			$success = false;
 		}
 	}
-	*/
 	return $success;
 }
 

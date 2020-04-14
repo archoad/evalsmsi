@@ -44,6 +44,8 @@ $auhtPict = 'pict/accueil.png';
 $rapportPicts = array("pict/archoad.png", "pict/customer.png");
 // Mode captcha
 $captchaMode = 'num'; // 'txt' or 'num'
+// Attestation mode
+$attestationMode = 'direct'; // 'none' or 'indirect' or 'direct'
 // --------------------
 
 
