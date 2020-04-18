@@ -197,7 +197,6 @@ function generatePKCCOregistration() {
 
 
 function generatePKCCOauthentication() {
-	file_put_contents('test.json', json_encode($_SESSION));
 	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
 	$allowCredentials = [
 		'type' => 'public-key',
