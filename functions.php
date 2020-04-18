@@ -37,7 +37,7 @@ $passwd = 'webphpsql';
 $appli_titre = "Evaluation du SMSI";
 $appli_titre_short = "EvalSMSI";
 // Thème CSS
-$cssTheme = 'beige'; // glp, beige, blue
+$cssTheme = 'green'; // glp, beige, blue, green
 // Image accueil
 $auhtPict = 'pict/accueil.png';
 // Image rapport
@@ -422,6 +422,7 @@ function headPage($titre, $sousTitre='') {
 	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
 	printf("<meta name='author' content='Michel Dubois' />");
+	printf("<title>%s</title>", $titre);
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
 	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $nonce, $_SESSION['theme']);
 	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $nonce);
@@ -446,9 +447,7 @@ function headPage($titre, $sousTitre='') {
 		if ($script === 'admin.php') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 		}
-		print_r($_SESSION);
 	}
-	printf("<title>%s</title>", $titre);
 	printf("</head><body><h1>%s</h1>", $titre);
 	if ($sousTitre !== '') {
 		printf("<h2>%s</h2>", $sousTitre);

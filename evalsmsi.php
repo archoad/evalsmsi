@@ -34,18 +34,18 @@ function headPageAuth() {
 	header("X-XSS-Protection: 1; mode=block");
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
-	printf("<!DOCTYPE html>\n<html lang='fr-FR'>\n<head>\n");
-	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n");
-	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />\n");
-	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce'], $_SESSION['theme']);
-	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />\n", $_SESSION['nonce']);
-	printf("<title>Authentification</title>\n");
-	printf("</head>\n<body>\n");
+	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
+	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
+	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
+	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce'], $_SESSION['theme']);
+	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce']);
+	printf("<title>Authentification</title>");
+	printf("</head><body>");
 }
 
 
 function footPageAuth() {
-	printf("</body>\n</html>\n");
+	printf("</body></html>");
 }
 
 
@@ -55,24 +55,24 @@ function menuAuth($msg='') {
 	initiateNullSession();
 	headPageAuth();
 	$_SESSION['rand'] = genNonce(16);
-	printf("<div class='authcont'>\n");
-	printf("<div class='auth'>\n");
+	printf("<div class='authcont'>");
+	printf("<div class='auth'>");
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
-	printf("</div>\n<div class='auth'>\n");
-	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>\n", $_SESSION['rand']);
-	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' required />\n");
-	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' required />\n");
-	printf("<div class='captcha'>\n");
-	printf("<img src='captcha.php' alt='captcha'/>\n");
-	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />\n");
+	printf("</div><div class='auth'>");
+	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>", $_SESSION['rand']);
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' required />");
+	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' required />");
+	printf("<div class='captcha'>");
+	printf("<img src='captcha.php' alt='captcha'/>");
+	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />");
 	printf("</div>");
-	printf("<input type='submit' id='valid' value='Connexion' />\n");
+	printf("<input type='submit' id='valid' value='Connexion' />");
 	if ($msg<>'') {
 		printf("<div class='help'><img src='pict/help.png' alt='Aide' /></div>");
-		printf("<p>%s</p>\n", $msg);
-		printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>\n");
+		printf("<p>%s</p>", $msg);
+		printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>");
 	}
-	printf("</form>\n</div>\n</div>\n");
+	printf("</form></div></div>");
 	footPageAuth();
 }
 
