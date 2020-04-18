@@ -393,11 +393,6 @@ textarea {
 	margin: auto;
 }
 
-.help {
-	width: 60px;
-	margin: auto;
-}
-
 .auth form {
 	width: 80%;
 	margin: auto;
@@ -467,6 +462,49 @@ textarea {
 	font-weight: normal;
 	text-decoration: underline;
 	color: var(--textClearColor);
+}
+
+.fido2 {
+	display: table;
+	width: 80%;
+	margin: auto;
+	padding: 60px 45px 60px 45px;
+	text-align: center;
+	background: var(--bg2Color);
+	box-shadow: var(--shadowAuth);
+}
+
+.fido2 div {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.fido2 img {
+	padding: 5px;
+	width: 70px;
+}
+
+.fido2 p {
+	font-size: 12pt;
+}
+
+.fido2 a {
+	text-transform: uppercase;
+	background: var(--bg1Color);
+	color: var(--textDarkColor);
+	width: 100%;
+	border: 0;
+	border-radius: 4px;
+	padding: 15px;
+	font-size: 14px;
+	cursor: pointer;
+	box-shadow:var(--shadowNormal);
+	text-decoration: none;
+}
+
+.help {
+	width: 60px;
+	margin: auto;
 }
 
 .captcha {

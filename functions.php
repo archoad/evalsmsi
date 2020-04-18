@@ -182,7 +182,6 @@ function menuAuthentication() {
 	linkMsg($_SESSION['curr_script']."?action=password", "Changer de mot de passe", "cadenas.png", 'menu');
 	printf("</div><div class='column right'>");
 	linkMsg($_SESSION['curr_script']."?action=regwebauthn", "Enregistrer une clef d'authentification", "fido2key.png", 'menu');
-	linkMsg($_SESSION['curr_script']."?action=webauthnauth", "Authentification", "fido2key.png", 'menu');
 	printf("</div></div>");
 }
 
@@ -204,6 +203,20 @@ function dbConnect() {
 function dbDisconnect($dbh) {
 	mysqli_close($dbh);
 	$dbh=0;
+}
+
+
+function base64UrlEncode($data) {
+	$b64 = base64_encode($data);
+	$url = strtr($b64, '+/', '-_');
+	return rtrim($url, '=');
+}
+
+
+function base64UrlDecode($data) {
+	$b64 = strtr($data, '-_', '+/');
+	$end = str_repeat('=', 3 - (3 + strlen($data)) % 4);
+	return base64_decode($b64.$end);
 }
 
 
@@ -388,7 +401,7 @@ function genSyslog($caller, $msg='') {
 	global $progVersion;
 	$log = array();
 	$log[] = array('program' => 'evalsmsi', 'version' => $progVersion);
-	$log[] = array('function' => $caller);
+	$log[] = array('file' =>basename($_SERVER['PHP_SELF']), 'function' => $caller);
 	if (isset($_SESSION['login'])) {
 		$log[] = array('login' => $_SESSION['login']);
 	}
@@ -755,6 +768,21 @@ function isRegroupEtab() {
 	} else {
 		return true;
 	}
+}
+
+
+function getCredentialFromDb() {
+	$base = dbConnect();
+	$request = sprintf("SELECT credential_id, public_key, sign_count FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	if (isset($row->credential_id)) {
+		$_SESSION['registration']['credentialId'] = $row->credential_id;
+		$_SESSION['registration']['credentialPublicKeyPEM'] = $row->public_key;
+		$_SESSION['registration']['signCount'] = $row->sign_count;
+	}
+	return($result);
 }
 
 

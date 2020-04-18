@@ -32,26 +32,12 @@ session_set_cookie_params([
 	'samesite' => $cookie_samesite
 ]);
 session_start();
-$authorizedRole = array('2', '3', '4', '5');
+$authorizedRole = array('2', '3', '4', '5', '100');
 isSessionValid($authorizedRole);
 
 
 //https://www.iana.org/assignments/cose/cose.xhtml#algorithms
 $coseAlgoECDSAwSHA256 = -7;
-
-
-function base64UrlEncode($data) {
-	$b64 = base64_encode($data);
-	$url = strtr($b64, '+/', '-_');
-	return rtrim($url, '=');
-}
-
-
-function base64UrlDecode($data) {
-	$b64 = strtr($data, '-_', '+/');
-	$end = str_repeat('=', 3 - (3 + strlen($data)) % 4);
-	return base64_decode($b64.$end);
-}
 
 
 function checkOrigin($origin) {
@@ -170,19 +156,6 @@ function getCertificatePem($publicKey) {
 }
 
 
-function getCredentialFromDb() {
-	$base = dbConnect();
-	$request = sprintf("SELECT credential_id, public_key, sign_count FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	$_SESSION['registration']['credentialId'] = $row->credential_id;
-	$_SESSION['registration']['credentialPublicKeyPEM'] = $row->public_key;
-	$_SESSION['registration']['signCount'] = $row->sign_count;
-	return $result;
-}
-
-
 function generatePKCCOregistration() {
 	global $coseAlgoECDSAwSHA256, $attestationMode;
 	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
@@ -224,8 +197,8 @@ function generatePKCCOregistration() {
 
 
 function generatePKCCOauthentication() {
+	file_put_contents('test.json', json_encode($_SESSION));
 	if (isset($_SESSION['challenge'])) { unset($_SESSION['challenge']); }
-	getCredentialFromDb();
 	$allowCredentials = [
 		'type' => 'public-key',
 		'id' => $_SESSION['registration']['credentialId'],
@@ -628,7 +601,7 @@ function validateNewAssertion($post) {
 	$authenticatorData = $post['authenticatorData'];
 	$signature = $post['signature'];
 	$credentialPublicKey = null;
-	if (getCredentialFromDb()) {
+	if (isset($_SESSION['registration']['credentialId'])) {
 		if ($_SESSION['registration']['credentialId'] === $post['id']) {
 			$credentialPublicKey = $_SESSION['registration']['credentialPublicKeyPEM'];
 		}
@@ -637,23 +610,25 @@ function validateNewAssertion($post) {
 		} else {
 			$success = verifyAssertion($clientDataJSON, $authenticatorData, $signature, $credentialPublicKey);
 		}
-		$return['success'] = $success;
 		if ($success) {
 			$return['msg'] = "Authentification réussie";
 		} else {
 			$return['msg'] = "Erreur d'authentification";
 		}
+		unset($_SESSION['registration']);
+		$_SESSION['webauthn'] = $success;
+		$_SESSION['rand'] = base64UrlEncode(genNonce(16));
+		$return['rand'] = $_SESSION['rand'];
+		$return['success'] = $success;
 	} else {
 		$return['msg'] = "Erreur d'authentification";
+		$return['success'] = false;
 	}
 	return json_encode($return);
 }
 
 
-
-
 if (isset($_GET['action'])) {
-	if (isset($_SESSION['registration'])) { unset($_SESSION['registration']); }
 	switch ($_GET['action']) {
 		case 'generatePKCCOreg':
 			header('Content-Type: application/json');

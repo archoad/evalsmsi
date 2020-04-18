@@ -220,11 +220,6 @@ if (isset($_GET['action'])) {
 		footPage();
 		break;
 
-	case 'webauthnauth':
-		webauthnAuthenticating();
-		footPage();
-		break;
-
 	case 'authentication':
 		menuAuthentication();
 		footPage($_SESSION['curr_script'], "Accueil");

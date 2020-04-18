@@ -36,6 +36,18 @@ function addReturnMessage() {
 }
 
 
+function displayResultButton(rand) {
+	let mylink = document.getElementById('endAuthLink');
+	if (rand) {
+		mylink.href = "evalsmsi.php?rand="+rand+"&action=connect";
+	} else {
+		mylink.href = "evalsmsi.php";
+	}
+	mylink.classList.add('block');
+	mylink.classList.remove('none');
+}
+
+
 function newRegistration() {
 	let msg = document.getElementById('registerMsg');
 	let txt = document.createTextNode("Insérez votre clef FIDO2");
@@ -141,20 +153,20 @@ function webauthnAuthentication() {
 			console.log('Parameters', parameters);
 			if (parameters.success) {
 				document.getElementById('authenticateImg').src = 'pict/valid.png';
-				let txt = document.createTextNode("Authentification validée");
+				let txt = document.createTextNode(parameters.msg);
 				msg.replaceChild(txt, msg.childNodes[0]);
 			} else {
 				document.getElementById('authenticateImg').src = 'pict/invalid.png';
-				let txt = document.createTextNode("Erreur d'authentification");
+				let txt = document.createTextNode(parameters.msg);
 				msg.replaceChild(txt, msg.childNodes[0]);
 			}
-			addReturnMessage();
+			displayResultButton(parameters.rand);
 		});
 	}).catch(function(err) {
 		console.log(err.message || 'Unknown error occured');
 		document.getElementById('authenticateImg').src = 'pict/invalid.png';
 		let txt = document.createTextNode("Erreur d'authentification");
 		msg.replaceChild(txt, msg.childNodes[0]);
-		addReturnMessage();
+		displayResultButton(false);
 	});
 }

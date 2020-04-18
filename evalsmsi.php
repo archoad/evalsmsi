@@ -21,11 +21,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 include("functions.php");
+session_set_cookie_params([
+	'lifetime' => $cookie_timeout,
+	'path' => '/',
+	'domain' => $cookie_domain,
+	'secure' => $session_secure,
+	'httponly' => $cookie_httponly,
+	'samesite' => $cookie_samesite
+]);
+session_start();
 
 
 function headPageAuth() {
-	genSyslog(__FUNCTION__);
 	$cspPolicy = genCspPolicy();
+	$_SESSION['rand'] = base64UrlEncode(genNonce(16));
 	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -39,6 +48,7 @@ function headPageAuth() {
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
 	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce'], $_SESSION['theme']);
 	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce']);
+	printf("<script nonce='%s' src='js/mfa.js'></script>", $_SESSION['nonce']);
 	printf("<title>Authentification</title>");
 	printf("</head><body>");
 }
@@ -49,44 +59,73 @@ function footPageAuth() {
 }
 
 
-function menuAuth($msg='') {
+function menuLogin() {
 	global $auhtPict;
 	genSyslog(__FUNCTION__);
-	initiateNullSession();
-	headPageAuth();
-	$_SESSION['rand'] = genNonce(16);
 	printf("<div class='authcont'>");
 	printf("<div class='auth'>");
 	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
 	printf("</div><div class='auth'>");
-	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>", $_SESSION['rand']);
-	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' required />");
-	printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' required />");
-	printf("<div class='captcha'>");
-	printf("<img src='captcha.php' alt='captcha'/>");
-	printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />");
-	printf("</div>");
-	printf("<input type='submit' id='valid' value='Connexion' />");
-	if ($msg<>'') {
-		printf("<div class='help'><img src='pict/help.png' alt='Aide' /></div>");
-		printf("<p>%s</p>", $msg);
-		printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>");
-	}
+	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s'>", $_SESSION['rand']);
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' autofocus required />");
+	printf("<input type='submit' id='valid' value='Continuer' />");
 	printf("</form></div></div>");
-	footPageAuth();
 }
 
 
-function authentification($login, $password) {
+function menuPassword($msg='') {
+	global $auhtPict;
 	genSyslog(__FUNCTION__);
+	printf("<div class='authcont'>");
+	printf("<div class='auth'><img src=%s alt='CyberSécurité' /></div>", $auhtPict);
+	printf("<div class='auth'>");
+	if (isset($_SESSION['registration'])) {
+		printf("<div class='fido2'>");
+		printf("<div><img id='authenticateImg' src='pict/fido2key.png' alt='info' /></div>");
+		printf("<div><p id='authenticateMsg'></p></div>");
+		printf("<div><a class='none' id='endAuthLink' href=''>Continuer</a></div>", $_SESSION['rand']);
+		printf("</div>");
+		printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
+	} else {
+		printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>", $_SESSION['rand']);
+		printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' autofocus required />");
+		printf("<div id='divcaptcha' class='captcha'>");
+		printf("<img src='captcha.php' alt='captcha'/>");
+		printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />");
+		printf("</div>");
+		printf("<input type='submit' id='valid' value='Connexion' />");
+		if ($msg<>'') {
+			printf("<div class='help'><img src='pict/help.png' alt='Aide' /></div>");
+			printf("<p>%s</p>", $msg);
+			printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>");
+		}
+		printf("</form>");
+	}
+	printf("</div></div>");
+}
+
+
+function getUserData() {
 	$base = dbConnect();
-	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $login);
+	$request = sprintf("SELECT * FROM users WHERE login='%s' LIMIT 1", $_SESSION['login']);
 	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	if (isset($row)) {
-		if (($login === $row->login) and (password_verify($password, $row->password))) {
-			return $row;
+	if (mysqli_num_rows($result)) {
+		$row = mysqli_fetch_object($result);
+		dbDisconnect($base);
+		return $row;
+	} else {
+		dbDisconnect($base);
+		return false;
+	}
+}
+
+
+function authentification($password) {
+	genSyslog(__FUNCTION__);
+	$data = getUserData();
+	if ($data) {
+		if (($_SESSION['login'] === $data->login) and (password_verify($password, $data->password))) {
+			return $data;
 		} else {
 			return false;
 		}
@@ -125,18 +164,22 @@ function initiateSession($data) {
 
 
 function initiateNullSession() {
-	genSyslog(__FUNCTION__);
 	global $cssTheme, $captchaMode;
 	session_regenerate_id();
+	unset($_SESSION['uid']);
+	unset($_SESSION['login']);
+	unset($_SESSION['webauthn']);
+	unset($_SESSION['sess_captcha']);
+	unset($_SESSION['registration']);
 	$_SESSION['theme'] = $cssTheme;
 	$_SESSION['captchaMode'] = $captchaMode;
 	$_SESSION['role'] = '100';
 	$_SESSION['uid'] = 'null';
+	$_SESSION['curr_script'] = 'evalsmsi.php';
 }
 
 
 function validateCaptcha($captcha) {
-	genSyslog(__FUNCTION__);
 	if (strncmp($_SESSION['sess_captcha'], $captcha, 6) === 0) {
 		return true;
 	} else {
@@ -171,29 +214,36 @@ function redirectUser($data) {
 }
 
 
-session_set_cookie_params([
-	'lifetime' => $cookie_timeout,
-	'path' => '/',
-	'domain' => $cookie_domain,
-	'secure' => $session_secure,
-	'httponly' => $cookie_httponly,
-	'samesite' => $cookie_samesite
-]);
-session_start();
+
+
 if (isset($_GET['rand']) && ($_GET['rand'] === $_SESSION['rand'])) {
 	if (isset($_GET['action'])) {
 		switch ($_GET['action']) {
 			case 'connect':
-				if (validateCaptcha($_POST['captcha'])) {
-					$data = authentification($_POST['login'], $_POST['password']);
-					if ($data) {
-						redirectUser($data);
+				if (isset($_SESSION['webauthn'])) { //Webauthn authentication
+					if ($_SESSION['webauthn']) {
+						$data = getUserData();
+						if ($data) {
+							redirectUser($data);
+						} else {
+							destroySession();
+						}
 					} else {
-						menuAuth("Erreur d'authentification");
-						exit();
+						destroySession();
 					}
-				} else {
-					destroySession();
+				} else { // Password authentication
+					if (validateCaptcha($_POST['captcha'])) {
+						$data = authentification($_POST['password']);
+						if ($data) {
+							redirectUser($data);
+						} else {
+							headPageAuth();
+							menuPassword("Erreur d'authentification");
+							footPageAuth();
+						}
+					} else {
+						destroySession();
+					}
 				}
 				break;
 			case 'disconnect':
@@ -204,12 +254,24 @@ if (isset($_GET['rand']) && ($_GET['rand'] === $_SESSION['rand'])) {
 				break;
 		}
 	} else {
-		menuAuth();
-		exit;
+		if (isset($_POST['login'])) {
+			$_SESSION['login'] = traiteStringToBDD($_POST['login']);
+			getCredentialFromDb();
+			headPageAuth();
+			menuPassword();
+			footPageAuth();
+		} else {
+			initiateNullSession();
+			headPageAuth();
+			menuLogin();
+			footPageAuth();
+		}
 	}
 } else {
-	menuAuth();
-	exit;
+	initiateNullSession();
+	headPageAuth();
+	menuLogin();
+	footPageAuth();
 }
 
 ?>
