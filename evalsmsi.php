@@ -44,10 +44,11 @@ function headPageAuth() {
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
 	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
-	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
-	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
-	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce'], $_SESSION['theme']);
-	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $_SESSION['nonce']);
+	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
+	printf("<link rel='apple-touch-icon' href='pict/logoArchoadApple.png'>");
+	printf("<link rel='icon' type='image/png' href='pict/favicon.png'>");
+	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce'], $_SESSION['theme']);
+	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce']);
 	printf("<script nonce='%s' src='js/mfa.js'></script>", $_SESSION['nonce']);
 	printf("<title>Authentification</title>");
 	printf("</head><body>");
@@ -64,11 +65,11 @@ function menuLogin() {
 	genSyslog(__FUNCTION__);
 	printf("<div class='authcont'>");
 	printf("<div class='auth'>");
-	printf("<img src=%s alt='CyberSécurité' />", $auhtPict);
+	printf("<img src=%s alt='CyberSécurité'>", $auhtPict);
 	printf("</div><div class='auth'>");
 	printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s'>", $_SESSION['rand']);
-	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' autofocus required />");
-	printf("<input type='submit' id='valid' value='Continuer' />");
+	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' autofocus required>");
+	printf("<input type='submit' id='valid' value='Continuer'>");
 	printf("</form></div></div>");
 }
 
@@ -77,25 +78,25 @@ function menuPassword($msg='') {
 	global $auhtPict;
 	genSyslog(__FUNCTION__);
 	printf("<div class='authcont'>");
-	printf("<div class='auth'><img src=%s alt='CyberSécurité' /></div>", $auhtPict);
+	printf("<div class='auth'><img src=%s alt='CyberSécurité'></div>", $auhtPict);
 	printf("<div class='auth'>");
 	if (isset($_SESSION['registration'])) {
 		printf("<div class='fido2'>");
-		printf("<div><img id='authenticateImg' src='pict/fido2key.png' alt='info' /></div>");
+		printf("<div><img id='authenticateImg' src='pict/fido2key.png' alt='info'></div>");
 		printf("<div><p id='authenticateMsg'></p></div>");
 		printf("<div><a class='none' id='endAuthLink' href=''>Continuer</a></div>", $_SESSION['rand']);
 		printf("</div>");
 		printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
 	} else {
 		printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>", $_SESSION['rand']);
-		printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' autofocus required />");
+		printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' autofocus required>");
 		printf("<div id='divcaptcha' class='captcha'>");
 		printf("<img src='captcha.php' alt='captcha'/>");
-		printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required />");
+		printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required>");
 		printf("</div>");
-		printf("<input type='submit' id='valid' value='Connexion' />");
+		printf("<input type='submit' id='valid' value='Connexion'>");
 		if ($msg<>'') {
-			printf("<div class='help'><img src='pict/help.png' alt='Aide' /></div>");
+			printf("<div class='help'><img src='pict/help.png' alt='Aide'></div>");
 			printf("<p>%s</p>", $msg);
 			printf("<a href='aide.php'>(Afficher l'aide en ligne)</a>");
 		}

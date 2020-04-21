@@ -40,7 +40,7 @@ function about() {
 	genSyslog(__FUNCTION__);
 	printf("<div class='row'>");
 	printf("<div class='column left'>");
-	printf("<p><a href='https://www.archoad.io/'><img src='pict/logoArchoad.png' alt='logo SSI' /></a></p>");
+	printf("<p><a href='https://www.archoad.io/'><img src='pict/logoArchoad.png' alt='logo SSI'></a></p>");
 	printf("</div><div class='column right'>");
 	printf("<p><b>EvalSMSI version %s - %s</b></p>", $progVersion, $progDate);
 	printf("<p><b>Copyright (C) 2009 - %s Michel Dubois</b></p>", mb_strtolower(strftime("%Y", time())));
@@ -51,11 +51,11 @@ function about() {
 	printf("<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>");
 	printf("<p><b>You should have received a copy of the GNU General Public License along with this program.</b></p><p>If not, see <a href='http://www.gnu.org/licenses/'>the GNU web site</a>.</p>");
 	printf("<table><tr>");
-	printf("<td><a href='https://www.gnu.org/licenses/gpl-3.0.txt'><img src='pict/gplv3.png' alt='logo GPL V3' /></a></td>");
-	printf("<td><a href='https://github.com/PHPOffice'><img src='pict/phpoffice.png' alt='logo phpoffice' /></a></td>");
-	printf("<td><img src='pict/html5.png' alt='valid html5' /></td>");
-	printf("<td><img src='pict/css3.png' alt='valid css3' /></td>");
-	printf("<td><a href='https://github.com/lbuchs/WebAuthn'><img src='pict/lbuchs.png' alt='lbuchs' /></a></td>");
+	printf("<td><a href='https://www.gnu.org/licenses/gpl-3.0.txt'><img src='pict/gplv3.png' alt='logo GPL V3'></a></td>");
+	printf("<td><a href='https://github.com/PHPOffice'><img src='pict/phpoffice.png' alt='logo phpoffice'></a></td>");
+	printf("<td><img src='pict/html5.png' alt='valid html5'></td>");
+	printf("<td><img src='pict/css3.png' alt='valid css3'></td>");
+	printf("<td><a href='https://github.com/lbuchs/WebAuthn'><img src='pict/lbuchs.png' alt='lbuchs'></a></td>");
 	printf("</tr></table></div></div>");
 }
 
@@ -102,7 +102,7 @@ function docISMSeval() {
 	printf("<ol><li><b>Plan</b>: Préparer, Planifier (ce que l'on va réaliser)</li><li><b>Do</b>: Développer, réaliser, mettre en œuvre</li><li><b>Check</b>: Contrôler, vérifier</li><li><b>Act</b>: Agir, réagir</li></ol>");
 	printf("<h2>Le modèle PDCA appliqué au SMSI</h2>");
 	printf("<p>Appliqué au Système de Management de la Sécurité de l'Information, le PDCA se traduit selon le schéma suivant:</p>");
-	printf("<img src='pict/pdca.png' alt='PDCA' />");
+	printf("<img src='pict/pdca.png' alt='PDCA'>");
 	printf("<p><b>Planifier</b>: Etablir la politique, les objectifs, les processus et les procédures du SMSI relatives à la gestion du risque et à l'amélioration de la sécurité de l'information de manière à fournir des résultats conformément aux politiques et aux objectifs globaux de l'organisme.</p>");
 	printf("<p><b>Déployer</b>: Mettre en oeuvre et exploiter la politique, les mesures, les processus et les procédures du SMSI.</p>");
 	printf("<p><b>Contrôler</b>: Evaluer et, le cas échéant, mesurer les performances des processus par rapport à la politique, aux objectifs et à l'expérience pratique et rendre compte des résultats à la direction pour réexamen.</p>");

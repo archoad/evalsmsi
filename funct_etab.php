@@ -45,7 +45,7 @@ function displayAssessment() {
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $_SESSION['id_etab'], $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
 	dbDisconnect($base);
-	printf("<h1>Evaluation pour l'année %s</h1>\n", $annee);
+	printf("<h1>Evaluation pour l'année %s</h1>", $annee);
 	// un enregistrement a déjà été fait
 	if ($result->num_rows) {
 		$row = mysqli_fetch_object($result);
@@ -59,33 +59,33 @@ function displayAssessment() {
 		# affichage de la barre de progression
 		printf("<div id='a'><div id='b'><div id='c'></div></div></div>");
 		# affichage du formulaire
-		printf("<div class='row'>\n");
-		printf("<div class='column largeleft'>\n");
-		printf("<h3>Cette évaluation comprend %s questions</h3>\n", $numQuestion);
-		printf("<div class='assess'>\n");
-		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' novalidate>\n");
-		printf("<p><input type='hidden' id='nbr_questions' value='%s' /></p>\n", $numQuestion);
+		printf("<div class='row'>");
+		printf("<div class='column largeleft'>");
+		printf("<h3>Cette évaluation comprend %s questions</h3>", $numQuestion);
+		printf("<div class='assess'>");
+		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' novalidate>");
+		printf("<p><input type='hidden' id='nbr_questions' value='%s'></p>", $numQuestion);
 		$dom_complete = domainComplete($assessment);
 		for ($d=0; $d<count($quiz); $d++) {
 			$num_dom = $quiz[$d]['numero'];
 			$subDom = $quiz[$d]['subdomains'];
 			$fond = getColorButton($dom_complete, $num_dom);
-			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
-			printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>\n", $nonce, $num_dom, $num_dom);
-			printf("<dl class='none' id='dl%s'>\n", $num_dom);
+			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s'></p>", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
+			printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>", $nonce, $num_dom, $num_dom);
+			printf("<dl class='none' id='dl%s'>", $num_dom);
 			for ($sd=0; $sd<count($subDom); $sd++) {
 				$num_sub_dom = $subDom[$sd]['numero'];
 				$questions = $subDom[$sd]['questions'];
 				$id = $num_dom.'-'.$num_sub_dom;
 				$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 				$fond = getColorButton($subdom_complete, $num_sub_dom);
-				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
-				printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>\n", $nonce, $id, $id);
-				printf("<dd class='comment'>%s</dd>\n", $subDom[$sd]['comment']);
-				printf("<dd class='none' id='dd%s'>\n", $id);
+				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s'></dt>", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+				printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>", $nonce, $id, $id);
+				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+				printf("<dd class='none' id='dd%s'>", $id);
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];
-					printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+					printf("<p><b>%s.%s.%s</b> %s</p>", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 					if (isset($assessment)) {
 						printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
 					} else {
@@ -93,28 +93,28 @@ function displayAssessment() {
 					}
 					$commentID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 					$errorID = 'error'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
-					printf("<br />\n");
+					printf("<br>");
 					if (isset($assessment)) {
-						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $commentID, $commentID, traiteStringFromBDD($assessment[$commentID]));
+						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>", $commentID, $commentID, traiteStringFromBDD($assessment[$commentID]));
 					} else {
-						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'></textarea>\n", $commentID, $commentID);
+						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'></textarea>", $commentID, $commentID);
 					}
-					printf("<span class='error' id='%s'></span>\n", $errorID);
+					printf("<span class='error' id='%s'></span>", $errorID);
 					printf("<script nonce='%s'>document.getElementById('%s').addEventListener('keyup', function(){progresse();});</script>", $nonce, $commentID);
-					printf("<p class='separation'>&nbsp;</p>\n");
+					printf("<p class='separation'>&nbsp;</p>");
 				}
-				printf("</dd>\n");
+				printf("</dd>");
 			}
-			printf("</dl>\n");
+			printf("</dl>");
 		}
-		printf("<table>\n<tr>\n<td><b>Commentaire final - Conclusion</b></td>\n</tr>\n");
-		printf("<tr>\n<td>\n<textarea name='final_comment' id='final_comment' cols='68' rows='5' class='none'>%s</textarea>\n</td>\n</tr>\n</table>\n", traiteStringFromBDD($final_c));
+		printf("<table><tr><td><b>Commentaire final - Conclusion</b></td></tr>");
+		printf("<tr><td><textarea name='final_comment' id='final_comment' cols='68' rows='5' class='none'>%s</textarea></td></tr></table>", traiteStringFromBDD($final_c));
 		validForms('Enregistrer', 'etab.php', $back=False);
-		printf("</form>\n");
-		printf("</div>\n");
-		printf("</div>\n");
+		printf("</form>");
+		printf("</div>");
+		printf("</div>");
 		afficheNotesExplanation();
-		printf("</div>\n");
+		printf("</div>");
 		printf("<script nonce='%s'>document.body.addEventListener('load', progresse());</script>", $nonce);
 		printf("<script nonce='%s'>document.getElementById('make_assess').addEventListener('submit', function(){assessFormValidity(event);});</script>", $nonce);
 	}
@@ -151,13 +151,13 @@ function exportRapport($annee) {
 	}
 	$xlsFile = generateExcellRapport($annee);
 	$msg = sprintf("Télécharger le plan d'actions %s (Excel)", $annee);
-	printf("<div class='row'>\n");
-	printf("<div class='column left'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column left'>");
 	generateRapport($annee);
-	printf("</div>\n");
-	printf("<div class='column right'>\n");
+	printf("</div>");
+	printf("<div class='column right'>");
 	linkMsg($xlsFile, $msg, "xlsx.png", 'menu');
-	printf("</div>\n</div>\n");
+	printf("</div></div>");
 }
 
 
@@ -174,19 +174,19 @@ function selectYearRapport() {
 		}
 	}
 	if (count($list)) {
-		printf("<form method='post' id='select_print' action='etab.php?action=do_print'>\n");
-		printf("<fieldset>\n<legend>Choix d'une année</legend>\n");
-		printf("<table>\n<tr><td>\n");
-		printf("Année:&nbsp;\n<select name='year' id='year' required>\n");
-		printf("<option selected='selected' value=''>&nbsp;</option>\n");
+		printf("<form method='post' id='select_print' action='etab.php?action=do_print'>");
+		printf("<fieldset><legend>Choix d'une année</legend>");
+		printf("<table><tr><td>");
+		printf("Année:&nbsp;<select name='year' id='year' required>");
+		printf("<option selected='selected' value=''>&nbsp;</option>");
 		foreach($list as $annee) {
-			printf("<option value='%d'>%d</option>\n", $annee, $annee);
+			printf("<option value='%d'>%d</option>", $annee, $annee);
 		}
-		printf("</select>\n");
-		printf("</td>\n</tr>\n</table>\n");
-		printf("</fieldset>\n");
+		printf("</select>");
+		printf("</td></tr></table>");
+		printf("</fieldset>");
 		validForms('Afficher le rapport', 'etab.php');
-		printf("</form>\n");
+		printf("</form>");
 	} else {
 		linkMsg("etab.php", "Il n'y a pas d'évaluation validée pour cet établissement.", "alert.png");
 	}

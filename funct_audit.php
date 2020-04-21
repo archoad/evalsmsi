@@ -85,27 +85,27 @@ function selectEtablissementAudit() {
 		default:
 			break;
 	}
-	printf("<form method='post' id='audit' action='audit.php?action=%s'>\n", $act);
-	printf("<fieldset>\n<legend>Choix d'un établissement</legend>\n");
-	printf("<table>\n<tr id='selectEtabRow'><td>\n");
+	printf("<form method='post' id='audit' action='audit.php?action=%s'>", $act);
+	printf("<fieldset><legend>Choix d'un établissement</legend>");
+	printf("<table><tr id='selectEtabRow'><td>");
 	if ($action === 'objectif') {
-		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab' required>\n");
+		printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
 	} else {
-		printf("Etablissement:&nbsp;\n<select name='id_etab' id='id_etab' required>\n");
-		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>\n", $nonce);
+		printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
+		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>", $nonce);
 	}
-	printf("<option selected='selected' value=''>&nbsp;</option>\n");
+	printf("<option selected='selected' value=''>&nbsp;</option>");
 	while($row = mysqli_fetch_object($result)) {
 		if (stripos($row->abrege, "_TEAM") === false) {
-			printf("<option value='%s'>%s</option>\n", $row->id, $row->nom);
+			printf("<option value='%s'>%s</option>", $row->id, $row->nom);
 		} else {
-			printf("<option value='%s'>%s (regroupement)</option>\n", $row->id, $row->nom);
+			printf("<option value='%s'>%s (regroupement)</option>", $row->id, $row->nom);
 		}
 	}
-	printf("</select>\n</td>\n");
-	printf("</tr>\n</table>\n</fieldset>\n");
+	printf("</select></td>");
+	printf("</tr></table></fieldset>");
 	validForms('Continuer', 'audit.php', $back=False);
-	printf("</form>\n");
+	printf("</form>");
 }
 
 
@@ -162,30 +162,30 @@ function objectifs() {
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
 	$objectives = json_decode($row->objectifs, true);
-	printf("<div class='row'>\n");
-	printf("<div class='column largeleft'>\n");
-	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' >\n");
-	printf("<fieldset>\n<legend>Gestion des objectifs pour <b>%s</b></legend>\n", $row->nom);
+	printf("<div class='row'>");
+	printf("<div class='column largeleft'>");
+	printf("<form method='post' id='objectifs' action='audit.php?action=write_objectifs' >");
+	printf("<fieldset><legend>Gestion des objectifs pour <b>%s</b></legend>", $row->nom);
 	foreach ($objectives as $numQuiz => $obj) {
 		$domLibelle = getDomLibelle($numQuiz);
 		$name_quiz = getQuizNameById($numQuiz);
-		printf("<table>\n");
-		printf("<tr><th colspan=3>%s</th></tr>\n", $name_quiz);
-		printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>\n");
+		printf("<table>");
+		printf("<tr><th colspan=3>%s</th></tr>", $name_quiz);
+		printf("<tr><th>Numéro</th><th>Paragraphe</th><th>Objectif</th></tr>");
 		foreach ($obj as $objectif => $value) {
 			$num_dom = intval(explode('_', $objectif)[1]);
 			$objCurr = sprintf("obj_%d_%d", $numQuiz, $num_dom);
-			printf("<tr>\n<td>%d</td><td class='pleft'>%s</td>", $num_dom, $domLibelle[$num_dom]);
-			printf("<td><input type='number' name='%s' id='%s' value='%d' min='1' max='%d' required /></td></tr>", $objCurr, $objCurr, $value, $noteMax);
+			printf("<tr><td>%d</td><td class='pleft'>%s</td>", $num_dom, $domLibelle[$num_dom]);
+			printf("<td><input type='number' name='%s' id='%s' value='%d' min='1' max='%d' required></td></tr>", $objCurr, $objCurr, $value, $noteMax);
 		}
-		printf("</table>\n");
-		printf("<p class='separation'>&nbsp;</p>\n");
+		printf("</table>");
+		printf("<p class='separation'>&nbsp;</p>");
 	}
-	printf("</fieldset>\n");
+	printf("</fieldset>");
 	validForms('Enregistrer', 'audit.php', $back=False);
-	printf("</form>\n</div>\n");
+	printf("</form></div>");
 	afficheNotesExplanation();
-	printf("</div>\n");
+	printf("</div>");
 }
 
 
@@ -236,12 +236,12 @@ function journalisation() {
 	$nonce = $_SESSION['nonce'];
 	if (isset($_SESSION['quiz'])) {
 		printf("<script nonce='%s'>document.body.addEventListener('load', loadLogs());</script>", $nonce);
-		printf("<div class='onecolumn' id='graphs'>\n");
+		printf("<div class='onecolumn' id='graphs'>");
 		$msg = sprintf("Journal des opérations - %s", uidToEtbs());
 		printf("<div class='visualization' id='visualization'><p>%s</p></div>", $msg);
 		printf("<p>&nbsp;</p>");
 		printf("<textarea name='visdata' id='visdata' rows='15' cols='100' placeholder='Détails des opérations' readonly></textarea>");
-		printf("</div>\n<p>&nbsp;</p>\n");
+		printf("</div><p>&nbsp;</p>");
 	} else {
 		linkMsg("audit.php", "Il n'y a pas d'évaluation pour cet établissement", "alert.png");
 	}
@@ -312,7 +312,7 @@ function displayAudit() {
 		$id_etab = $_SESSION['id_etab'];
 		$quiz = getJsonFile();
 		$name_etab = getEtablissement($id_etab);
-		printf("<h1>%s - %s</h1>\n", $name_etab, $annee);
+		printf("<h1>%s - %s</h1>", $name_etab, $annee);
 		$base = dbConnect();
 		$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
 		$result = mysqli_query($base, $request);
@@ -337,49 +337,49 @@ function displayAudit() {
 			if (isAssessComplete($reponses[$annee])) {
 				linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
 				# affichage du formulaire
-				printf("<div class='row'>\n");
-				printf("<div class='column largeleft'>\n");
-				printf("<h3>Cette évaluation comprend %s questions</h3>\n", $numQuestion);
-				printf("<div class='assess'>\n");
-				printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>\n");
+				printf("<div class='row'>");
+				printf("<div class='column largeleft'>");
+				printf("<h3>Cette évaluation comprend %s questions</h3>", $numQuestion);
+				printf("<div class='assess'>");
+				printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>");
 				for ($d=0; $d<count($quiz); $d++) {
 					$num_dom = $quiz[$d]['numero'];
 					$subDom = $quiz[$d]['subdomains'];
-					printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' /></p>\n", $num_dom, $quiz[$d]['libelle'], $num_dom);
-					printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>\n", $nonce, $num_dom, $num_dom);
-					printf("<dl class='none' id='dl%s'>\n", $num_dom);
+					printf("<p><b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s'></p>", $num_dom, $quiz[$d]['libelle'], $num_dom);
+					printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>", $nonce, $num_dom, $num_dom);
+					printf("<dl class='none' id='dl%s'>", $num_dom);
 					for ($sd=0; $sd<count($subDom); $sd++) {
 						$num_sub_dom = $subDom[$sd]['numero'];
 						$questions = $subDom[$sd]['questions'];
 						$id = $num_dom.'-'.$num_sub_dom;
-						printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' /></dt>\n", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
-						printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>\n", $nonce, $id, $id);
+						printf("<dt><b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s'></dt>", $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+						printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>", $nonce, $id, $id);
 						printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
-						printf("<dd class='none' id='dd%s'>\n", $id);
+						printf("<dd class='none' id='dd%s'>", $id);
 						for ($q=0; $q<count($questions); $q++) {
 							$num_question = $questions[$q]['numero'];
 							$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
-							printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+							printf("<p><b>%s.%s.%s</b> %s</p>", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 							printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
-							printf("<br />Commentaire établissement<br /><textarea name='%s' id='%s' cols='80' rows='4' readonly class='protected'>%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
+							printf("<br>Commentaire établissement<br><textarea name='%s' id='%s' cols='80' rows='4' readonly class='protected'>%s</textarea>", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 							$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							if (isset($assessment[$evalID])) {
-								printf("<br /><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'>%s</textarea>\n", $evalID, $evalID, traiteStringFromBDD($assessment[$evalID]));
+								printf("<br><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'>%s</textarea>", $evalID, $evalID, traiteStringFromBDD($assessment[$evalID]));
 							} else {
-								printf("<br /><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'></textarea>\n", $evalID, $evalID);
+								printf("<br><textarea placeholder='Commentaire évaluateur' name='%s' id='%s' cols='80' rows='4'></textarea>", $evalID, $evalID);
 							}
-							printf("<p class='separation'>&nbsp;</p>\n");
+							printf("<p class='separation'>&nbsp;</p>");
 						}
-					printf("</dd>\n");
+					printf("</dd>");
 					}
-					printf("</dl>\n");
+					printf("</dl>");
 				}
 				validForms('Enregistrer', 'audit.php', $back=False);
-				printf("</form>\n");
-				printf("</div>\n");
-				printf("</div>\n");
+				printf("</form>");
+				printf("</div>");
+				printf("</div>");
 				afficheNotesExplanation();
-				printf("</div>\n");
+				printf("</div>");
 			} else {
 				linkMsg("audit.php", "L'évaluation pour ".$annee." est incomplète.", "alert.png");
 			}
@@ -401,7 +401,7 @@ function displayAuditRegroup() {
 	$annee = $_SESSION['annee'];
 	$quiz = getJsonFile();
 	$name_etab = getEtablissement($id_etab);
-	printf("<h1>%s - %s</h1>\n", $name_etab, $annee);
+	printf("<h1>%s - %s</h1>", $name_etab, $annee);
 	$base = dbConnect();
 	$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);
@@ -473,50 +473,50 @@ function displayAuditRegroup() {
 	}
 	$dom_complete = domainComplete($assessment);
 	# affichage du formulaire
-	printf("<div class='row'>\n");
-	printf("<div class='column largeleft'>\n");
-	printf("<div class='assess'>\n");
-	printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>\n");
+	printf("<div class='row'>");
+	printf("<div class='column largeleft'>");
+	printf("<div class='assess'>");
+	printf("<form method='post' id='eval_auditeur' action='audit.php?action=record_audit'>");
 	for ($d=0; $d<count($quiz); $d++) {
 		$num_dom = $quiz[$d]['numero'];
 		$subDom = $quiz[$d]['subdomains'];
 		$fond = getColorButton($dom_complete, $num_dom);
-		printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)' /></p>\n", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
-		printf("<dl class='none;' id='dl%s'>\n", $num_dom);
+		printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s' onclick='display(this)'></p>", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
+		printf("<dl class='none;' id='dl%s'>", $num_dom);
 		for ($sd=0; $sd<count($subDom); $sd++) {
 			$num_sub_dom = $subDom[$sd]['numero'];
 			$questions = $subDom[$sd]['questions'];
 			$id = $num_dom.'-'.$num_sub_dom;
 			$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 			$fond = getColorButton($subdom_complete, $num_sub_dom);
-			printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)' /></dt>\n", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
-			printf("<dd class='none;' id='dd%s'>\n", $id);
+			printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s' onclick='display(this)'></dt>", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+			printf("<dd class='none;' id='dd%s'>", $id);
 			for ($q=0; $q<count($questions); $q++) {
 				$num_question = $questions[$q]['numero'];
 				$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 				$noteID = 'question'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
-				printf("<p><b>%s.%s.%s</b> %s</p>\n", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+				printf("<p><b>%s.%s.%s</b> %s</p>", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
 				if ($new) {
-					printf("<input type='hidden' name='%s' id='%s' value='%s' />\n", $noteID, $noteID, $question[$noteID]);
-					printf("Note: %d - %s\n", $question[$noteID], textItem($question[$noteID]));
-					printf("<br /><textarea name='%s' id='%s' cols='80' rows='4' >%s</textarea>\n", $textID, $textID, traiteStringFromBDD($eval[$textID]));
+					printf("<input type='hidden' name='%s' id='%s' value='%s'>", $noteID, $noteID, $question[$noteID]);
+					printf("Note: %d - %s", $question[$noteID], textItem($question[$noteID]));
+					printf("<br><textarea name='%s' id='%s' cols='80' rows='4' >%s</textarea>", $textID, $textID, traiteStringFromBDD($eval[$textID]));
 				} else {
-					printf("<input type='hidden' name='%s' id='%s' value='%s' />\n", $noteID, $noteID, $assessment[$noteID]);
-					printf("Note: %d - %s\n", $assessment[$noteID], textItem($assessment[$noteID]));
-					printf("<br /><textarea name='%s' id='%s' cols='80' rows='4' >%s</textarea>\n", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
+					printf("<input type='hidden' name='%s' id='%s' value='%s'>", $noteID, $noteID, $assessment[$noteID]);
+					printf("Note: %d - %s", $assessment[$noteID], textItem($assessment[$noteID]));
+					printf("<br><textarea name='%s' id='%s' cols='80' rows='4' >%s</textarea>", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 				}
-				printf("<p class='separation'>&nbsp;</p>\n");
+				printf("<p class='separation'>&nbsp;</p>");
 			}
-			printf("</dd>\n");
+			printf("</dd>");
 		}
-		printf("</dl>\n");
+		printf("</dl>");
 	}
 	validForms('Enregistrer', 'audit.php', $back=False);
-	printf("</form>\n");
-	printf("</div>\n");
-	printf("</div>\n");
+	printf("</form>");
+	printf("</div>");
+	printf("</div>");
 	afficheNotesExplanation();
-	printf("</div>\n");
+	printf("</div>");
 	dbDisconnect($base);
 }
 
@@ -559,21 +559,21 @@ function getCommentGraphPar() {
 						$result = mysqli_query($base, $request);
 						dbDisconnect($base);
 						$record = mysqli_fetch_object($result);
-						printf("<div class='onecolumn'>\n");
-						printf("<div id='graphs'>\n");
-						printf("<canvas id='currentYearGraphBar'></canvas>\n");
-						printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>\n");
-						printf("<canvas id='currentYearGraphPolar'></canvas>\n");
-						printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>\n");
-						printf("<canvas id='currentYearGraphScatter'></canvas><br />\n");
-						printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>\n");
-						printf("</div>\n");
-						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' >\n");
-						printf("<input type='hidden' name='id_assess' id='id_assess' value='%s'/>\n", $record->id);
-						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10' required>%s</textarea>\n", traiteStringFromBDD($record->comment_graph_par));
+						printf("<div class='onecolumn'>");
+						printf("<div id='graphs'>");
+						printf("<canvas id='currentYearGraphBar'></canvas>");
+						printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
+						printf("<canvas id='currentYearGraphPolar'></canvas>");
+						printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
+						printf("<canvas id='currentYearGraphScatter'></canvas><br>");
+						printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
+						printf("</div>");
+						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' >");
+						printf("<input type='hidden' name='id_assess' id='id_assess' value='%s'/>", $record->id);
+						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10' required>%s</textarea>", traiteStringFromBDD($record->comment_graph_par));
 						validForms('Continuer', 'audit.php', $back=False);
-						printf("</form>\n");
-						printf("</div>\n");
+						printf("</form>");
+						printf("</div>");
 					} else {
 						linkMsg("audit.php", "L'évaluation pour ".$annee." n'a pas été revue par les auditeurs", "alert.png");
 					}
@@ -601,12 +601,12 @@ function confirmDeleteAssessment() {
 	$nonce = $_SESSION['nonce'];
 	$annee = $_SESSION['annee'];
 	$script = $_SESSION['curr_script'];
-	$msg = sprintf("Cliquer pour effacer l'évaluation<br />réalisée en <b>%d</b> par <b>%s</b>", $annee, $name_etab);
+	$msg = sprintf("Cliquer pour effacer l'évaluation<br>réalisée en <b>%d</b> par <b>%s</b>", $annee, $name_etab);
 	linkMsg($script."?action=do_delete", $msg, "alert.png");
 	linkMsg($script, "Annuler et revenir à la page d'acueil", "ok.png");
-	printf("<div class='onecolumn' id='graphs'>\n");
-	printf("<canvas id='currentYearGraphBar'></canvas>\n");
-	printf("</div>\n");
+	printf("<div class='onecolumn' id='graphs'>");
+	printf("<canvas id='currentYearGraphBar'></canvas>");
+	printf("</div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 }
 

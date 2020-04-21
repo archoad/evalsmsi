@@ -68,7 +68,7 @@ while($row = mysqli_fetch_object($result)) {
 		$temp[$currDate]['id'] = $cpt;
 		$temp[$currDate]['start'] = $currDate;
 		$temp[$currDate]['content'] = $nbrActions;
-		$temp[$currDate]['title'] = sprintf('<span style="font-size: 8pt;"><b>Utilisateur</b>: %s<br/><b>OS</b>: %s<br /><b>Navigateur</b>: %s<br /><b>Adresse IP</b>: %s<br /></span>', $row->user, $row->os, $row->navigateur, $row->ip);
+		$temp[$currDate]['title'] = sprintf('<span style="font-size: 8pt;"><b>Utilisateur</b>: %s<br/><b>OS</b>: %s<br><b>Navigateur</b>: %s<br><b>Adresse IP</b>: %s<br></span>', $row->user, $row->os, $row->navigateur, $row->ip);
 		$temp[$currDate]['actions'] = $detailActions;
 		$cpt ++;
 	} else {

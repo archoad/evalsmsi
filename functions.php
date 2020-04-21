@@ -44,7 +44,7 @@ $auhtPict = 'pict/accueil.png';
 $rapportPicts = array("pict/archoad.png", "pict/customer.png");
 // Mode captcha
 $captchaMode = 'num'; // 'txt' or 'num'
-// Attestation mode
+// Webauthn attestation mode
 $attestationMode = 'direct'; // 'none' or 'indirect' or 'direct'
 // --------------------
 
@@ -433,25 +433,26 @@ function headPage($titre, $sousTitre='') {
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
 	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
-	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
-	printf("<meta name='author' content='Michel Dubois' />");
+	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
+	printf("<meta name='author' content='Michel Dubois'>");
 	printf("<title>%s</title>", $titre);
-	printf("<link rel='icon' type='image/png' href='pict/favicon.png' />");
-	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all' />", $nonce, $_SESSION['theme']);
-	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all' />", $nonce);
+	printf("<link rel='apple-touch-icon' href='pict/logoArchoadApple.png'>");
+	printf("<link rel='icon' type='image/png' href='pict/favicon.png'>");
+	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all'>", $nonce, $_SESSION['theme']);
+	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all'>", $nonce);
 	if (isset($_SESSION['curr_script'])) {
 		$script = $_SESSION['curr_script'];
 		if ($script === 'etab.php') {
-			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
+			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all'>", $nonce);
 			printf("<script nonce='%s' src='js/chart.min.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/graphs.js'></script>", $nonce);
 		}
 		if ($script === 'audit.php') {
-			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
+			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all'>", $nonce);
 			printf("<script nonce='%s' src='js/chart.min.js'></script>", $nonce);
-			printf("<link nonce='%s' href='js/vis.min.css' rel='stylesheet' type='text/css' media='all' />", $nonce);
+			printf("<link nonce='%s' href='js/vis.min.css' rel='stylesheet' type='text/css' media='all'>", $nonce);
 			printf("<script nonce='%s' src='js/vis.min.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
@@ -500,9 +501,9 @@ function validForms($msg, $url, $back=True) {
 	$_SESSION['token'] = generateToken();
 	printf("<fieldset><legend>Validation</legend>");
 	printf("<table><tr><td>");
-	printf("<input type='submit' value='%s' />", $msg);
+	printf("<input type='submit' value='%s'>", $msg);
 	if ($back) {
-		printf("<input type='reset' value='Effacer' />");
+		printf("<input type='reset' value='Effacer'>");
 	}
 	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
 	printf("</td></tr></table></fieldset>");
@@ -511,7 +512,7 @@ function validForms($msg, $url, $back=True) {
 
 function linkMsg($link, $msg, $img, $class='msg') {
 	printf("<div class='%s'>", $class);
-	printf("<div><img src='pict/%s' alt='info' /></div>", $img);
+	printf("<div><img src='pict/%s' alt='info'></div>", $img);
 	if ($link==='#') {
 		printf("<div><p>%s</p></div>", $msg);
 	} else {
@@ -787,15 +788,9 @@ function getCredentialFromDb() {
 
 
 function registerWebauthnCred() {
-	printf("<div class='msg'><div><img id='registerImg' src='pict/fido2key.png' alt='info' /></div><div><p id='registerMsg'></p></div></div>");
-	printf("<div class='none' id='pubKey'><div><img src='pict/public_key.png' alt='pubkey' /></div><div id='msgPubKey'></div></div>");
+	printf("<div class='msg'><div><img id='registerImg' src='pict/fido2key.png' alt='info'></div><div><p id='registerMsg'></p></div></div>");
+	printf("<div class='none' id='pubKey'><div><img src='pict/public_key.png' alt='pubkey'></div><div id='msgPubKey'></div></div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', newRegistration());</script>", $_SESSION['nonce']);
-}
-
-
-function webauthnAuthenticating() {
-	printf("<div class='msg'><div><img id='authenticateImg' src='pict/fido2key.png' alt='info' /></div><div><p id='authenticateMsg'></p></div></div>");
-	printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
 }
 
 
@@ -812,9 +807,9 @@ function changePassword() {
 		printf("<form method='post' id='chg_password' action='%s?action=chg_password'>", $script);
 		printf("<fieldset><legend>Changement de mot de passe</legend>");
 		printf("<table><tr><td>");
-		printf("<input type='password' size='30' maxlength='30' name='new1' id='new1' placeholder='Nouveau mot de passe' autocomplete='new-password' required />");
+		printf("<input type='password' size='30' maxlength='30' name='new1' id='new1' placeholder='Nouveau mot de passe' autocomplete='new-password' required>");
 		printf("</td></tr><tr><td>");
-		printf("<input type='password' size='30' maxlength='30' name='new2' id='new2' placeholder='Saisissez à nouveau le mot de passe' autocomplete='new-password' required />");
+		printf("<input type='password' size='30' maxlength='30' name='new2' id='new2' placeholder='Saisissez à nouveau le mot de passe' autocomplete='new-password' required>");
 		printf("</td></tr></table>");
 		printf("</fieldset>");
 		validForms('Enregistrer', $script);
@@ -1359,7 +1354,7 @@ function displayEtablissmentGraphs() {
 		printf("<canvas id='currentYearGraphPolar'></canvas>");
 		printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
 		printf("<p class='separation'>&nbsp;</p>");
-		printf("<canvas id='currentYearGraphScatter'></canvas><br />");
+		printf("<canvas id='currentYearGraphScatter'></canvas><br>");
 		printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
 		printf("<p class='separation'>&nbsp;</p>");
 		printf("</div>");
@@ -2354,14 +2349,15 @@ function bilanByEtab() {
 			}
 		}
 		if (!$gotDirecteur or !$gotRSSI or !$gotOpeSSI or !$gotAuditor) {
-			printf("<tr><th>Problème</th><td colspan='3' class='notok'>");
-			if (!$gotDirecteur) { printf("Directeur "); }
-			if (!$gotRSSI) { printf("RSSI "); }
-			if (!$gotOpeSSI) { printf("Opérateur "); }
-			if (!$gotAuditor) { printf("Auditeur"); }
-			printf("</td></tr>");
+			$missing = "";
+			if (!$gotDirecteur) { $missing .= "Directeur, "; }
+			if (!$gotRSSI) { $missing .= "RSSI, "; }
+			if (!$gotOpeSSI) { $missing .= "Opérateur, "; }
+			if (!$gotAuditor) { $missing .= "Auditeur, "; }
+			$missing = rtrim($missing, ", ").".";
+			printf("<tr><th>Problème</th><td colspan='3' class='notok'>%s</td></tr>", $missing);
 		}
-		printf("</table><br />");
+		printf("</table><br>");
 	}
 	printf("</div>");
 	dbDisconnect($base);

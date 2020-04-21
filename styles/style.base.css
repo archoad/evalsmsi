@@ -149,6 +149,10 @@ select:valid {
 	border-color: var(--bg1Color);
 }
 
+::placeholder {
+	font-style: italic;
+}
+
 table {
 	width: 80%;
 	margin: 5px auto 5px auto;
