@@ -450,7 +450,72 @@ function createDefaultObjectifs() {
 }
 
 
-
+function bilanByEtab() {
+	$base = dbConnect();
+	$req_etab = sprintf("SELECT * FROM etablissement ORDER BY nom");
+	$res_etab = mysqli_query($base, $req_etab);
+	printf("<div class='bilan'>");
+	while ($row_etab = mysqli_fetch_object($res_etab)) {
+		printf("<table>");
+		printf("<tr><th colspan='4'>%s - %s - %s %s </th></tr>", $row_etab->nom, $row_etab->adresse, $row_etab->code_postal, $row_etab->ville);
+		printf("<tr>");
+		printf("<th class='width25'>&nbsp;</th>");
+		printf("<th class='width25'>Prénom</th>");
+		printf("<th class='width25'>Nom</th>");
+		printf("<th class='width25'>Login</th>");
+		printf("</tr>");
+		$req_auditor = sprintf("SELECT nom, prenom, login, etablissement FROM users WHERE role='2'");
+		$res_auditor = mysqli_query($base, $req_auditor);
+		$req_user = sprintf("SELECT role, nom, prenom, login FROM users WHERE etablissement = '%d' ORDER BY role", $row_etab->id);
+		$res_user = mysqli_query($base, $req_user);
+		$gotDirecteur = False;
+		$gotRSSI = False;
+		$gotOpeSSI = False;
+		if (mysqli_num_rows($res_user)) {
+			$users = mysqli_fetch_all($res_user, MYSQLI_ASSOC);
+			$roles = array();
+			foreach($users as $user) { $roles[] = $user['role']; }
+			$roles = array_unique($roles);
+			foreach($users as $user) {
+				switch ($user['role']) {
+					case '3':
+						printf("<tr><th>Directeur</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotDirecteur = True;
+						break;
+					case '4':
+						printf("<tr><th>RSSI</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotRSSI = True;
+						break;
+					case '5':
+						printf("<tr><th>Opérateur SSI</th><td>%s</td><td>%s</td><td>%s</td></tr>", $user['prenom'], $user['nom'], $user['login']);
+						$gotOpeSSI = True;
+						break;
+				}
+			}
+		}
+		if (mysqli_num_rows($res_auditor)) {
+			$gotAuditor = False;
+			foreach (mysqli_fetch_all($res_auditor, MYSQLI_ASSOC) as $auditor) {
+				if (in_array($row_etab->id, explode(',', $auditor['etablissement']))) {
+					printf("<tr><th>Auditeur</th><td>%s</td><td>%s</td><td>%s</td></tr>", $auditor['prenom'], $auditor['nom'], $auditor['login']);
+					$gotAuditor = True;
+				}
+			}
+		}
+		if (!$gotDirecteur or !$gotRSSI or !$gotOpeSSI or !$gotAuditor) {
+			$missing = "";
+			if (!$gotDirecteur) { $missing .= "Directeur, "; }
+			if (!$gotRSSI) { $missing .= "RSSI, "; }
+			if (!$gotOpeSSI) { $missing .= "Opérateur, "; }
+			if (!$gotAuditor) { $missing .= "Auditeur, "; }
+			$missing = rtrim($missing, ", ").".";
+			printf("<tr><th>Problème</th><td colspan='3' class='notok'>%s</td></tr>", $missing);
+		}
+		printf("</table><br>");
+	}
+	printf("</div>");
+	dbDisconnect($base);
+}
 
 
 ?>
