@@ -81,7 +81,9 @@ function displayAssessment() {
 				$fond = getColorButton($subdom_complete, $num_sub_dom);
 				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s'></dt>", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
 				printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>", $nonce, $id, $id);
-				printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+				if ($subDom[$sd]['comment'] != '') {
+					printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
+				}
 				printf("<dd class='none' id='dd%s'>", $id);
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];

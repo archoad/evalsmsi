@@ -1,0 +1,2578 @@
+[
+  {
+    "numero": 1,
+    "libelle": "Politiques de sécurité de l'information et gestion du risque",
+    "abrege": "PSSI et risques",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Principes",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit opérer la prestation à l'état de l'art pour le type d'activité retenu: utiliser des logiciels stables bénéficiant d'un suivi des correctifs de sécurité et paramétrés de façon à obtenir un niveau de sécurité optimal.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit appliquer le guide d'hygiène informatique de l'ANSSI au système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Politique de sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une politique de sécurité de l'information relative au service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "La politique de sécurité de l'information doit identifier les engagements du prestataire quant au respect de la législation et réglementation nationale en vigueur selon la nature des informations qui pourraient être confiées par le commanditaire au prestataire; il revient en revanche in fine au commanditaire de s'assurer du respect des contraintes légales et réglementaires applicables aux données qu'il confie effectivement au prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "La direction du prestataire doit approuver formellement la politique de sécurité de l'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit réviser annuellement la politique de sécurité de l'information et à chaque changement majeur pouvant avoir un impact sur le service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Appréciation des risques",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter une appréciation des risques couvrant l'ensemble du périmètre du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit réaliser son appréciation de risques en utilisant une méthode documentée garantissant la reproductibilité et comparabilité de la démarche.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit prendre en compte dans l'appréciation des risques: la gestion d'informations du commanditaire ayant des besoins de sécurité différents.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit prendre en compte dans l'appréciation des risques: les risques ayant des impacts sur les droits et libertés des personnes concernées en cas d'accès\nnon autorisé, de modification non désirée et de disparition de données à caractère personnel.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit prendre en compte dans l'appréciation des risques: les risques de défaillance des mécanismes de cloisonnement des ressources de l'infrastructure technique (mémoire, calcul, stockage, réseau) partagées entre les commanditaires.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit prendre en compte dans l'appréciation des risques: les risques liés à l'effacement incomplet ou non sécurisé des données stockées sur les espaces de mémoire ou de stockage partagés entre commanditaires, en particulier lors des réallocations des espaces de mémoire et de stockage.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit prendre en compte dans l'appréciation des risques: les risques liés à l'exposition des interfaces d'administration sur un réseau public.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 8,
+            "libelle": "Lorsqu'il existe des exigences légales, réglementaires ou sectorielles spécifiques liées aux types d'informations confiées par le commanditaire au prestataire, ce dernier doit les prendre en compte dans son appréciation des risques en s'assurant de respecter l'ensemble des exigences du présent document d'une part et de ne pas abaisser le niveau de sécurité établi par le respect des exigences du présent document d'autre part.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 9,
+            "libelle": "La direction du prestataire doit accepter formellement les risques résiduels identifiés dans l'appréciation des risques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 10,
+            "libelle": "Le prestataire doit réviser annuellement l'appréciation des risques et à chaque changement majeur pouvant avoir un impact sur le service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 2,
+    "libelle": "Organisation de la sécurité de l'information",
+    "abrege": "Organisation",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Fonctions et responsabilités liées à la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une organisation interne de la sécurité pour assurer la définition, la mise en place et le suivi du fonctionnement opérationnel de la sécurité de l'information au sein de son organisation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit désigner un responsable de la sécurité des systèmes d'information et un responsable de la sécurité physique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit définir et attribuer les responsabilités en matière de sécurité de l'information pour le personnel impliqué dans la fourniture du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit s'assurer après tout changement majeur pouvant avoir un impact sur le service que l'attribution des responsabilités en matière de sécurité de l'information est toujours pertinente.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit définir et attribuer les responsabilités en matière de protection de données à caractère personnel, en cohérence avec son rôle dans les traitements de données à caractère personnel (responsable de traitement, sous-traitant ou co-responsable).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit, lorsqu'il traite un grand nombre de données parmi lesquelles figurent des catégories particulières de données à caractère personnel telles que définies dans le RGPD, désigner un délégué à la protection des données.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Il est recommandé que le prestataire, quel que soit le volume de données à caractère personnel qu'il traite, désigne un délégué à la protection des données.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 8,
+            "libelle": "Le prestataire doit réaliser ou contribuer à la réalisation d'une analyse d'impact relative à la protection des données à caractère personnel lorsque le traitement est susceptible d'engendrer un risque élevé pour les droits et libertés des personnes concernées (traitement de catégories particulières de données à caractère personnel telles que définies dans le RGPD, traitement de données à grande échelle, etc.). Cette analyse doit comporter une évaluation juridique du respect des principes et droits fondamentaux, ainsi qu'une étude plus technique des mesures techniques mises en oeuvre pour protéger les personnes des risques pour leur vie privée.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Séparation des tâches",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit identifier les risques associés à des cumuls de responsabilités ou de tâches, les prendre en compte dans l'appréciation des risques et mettre en oeuvre des mesures de réduction de ces risques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Relations avec les autorités",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Il est recommandé que le prestataire mette en place des relations appropriées avec les autorités compétentes en matière de sécurité de l'information et de données à caractère personnel et, le cas échéant, avec les autorités sectorielles selon la nature des informations confiées par le commanditaire au prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Relations avec les groupes de travail spécialisés",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Il est recommandé que le prestataire entretienne des contacts appropriés avec des groupes de spécialistes ou des sources reconnues, notamment pour prendre en compte de nouvelles menaces et les mesures de sécurité appropriées pour les contrer.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "La sécurité de l'information dans la gestion de projet",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter une estimation des risques préalablement à tout projet pouvant avoir un impact sur le service, et ce quelle que soit la nature du projet.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Dans la mesure où un projet affecte ou est susceptible d'affecter le niveau de sécurité du service, le prestataire doit avertir le commanditaire et l'informer par écrit des impacts potentiels, des mesures mises en place pour réduire ces impacts ainsi que des risques résiduels le concernant.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 3,
+    "libelle": "Sécurité des ressources humaines",
+    "abrege": "Sécurité des RH",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Sélection des candidats",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de vérification des informations concernant son personnel conforme aux lois et règlements en vigueur. Ces vérifications s'appliquent à toute personne impliquée dans la fourniture du service et doivent être proportionnelles à la sensibilité des informations du commanditaire confiées au prestataire ainsi qu'aux risques identifiés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Conditions d'embauche",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit disposer d'une charte d'éthique intégrée au règlement intérieur, prévoyant notamment que les prestations sont réalisées avec loyauté, discrétion, impartialité et dans des conditions de confidentialité des informations traitées.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit disposer d'une charte d'éthique intégrée au règlement intérieur, prévoyant notamment que les personnels ne recourent qu'aux méthodes, outils et techniques validés par le prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit disposer d'une charte d'éthique intégrée au règlement intérieur, prévoyant notamment que les personnels s'engagent à ne pas divulguer d'informations à un tiers, même anonymisées et décontextualisées, obtenues ou générées dans le cadre de la prestation sauf autorisation formelle et écrite du commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit disposer d'une charte d'éthique intégrée au règlement intérieur, prévoyant notamment que les personnels s'engagent à signaler au prestataire tout contenu manifestement illicite découvert pendant la prestation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit disposer d'une charte d'éthique intégrée au règlement intérieur, prévoyant notamment que les personnels s'engagent à respecter la législation et la réglementation nationale en vigueur et les bonnes pratiques liées à leurs activités.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit faire signer la charte d'éthique à l'ensemble des personnes impliquées dans la fourniture du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit, sur demande d'un commanditaire, lui rendre accessible le règlement intérieur et la charte d'éthique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Sensibilisation, apprentissage et formations à la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit sensibiliser à la sécurité de l'information et aux risques liés à la protection des données l'ensemble des personnes impliquées dans la fourniture du service. Il doit leur communiquer les mises à jour des politiques et procédures pertinentes dans le cadre de leurs missions.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un plan de formation concernant la sécurité de l'information adapté au service et aux missions des personnels.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le responsable de la sécurité des systèmes d'information du prestataire doit valider formellement le plan de formation concernant la sécurité de l'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Processus disciplinaire",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un processus disciplinaire applicable à l'ensemble des personnes impliquées dans la fourniture du service ayant enfreint la politique de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit, sur demande d'un commanditaire, lui rendre accessible les sanctions encourues en cas d'infraction à la politique de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Rupture, terme ou modification du contrat de travail",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit définir et attribuer les rôles et les responsabilités relatives à la rupture, au terme ou à la modification de tout contrat avec une personne impliquée dans la fourniture du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 4,
+    "libelle": "Gestion des actifs",
+    "abrege": "Gestion des actifs",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Inventaire et propriété des actifs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "a) Le prestataire doit tenir à jour l'inventaire de l'ensemble des équipements mettant en oeuvre le service. Cet inventaire doit préciser pour chaque équipement:\n- les informations d'identification de l'équipement (nom, adresse IP, adresse MAC, etc.);\n- la fonction de l'équipement;\n- le modèle de l'équipement;\n- la localisation de l'équipement;\n- le propriétaire de l'équipement;\n- le besoin de sécurité des informations (au sens du chapitre 8.3).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit tenir à jour l'inventaire de l'ensemble des logiciels mettant en oeuvre le service. Cet inventaire doit identifier pour chaque logiciel, sa version et les équipements sur lesquels le logiciel est installé.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit s'assurer de la validité des licences des logiciels tout au long de la prestation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Restitution des actifs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de restitution des actifs permettant de s'assurer que chaque personne impliquée dans la fourniture du service restitue l'ensemble des actifs en sa possession à la fin de sa période d'emploi ou de son contrat.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Identification des besoins de sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit identifier les différents besoins de sécurité des informations relatives au service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Lorsque le commanditaire confie au prestataire des données soumises à des contraintes légales, réglementaires ou sectorielles spécifiques, le prestataire doit identifier les besoins de sécurité spécifiques associés à ces contraintes.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Marquage et manipulation de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Il est recommandé que le prestataire documente et mette en oeuvre une procédure pour le marquage et la manipulation de toutes les informations participant à la délivrance du service, conformément à son besoin de sécurité défini au chapitre 8.3.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Gestion des supports amovibles",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure pour la gestion des supports amovibles, conformément au besoin de sécurité défini au chapitre 8.3.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Lorsque des supports amovibles sont utilisés sur l'infrastructure technique ou pour des tâches d'administration, ces supports doivent être dédiés à un usage.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 5,
+    "libelle": "Contrôle d'accès et gestion des identités",
+    "abrege": "Gestion des accès",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Politiques et contrôle d'accès",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une politique de contrôle d'accès sur la base du résultat de son appréciation des risques et du partage des responsabilités.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit réviser annuellement la politique de contrôle d'accès et à chaque changement majeur pouvant avoir un impact sur le service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Enregistrement et désinscription des utilisateurs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure d'enregistrement et de désinscription des utilisateurs s'appuyant sur une interface de gestion des comptes et des droits d'accès. Cette procédure doit indiquer quelles données doivent être supprimées au départ d'un utilisateur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit attribuer des comptes nominatifs lors de l'enregistrement des utilisateurs placés sous sa responsabilité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit mettre en oeuvre des moyens permettant de s'assurer que la désinscription d'un utilisateur entraîne la suppression de tous ses accès aux ressources du système d'information du service, ainsi que la suppression de ses données conformément à la procédure d'enregistrement et de désinscription (voir exigence 9.2 a)).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Gestion des droits d'accès",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant d'assurer l'attribution, la modification et le retrait de droits d'accès aux ressources du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre à la disposition du commanditaire les outils et les moyens qui permettent une différenciation des rôles des utilisateurs du service, par exemple suivant leur rôle fonctionnel.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit tenir à jour l'inventaire des utilisateurs sous sa\nresponsabilité disposant de droits d'administration sur les ressources du système\nd'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit être en mesure de fournir, pour une ressource donnée mettant en oeuvre le service, la liste de tous les utilisateurs y ayant accès, qu'ils soient sous la responsabilité du prestataire ou du commanditaire ainsi que les droits d'accès qui leurs ont été attribués.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit être en mesure de fournir, pour un utilisateur donné, qu'ils soient sous la responsabilité du prestataire ou du commanditaire, la liste de tous ses droits d'accès sur les différents éléments du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit définir une liste de droits d'accès incompatibles entre eux. Il doit s'assurer, lors de l'attribution de droits d'accès à un utilisateur qu'il ne possède pas de droits d'accès incompatibles entre eux au titre de la liste précédemment établie.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit inclure dans la procédure de gestion des droits d'accès les actions de révocation ou de suspension des droits de tout utilisateur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Revue des droits d'accès utilisateurs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit réviser annuellement les droits d'accès des utilisateurs sur son périmètre de responsabilité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre à disposition du commanditaire un outil facilitant la revue des droits d'accès des utilisateurs placés sous la responsabilité de ce dernier.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit réviser trimestriellement la liste des utilisateurs sur son périmètre de responsabilité pouvant utiliser les comptes techniques mentionnés dans l'exigence 9.2 b).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Gestion des authentifications des utilisateurs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit formaliser et mettre en oeuvre des procédures de gestion de l'authentification des utilisateurs.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Les procédures de gestion de l'authentification des utilisateurs doivent notamment porter sur la gestion des moyens d'authentification (émission et réinitialisation de mot de passe, mise à jour des CRL et import des certificats racines en cas d'utilisation de certificats, etc.).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Les procédures de gestion de l'authentification des utilisateurs doivent notamment porter sur la mise en place des moyens permettant une authentification à multiples facteurs.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Les procédures de gestion de l'authentification des utilisateurs doivent notamment porter sur les systèmes qui génèrent des mots de passe ou vérifient leur robustesse, lorsqu'une authentification par mot de passe est utilisée. Ils doivent suivre les recommandations de la note technique de l'ANSSI \"Recommandations de sécurité relatives aux mots de passe\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Tout mécanisme d'authentification doit prévoir le blocage d'un compte après un nombre limité de tentatives infructueuses.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Dans le cadre d'un service SaaS, le prestataire doit proposer au commanditaire des moyens d'authentification à multiples facteurs pour l'accès des utilisateurs finaux.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Lorsque des comptes techniques, non nominatifs, sont nécessaires, le prestataire doit mettre en place des mesures obligeant les utilisateurs à s'authentifier avec leur compte nominatif avant de pouvoir accéder à ces comptes techniques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 6,
+        "libelle": "Accès aux interfaces d'administration",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Les comptes d'administration sous la responsabilité du prestataire doivent être gérés à l'aide d'outils et d'annuaires distincts de ceux utilisés pour la gestion des comptes utilisateurs placés sous la responsabilité du commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Les interfaces d'administration mises à disposition du commanditaire doivent être distinctes des interfaces d'administration utilisées par le prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Les interfaces d'administration mises à disposition du commanditaire ne doivent permettre aucune connexion avec des comptes d'administrateurs sous la responsabilité du prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Les interfaces d'administration utilisées par le prestataire ne doivent pas être accessibles à partir d'un réseau public et ainsi ne doivent permettre aucune connexion des utilisateurs sous la responsabilité du commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Si des interfaces d'administration sont mises à disposition du commanditaire avec un accès via un réseau public, les flux d'administration doivent être authentifiés et chiffrés avec des moyens en accord avec les exigences du chapitre 10.2.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit mettre en place un système d'authentification à double facteur pour l'accès:\n- aux interfaces d'administration utilisées par le prestataire;\n- aux interfaces d'administration dédiées aux commanditaires.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Dans le cadre d'un service SaaS, les interfaces d'administration mises à disposition des commanditaires doivent être différenciées des interfaces permettant l'accès des utilisateurs finaux.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 8,
+            "libelle": "Dès lors qu'une interface d'administration est accessible depuis un réseau public, le processus d'authentification doit avoir lieu avant toute interaction entre l'utilisateur et l'interface en question.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 9,
+            "libelle": "Lorsque le prestataire utilise un service de type IaaS comme socle d'un autre type de service (PaaS ou SaaS), les ressources affectées à l'usage du prestataire ne doivent en aucun cas être accessibles via l'interface publique mise à disposition des autres commanditaires du service IaaS.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 10,
+            "libelle": "Lorsque le prestataire utilise un service de type PaaS comme socle d'un autre type de service (typiquement SaaS), les ressources affectées à l'usage du prestataire ne doivent en aucun cas être accessibles via l'interface publique mise à disposition des autres commanditaires du service PaaS.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 7,
+        "libelle": "Restriction des accès à l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit mettre en oeuvre des mesures de cloisonnement appropriées entre ses commanditaires.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre en oeuvre des mesures de cloisonnement appropriées entre le système d'information du service et ses autres systèmes d'information (bureautique, informatique de gestion, gestion technique du bâtiment, contrôle d'accès physique, etc.).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit concevoir, développer, configurer et déployer le système d'information du service en assurant au moins un cloisonnement entre d'une part l'infrastructure technique et d'autre part les équipements nécessaires à l'administration des services et des ressources qu'elle héberge.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 6,
+    "libelle": "Cryptologie",
+    "abrege": "Cryptologie",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Chiffrement des données stockées",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit définir et mettre en oeuvre un mécanisme de chiffrement empêchant la récupération des données du commanditaire en cas de réallocation d'une ressource ou de récupération du support physique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Dans le cas d'un service IaaS, cet objectif pourra par exemple être atteint:\n- par un chiffrement du disque ou du système de fichier, lorsque le protocole d'accès en mode fichiers garantit que seuls des blocs vides peuvent être alloués (par exemple stockage de type NAS dans lequel un bloc physique n'est effectivement affecté qu'au moment de l'écriture),\n- par un chiffrement par volume dans le cas d'un accès en mode bloc (par exemple stockage de type SAN ou stockage local), avec au moins une clé par commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Dans le cas d'un service PaaS ou SaaS, cet objectif pourra être atteint en utilisant un chiffrement applicatif dans le périmètre du prestataire, avec au moins une clé par commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit utiliser une méthode de chiffrement des données respectant les règles concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Il est recommandé d'utiliser une méthode de chiffrement des données respectant les recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit mettre en place un chiffrement des données sur les supports amovibles et les supports de sauvegarde amenés à quitter le périmètre de sécurité physique du système d'information du service, en fonction du besoin de sécurité des données.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Chiffrement des flux",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Lorsque le prestataire met en oeuvre un mécanisme de chiffrement des flux réseau, celui-ci doit respecter les règles concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Lorsque le prestataire met en oeuvre un mécanisme de chiffrement des flux réseau, il est recommandé que celui-ci respecte les recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Si le protocole TLS est mis en oeuvre, le prestataire doit appliquer les recommandations de la note technique de l'ANSSI \"Recommandations de sécurité relatives a TLS\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Si le protocole IPsec est mis en oeuvre, le prestataire doit appliquer les recommandations de la note technique de l'ANSSI \"Recommandations de sécurité relatives a IPsec\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Si le protocole SSH est mis en oeuvre, le prestataire doit appliquer les recommandations de la note technique de l'ANSSI \"Recommandations pour un usage sécurisé d'(Open)SSH\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Hachage des mots de passe",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire ne doit stocker que l'empreinte des mots de passe des utilisateurs et des comptes techniques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre en oeuvre une fonction de hachage respectant les règles concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Il est recommandé que le prestataire mette en oeuvre une fonction de hachage respectant les recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit générer les empreintes des mots de passe avec une fonction de hachage associée à l'utilisation d'un sel cryptographique respectant les règles concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Non répudiation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Lorsque le prestataire met en oeuvre un mécanisme de signature électronique, celui-ci doit respecter les règles concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Lorsque le prestataire met en oeuvre un mécanisme de signature électronique, il est recommandé que celui-ci respecte les recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B1).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Gestion des secrets",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit mettre en oeuvre des clés cryptographiques respectant les règles concernant la gestion des clés utilisées dans les mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B2).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Il est recommandé que le prestataire mette en oeuvre des clés cryptographiques respectant les recommandations concernant la gestion des clés utilisées dans les mécanismes cryptographiques du Référentiel Général de Sécurité (Annexe B2).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit protéger l'accès aux clés cryptographiques et autres secrets utilisés pour le chiffrement des données par un moyen adapté: conteneur de sécurité (logiciel ou matériel) ou support disjoint.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit protéger l'accès aux clés cryptographiques et autres secrets utilisés pour les tâches d'administration par un conteneur de sécurité adapté, logiciel ou matériel.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 7,
+    "libelle": "Sécurité physique et environnementale",
+    "abrege": "Sécurité physique",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Périmètres de sécurité physique",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des périmètres de sécurité, incluant le marquage des zones et les différents moyens de limitation et de contrôle des accès.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit distinguer des zones publiques, des zones privées et des zones sensibles.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Périmètres de sécurité physique - Zones publiques",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Les zones publiques sont accessibles à tous dans les limites de la propriété du prestataire. Le prestataire ne doit héberger aucune ressource dévolue au service ou permettant d'accéder à des composantes de celui-ci dans les zones publiques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Périmètres de sécurité physique - Zones privées",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Les zones privées peuvent héberger:\n- les plateformes et moyens de développement du service;\n- les postes d'administration, d'exploitation et de supervision;\n- les locaux à partir desquels le prestataire opère.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Périmètres de sécurité physique - Zones sensibles",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Les zones sensibles sont réservées à l'hébergement du système d'information de production du service hors postes d'administration, d'exploitation et de supervision.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Contrôle d'accès physique - Zones privées",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit protéger les zones privées contre les accès non autorisés. Pour ce faire, il doit mettre en oeuvre un contrôle d'accès physique reposant au moins sur un facteur personnel: la connaissance d'un secret, la détention d'un objet ou la biométrie.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Il est recommandé que le prestataire respecte les recommandations du guide ANSSI \"Sécurité des technologies sans contact pour le contrôle des accès physiques\" pour mettre en oeuvre du contrôle d'accès physique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit définir et documenter des mesures d'accès physique dérogatoires en cas d'urgence.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit afficher à l'entrée des zones privées un avertissement relatif aux limites et conditions d'accès à ces zones.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit définir et documenter les plages horaires et conditions d'accès aux zones privées en fonction des profils des intervenants.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les moyens permettant de s'assurer que les visiteurs sont systématiquement accompagnés par le prestataire lors de leurs accès et séjours en zone privée. Le prestataire doit conserver une trace de l'identité des visiteurs conformément à la législation et réglementation en vigueur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mécanismes de surveillance et de détection des accès non autorisés aux zones privées.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 6,
+        "libelle": "Contrôle d'accès physique - Zones sensibles",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit protéger les zones sensibles contre les accès non autorisés. Pour ce faire, il doit mettre en oeuvre un contrôle d'accès physique reposant au moins sur deux facteurs personnels: la connaissance d'un secret, la détention d'un objet ou la biométrie.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Il est recommandé que le prestataire respecte les recommandations du guide ANSSI \"Sécurité des technologies sans contact pour le contrôle des accès physiques\" pour la mise en oeuvre du contrôle d'accès physique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit définir et documenter des mesures d'accès physique dérogatoires en cas d'urgence.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit afficher à l'entrée des zones sensibles un avertissement relatif aux limites et conditions d'accès à ces zones.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit définir et documenter les plages horaires et conditions d'accès aux zones sensibles en fonction des profils des intervenants.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les moyens permettant de s'assurer que les visiteurs sont systématiquement accompagnés par le prestataire lors de leurs accès et séjours en zone sensible. Le prestataire doit conserver une trace de l'identité des visiteurs conformément à la législation et réglementation en vigueur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mécanismes de surveillance et de détection des accès non autorisés aux zones sensibles.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 8,
+            "libelle": "Le prestataire doit mettre en place une journalisation des accès physiques aux zones sensibles. Il doit effectuer une revue de ces journaux au moins mensuellement.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 9,
+            "libelle": "Le prestataire doit mettre en oeuvre les moyens garantissant qu'aucun accès direct n'existe entre une zone publique et une zone sensible.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 7,
+        "libelle": "Protection contre les menaces extérieures et environnementales",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les moyens permettant de minimiser les risques inhérents aux sinistres physiques (incendie, dégât des eaux, etc.) et naturels (risques climatiques, inondations, séismes, etc.).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les mesures permettant de limiter les risques de départ et de propagation de feu ainsi que les risques de dégât des eaux.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les mesures permettant de prévenir et limiter les conséquences d'une coupure d'alimentation électrique et permettre une reprise du service conforme aux exigences de disponibilité du service définies dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les moyens permettant de maintenir des conditions de température et d'humidité adaptées aux équipements. De plus, il doit mettre en oeuvre des mesures permettant de prévenir les pannes de climatisation et d'en limiter les conséquences.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des contrôles et tests réguliers des équipements de détection et de protection physique.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 8,
+        "libelle": "Travail dans les zones privées et sensibles",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit intégrer les éléments de sécurité physique dans la politique de sécurité et l'appréciation des risques conformément au niveau de sécurité requis par la catégorie de la zone.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des procédures relatives au travail en zones privées et sensibles. Il doit communiquer ces procédures aux intervenants concernés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 9,
+        "libelle": "Zones de livraison et de chargement",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit isoler les points d'accès de ces zones vers les zones privées et sensibles, de façon à éviter les accès non autorisés, ou à défaut, implémenter des mesures compensatoires permettant d'assurer le même niveau de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 10,
+        "libelle": "Sécurité du câblage",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mesures permettant de protéger le câblage électrique et de télécommunication des dommages physiques et des possibilités d'interception.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit établir et tenir à jour un plan de câblage.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Il est recommandé que le prestataire mette en oeuvre des mesures permettant d'identifier les câbles (par exemple code couleur, étiquette, etc.) afin d'en faciliter l'exploitation et limiter les erreurs de manipulation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 11,
+        "libelle": "Maintenance des matériels",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mesures permettant de s'assurer que les conditions d'installation, de maintenance et d'entretien des équipements du système d'information du service hébergés en zones privés et sensibles sont compatibles avec les exigences de confidentialité et de disponibilité du service définies dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit souscrire des contrats de maintenance permettant de disposer des mises à jour de sécurité des logiciels installés sur les équipements du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit s'assurer que les supports ne peuvent être retournés à un tiers que si les données du commanditaire y sont stockées chiffrées conformément au chapitre 10.1 ou ont préalablement été détruites à l'aide d'un mécanisme d'effacement sécurisé par réécriture de motifs aléatoires.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mesures permettant de s'assurer que les conditions d'installation, de maintenance et d'entretien des équipements techniques annexes (alimentation électrique, climatisation, incendie, etc.) sont compatibles avec les exigences de disponibilité du service définies dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 12,
+        "libelle": "Sortie des actifs",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de transfert hors site de données du commanditaire, équipements et logiciels. Cette procédure doit nécessiter que la direction du prestataire donne son autorisation écrite. Dans tous les cas, le prestataire doit mettre en oeuvre les moyens permettant de garantir que le niveau de protection en confidentialité et en intégrité des actifs durant leur transport est équivalent à celui sur site.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 13,
+        "libelle": "Recyclage sécurisé du matériel",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des moyens permettant d'effacer de manière sécurisée par réécriture de motifs aléatoires tout support de données mis à disposition d'un commanditaire. Si l'espace de stockage est chiffré dans le cadre de l'exigence 10.1 a), l'effacement peut être réalisé par un effacement sécurisé de la clé de chiffrement.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 14,
+        "libelle": "Matériel en attente d'utilisation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de protection du matériel en attente d'utilisation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 8,
+    "libelle": "Sécurité liée à l'exploitation",
+    "abrege": "Sécurité de l'exploitation",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Procédures d'exploitation documentées",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter les procédures d'exploitation, les tenir à jour et les rendre accessibles au personnel concerné.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Gestion des changements",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de gestion des changements apportés aux systèmes et moyens de traitement de l'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant, en cas d'opérations réalisées par le prestataire et pouvant avoir un impact sur la sécurité ou la disponibilité du service, de communiquer au plus tôt à l'ensemble de ses commanditaires les informations suivantes:\n- la date et l'heure programmées du début et de la fin des opérations;\n- la nature des opérations;\n- les impacts sur la sécurité ou la disponibilité du service;\n- le contact au sein du prestataire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Dans le cadre d'un service PaaS, le prestataire doit informer au plus tôt le commanditaire de toute modification à venir sur des éléments logiciels sous sa responsabilité dès lors que la compatibilité complète ne peut être assurée.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Dans le cadre d'un service SaaS, le prestataire doit informer au plus tôt le commanditaire de toute modification à venir sur les éléments du service dès lors qu'elle est susceptible d'occasionner une perte de fonctionnalité pour le commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Séparation des environnements de développement, de test et d'exploitation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les mesures permettant de séparer physiquement les environnements liés à la production du service des autres environnements, dont les environnements de développement.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Mesures contre les codes malveillants",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les mesures de détection, de prévention et de restauration pour se protéger des codes malveillants. Le périmètre d'application de cette exigence sur le système d'information du service doit nécessairement contenir les postes utilisateurs sous la responsabilité du prestataire et les flux entrants sur ce même système d'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une sensibilisation de ses employés aux risques liés aux codes malveillants et aux bonnes pratiques pour réduire l'impact d'une infection.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Sauvegarde des informations",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une politique de sauvegarde et de restauration des données sous sa responsabilité dans le cadre du service. Cette politique doit prévoir une sauvegarde quotidienne de l'ensemble des données (informations, logiciels, configurations, etc.) sous la responsabilité du prestataire dans le cadre du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des mesures de protection des sauvegardes conformément à la politique de contrôle d'accès. Cette politique doit prévoir une revue mensuelle des traces d'accès aux sauvegardes.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de tester régulièrement la restauration des sauvegardes.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit localiser les sauvegardes à une distance suffisante des équipements principaux en cohérence avec les résultats de l'appréciation de risques et permettant de faire face à des sinistres majeurs. Les sauvegardes sont assujetties aux mêmes exigences de localisation que les données opérationnelles. Le ou les sites de sauvegarde sont assujettis aux mêmes exigences de sécurité que le site principal. Les communications entre site principal et site de sauvegarde doivent être protégées par chiffrement.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 6,
+        "libelle": "Journalisation des événements",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "a) Le prestataire doit documenter et mettre en oeuvre une politique de journalisation incluant au minimum les éléments suivants:\n- la liste des sources de collecte;\n- la liste des événements à journaliser par source;\n- l'objet de la journalisation par événement;\n- la fréquence de la collecte et base de temps utilisée;\n- la durée de rétention locale et centralisée;\n- les mesures de protection des journaux (dont chiffrement et duplication);\n- la localisation des journaux.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit générer et collecter les événements suivants:\n- les activités des utilisateurs liées à la sécurité de l'information;\n- la modification des droits d'accès dans le périmètre de sa responsabilité;\n- les événements issus des mécanismes de lutte contre les codes malveillants (voir 12.4);\n- les exceptions;\n- les défaillances;\n- tout autre événement lié à la sécurité de l'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit conserver les événements issus de la journalisation pendant une durée minimale de six mois sous réserve du respect des exigences légales et réglementaires.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit fournir, sur demande d'un commanditaire, l'ensemble des événements le concernant.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Il est recommandé que le système de journalisation mis en place par le prestataire respecte les recommandations de la note technique de l'ANSSI \"Recommandations de sécurité pour la mise en oeuvre d'un système de journalisation\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 7,
+        "libelle": "Protection de l'information journalisée",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit protéger les équipements de journalisation et les événements journalisés contre les atteintes à leur disponibilité, intégrité ou confidentialité, conformément au chapitre 3.2 de la note technique de l'ANSSI \"Recommandations de sécurité pour la mise en oeuvre d'un système de journalisation\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit gérer le dimensionnement de l'espace de stockage de l'ensemble des équipements hébergeant une ou plusieurs sources de collecte afin de permettre la conservation locale des événements journalisés prévue par la politique de journalisation des événements. Cette gestion du dimensionnement doit prendre en compte les évolutions du système d'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit transférer les événements journalisés en assurant leur protection en confidentialité et en intégrité, sur un ou plusieurs serveurs centraux dédiés et doit les stocker sur une machine physique distincte de celle qui les a générés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit mettre en place une sauvegarde des événements collectés suivant une politique adaptée.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit exécuter les processus de journalisation et de collecte des évènements avec des comptes disposant de privilèges nécessaires et suffisants et doit limiter l'accès aux événements journalisés conformément à la politique de contrôle d'accès.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 8,
+        "libelle": "Synchronisation des horloges",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une synchronisation des horloges de l'ensemble des équipements sur une ou plusieurs sources de temps internes cohérentes entre elles. Ces sources pourront elles-mêmes être synchronisées sur plusieurs sources fiables externes, sauf pour les réseaux isolés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre en place l'horodatage de chaque événement journalisé.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 9,
+        "libelle": "Analyse et corrélation des événements",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une infrastructure permettant l'analyse et la corrélation des événements enregistrés par le système de journalisation afin de détecter les événements susceptibles d'affecter la sécurité du système d'information du service, en temps réel ou a posteriori pour des événements remontant jusqu'à six mois.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Il est recommandé de s'appuyer sur le référentiel d'exigences des prestataires de détection d'incidents de sécurité [PDIS] pour la mise en place et l'exploitation de l'infrastructure d'analyse et de corrélation des événements.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit acquitter les alarmes remontées par l'infrastructure d'analyse et de corrélation des événements au moins quotidiennement.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 10,
+        "libelle": "Installation de logiciels sur des systèmes en exploitation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de contrôler l'installation de logiciels sur les équipements du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de gestion de la configuration des environnements logiciels mis à la disposition du commanditaire, notamment pour leur maintien en condition de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 11,
+        "libelle": "Gestion des vulnérabilités techniques",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un processus de veille permettant de gérer les vulnérabilités techniques des logiciels et des systèmes utilisés dans le système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit évaluer son exposition à ces vulnérabilités en les incluant dans l'appréciation des risques et appliquer les mesures de traitement du risque adaptées.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 12,
+        "libelle": "Administration",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure obligeant les administrateurs sous sa responsabilité à utiliser des terminaux dédiés pour la réalisation exclusive des tâches d'administration, en accord avec le chapitre 4.1 intitulé \"Maîtrise du poste d'administration\" de la note technique de l'ANSSI \"Recommandations relatives a l'administration sécurisée des systèmes d'information\". Il doit les maîtriser et les maintenir à jour.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit mettre en place des mesures de durcissement de la configuration des terminaux utilisés pour les tâches d'administration, notamment celles du chapitre 4.3 intitulé \"Mesures de sécurisation du poste d'administration\" de la note technique de l'ANSSI \"Recommandations relatives a l'administration sécurisée des systèmes d'information\".",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Lorsque le prestataire autorise une situation de mobilité pour les administrateurs sous sa responsabilité, il doit l'encadrer par une politique documentée. La solution mise en oeuvre doit assurer que le niveau de sécurité de cette situation de mobilité est au moins équivalent au niveau de sécurité hors situation de mobilité. Cette solution doit notamment inclure:\n- l'utilisation d'un tunnel chiffré, non débrayable et non contournable, pour l'ensemble des flux;\n- le chiffrement intégral du disque.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 9,
+    "libelle": "Sécurité des communications",
+    "abrege": "Sécurité des communications",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Cartographie du système d'information.",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit établir et tenir à jour une cartographie du système d'information du service, en lien avec l'inventaire des actifs, comprenant au minimum les éléments suivants:\n- la liste des ressources matérielles ou virtualisées;\n- les noms et fonctions des applications, supportant le service;\n- le schéma d'architecture réseau au niveau 3 du modèle OSI sur lequel les points névralgiques sont identifiés:\n\t- les points d'interconnexions, notamment avec les réseaux tiers et publics,\n\t- les réseaux, sous-réseaux, notamment les réseaux d'administration,\n\t- les équipements assurant des fonctions de sécurité (filtrage, authentification, chiffrement, etc.),\n\t- les serveurs hébergeant des données ou assurant des fonctions sensibles;\n- la matrice des flux réseau autorisés en précisant:\n\t- leur description technique (services, protocoles et ports);\n\t- la justification métier ou d'infrastructure;\n\t- le cas échéant, lorsque des services, protocoles ou ports réputés non sûrs sont utilisés, les mesures compensatoires mises en place, dans la logique de défense en profondeur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit réviser au moins annuellement la cartographie.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Cloisonnement des réseaux",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre, pour le système d'information du service, les mesures de cloisonnement (logique, physique ou par chiffrement) pour séparer les flux réseau selon:\n- la sensibilité des informations transmises;\n- la nature des flux (production, administration, supervision, etc.);\n- le domaine d'appartenance des flux (des commanditaires – avec distinction par\ncommanditaire ou ensemble de commanditaires, du prestataire, des tiers, etc.);\n- le domaine technique (traitement, stockage, etc.).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit cloisonner, physiquement ou par chiffrement, tous les flux de données internes au système d'information du service vis-à-vis de tout autre système d'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Dans le cas où le réseau d'administration de l'infrastructure technique ne fait pas l'objet d'un cloisonnement physique, les flux d'administration doivent transiter dans un tunnel chiffré.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit mettre en place et configurer un pare-feu applicatif pour protéger les interfaces d'administration destinées à ses commanditaires et exposées sur un réseau public.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit mettre en oeuvre sur l'ensemble des interfaces d'administration et de supervision de l'infrastructure technique du service un mécanisme de filtrage n'autorisant que les connexions légitimes identifiées dans la matrice des flux autorisés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Surveillance des réseaux",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit disposer une ou plusieurs sondes de détection d'incidents de sécurité sur le système d'information du service. Ces sondes doivent notamment permettre la supervision de chacune des interconnexions du système d'information du service avec des systèmes d'information tiers et des réseaux publics. Ces sondes doivent être des sources de collecte pour l'infrastructure d'analyse et de corrélation des événements (voir chapitre 12.9).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 10,
+    "libelle": "Acquisition, développement et maintenance des systèmes d'information",
+    "abrege": "Développement et maintenance",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Politique de développement sécurisé",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des règles de développement sécurisé des logiciels et des systèmes, et les appliquer aux développements internes.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une formation adaptée en développement sécurisé aux employés concernés.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Procédures de contrôle des changements de système",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de contrôle des changements apportés au système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de validation des changements apportés au système d'information du service sur un environnement de pré-production avant leur mise en production.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit conserver un historique des versions des logiciels et des systèmes (développements internes ou externes, produits commerciaux) mis en oeuvre pour permettre de reconstituer, le cas échéant dans un environnement de test, un environnement complet tel qu'il était mis en oeuvre à une date donnée. La durée de conservation de cet historique doit être en accord avec celle des sauvegardes.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Revue technique des applications après changement apporté à la plateforme d'exploitation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de tester, préalablement à leur mise en production, l'ensemble des applications afin de vérifier l'absence de tout effet indésirable sur l'activité ou sur la sécurité du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Environnement de développement sécurisé",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit mettre en oeuvre un environnement sécurisé de développement permettant de gérer l'intégralité du cycle de développement du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit prendre en compte les environnements de développement dans l'appréciation des risques et en assurer la protection conformément au présent document.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Développement externalisé",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de superviser et de contrôler l'activité de développement externalisé des logiciels et des systèmes. Cette procédure doit s'assurer que l'activité de développement externalisé soit conforme à la politique de développement sécurisé du prestataire et permette d'atteindre un niveau de sécurité du développement externe équivalent à celui d'un développement interne.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 6,
+        "libelle": "Test de la sécurité et conformité du système",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit soumettre les systèmes d'information, nouveaux ou mis à jour, à des tests de conformité et de fonctionnalité de sécurité pendant le développement. Il doit documenter et mettre en oeuvre une procédure de test qui identifie:\n- les tâches à réaliser;\n- les données d'entrée;\n- les résultats attendus en sortie.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 7,
+        "libelle": "Protection des données de test",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant d'assurer l'intégrité des données de tests utilisés en pré-production.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Si le prestataire souhaite utiliser des données du commanditaire issues de la production pour réaliser des tests, le prestataire doit préalablement obtenir l'accord du commanditaire et les anonymiser. Le prestataire doit assurer la confidentialité des données lors de leur anonymisation.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 11,
+    "libelle": "Relations avec les tiers",
+    "abrege": "Gestion des tiers",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Identification des tiers",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit tenir à jour une liste de l'ensemble des tiers participant à la mise en oeuvre du service (hébergeur, développeur, intégrateur, archiveur, sous-traitant opérant sur site ou à distance, fournisseurs de climatisation, etc.). Cette liste doit être exhaustive, préciser la contribution du tiers au service et au traitement de données à caractère personnel et tenir compte des cas de sous-traitance à plusieurs niveaux.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit tenir à disposition du commanditaire la liste de l'ensemble des tiers qui peuvent accéder aux données et l'informer de tout changement de sous-traitants au sens de l'article 28 du RGPD afin que le commanditaire puisse émettre des objections à cet égard.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "La sécurité dans les accords conclus avec les tiers",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit exiger des tiers participant à la mise en oeuvre du service, dans leur contribution au service, un niveau de sécurité au moins équivalent à celui qu'il s'engage à maintenir dans sa propre politique de sécurité. Il doit le faire au travers d'exigences, adaptées à chaque tiers et à sa contribution au service, dans les cahiers des charges ou dans les clauses de sécurité des accords de partenariat. Le prestataire doit inclure ces exigences dans les contrats conclus avec les tiers.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit contractualiser, avec chacun des tiers participant à la mise en oeuvre du service, des clauses d'audit permettant à un organisme de qualification de vérifier que ces tiers respectent les exigences du présent document.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit définir et attribuer les rôles et les responsabilités relatives à la modification ou à la fin du contrat le liant à un tiers participant à la mise en oeuvre du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Surveillance et revue des services des tiers",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de contrôler régulièrement les mesures mises en place par les tiers participant à la mise en oeuvre du service pour respecter les exigences du présent document.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Gestion des changements apportés dans les services des tiers",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure de suivi des changements apportés par les tiers participant à la mise en oeuvre du service susceptibles d'affecter le niveau de sécurité du système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Dans la mesure où un changement de tiers participant à la mise en oeuvre du service affecte le niveau de sécurité du service, le prestataire doit en informer l'ensemble des commanditaires sans délais et mettre en oeuvre les mesures permettant de rétablir le niveau de sécurité précédent.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Engagements de confidentialité",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de réviser au moins annuellement les exigences en matière d'engagements de confidentialité ou de non-divulgation vis-à-vis des tiers participant à la mise en oeuvre du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 12,
+    "libelle": "Gestion des incidents liés à la sécurité de l'information",
+    "abrege": "Gestion des incidents",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Responsabilités et procédures",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant d'apporter des réponses rapides et efficaces aux incidents de sécurité. Ces procédures doivent définir les moyens et délais de communication des incidents de sécurité à l'ensemble des commanditaires concernés ainsi que le niveau de confidentialité exigé pour cette communication.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit informer ses employés et l'ensemble des tiers participant à la mise en oeuvre du service de cette procédure.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit documenter toute violation de données à caractère personnel et en informer son client. La violation doit être notifiée à la CNIL si elle présente un risque pour les droits et libertés des personnes concernées. Elle doit faire l'objet d'une information auprès des personnes concernées lorsque le risque pour leur vie privée est élevé.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Signalements liés à la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure exigeant de ses employés et des tiers participant à la mise en oeuvre du service qu'ils lui rendent compte de tout incident de sécurité, avéré ou suspecté ainsi que de toute faille de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant à l'ensemble des commanditaires de signaler tout incident de sécurité, avéré ou suspecté et toute faille de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit communiquer sans délai aux commanditaires les incidents de sécurité et les préconisations associées pour en limiter les impacts. Il doit permettre au commanditaire de choisir les niveaux de gravité des incidents pour lesquels il souhaite être informé.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit communiquer les incidents de sécurité aux autorités compétentes conformément aux exigences légales et réglementaires en vigueur.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Appréciation des événements liés à la sécurité de l'information et prise\nde décision",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit apprécier les événements liés à la sécurité de l'information et décider s'il faut les qualifier en incidents de sécurité. Pour l'appréciation, il doit s'appuyer sur une ou plusieurs échelles (estimation, évaluation, etc.) partagées avec le commanditaire. Note: Les incidents de sécurité incluent les violations de données à caractère personnel.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit utiliser une classification permettant d'identifier clairement les incidents de sécurité touchant des données relatives aux commanditaires, conformément aux résultats de l'appréciation des risques. Cette classification doit inclure les violations de données à caractère personnel.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Réponse aux incidents liés à la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit traiter les incidents de sécurité jusqu'à leur résolution et doit informer les commanditaires conformément aux procédures.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit archiver les documents détaillant les incidents de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Il est recommandé que le prestataire fasse appel à un prestataire de réponse aux incidents de sécurité [PRIS] qualifié pour traiter les incidents de sécurité nécessitant une expertise supplémentaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Tirer des enseignements des incidents liés à la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un processus d'amélioration continue afin de diminuer l'occurrence et l'impact de types d'incidents de sécurité déjà traités.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 6,
+        "libelle": "Recueil de preuves",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant d'enregistrer les informations relatives aux incidents de sécurité et pouvant servir d'éléments de preuve.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 13,
+    "libelle": "Continuité d'activité",
+    "abrege": "Continuité d'activité",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Organisation de la continuité d'activité",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre oeuvre un plan de continuité d'activité prenant en compte la sécurité de l'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit réviser annuellement le plan de continuité d'activité du service et à chaque changement majeur pouvant avoir un impact le service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Mise en oeuvre de la continuité d'activité",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre des procédures permettant de maintenir ou de restaurer l'exploitation du service et d'assurer la disponibilité des informations au niveau et dans les délais pour lesquels le prestataire s'est engagé vis-à-vis du commanditaire dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Vérifier, revoir et évaluer la continuité d'activité",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une procédure permettant de tester le plan de continuité d'activités afin de s'assurer qu'il est pertinent et efficace en situation de crise.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Disponibilité des moyens de traitement de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les mesures qui lui permettent de répondre au besoin de disponibilité du service défini dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 14,
+    "libelle": "Conformité",
+    "abrege": "Conformité",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Identification de la législation et des exigences contractuelles applicables",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit identifier les exigences légales, réglementaires et contractuelles en vigueur applicables au service. En France, le prestataire doit considérer au minimum les thèmes suivants:\n- les données à caractère personnel;\n- le secret professionnel, le cas échéant sans préjudice de l'application de l'article 40 alinéa 2 du Code de procédure pénale relatif au signalement à une autorité judiciaire;\n- l'abus de confiance;\n- le secret des correspondances privées;\n- l'atteinte à la vie privée;\n- l'accès ou le maintien frauduleux à un système d'information.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit, selon son rôle dans les traitements de données à caractère personnel (responsable de traitement, sous-traitant ou co-responsable) justifier et documenter les choix de mesures techniques et organisationnelles réalisés en vue de répondre aux exigences de protection des données à caractère personnel du présent document.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre les procédures permettant de respecter les exigences légales, réglementaires et contractuelles en vigueur applicables au service, ainsi que les besoins de sécurité spécifiques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit, sur demande d'un commanditaire, lui rendre accessible l'ensemble de ces procédures.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un processus de veille actif des exigences légales, réglementaires et contractuelles en vigueur applicables au service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Revue indépendante de la sécurité de l'information",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre un programme d'audit sur trois ans définissant le périmètre et la fréquence des audits en accord avec la gestion du changement, les politiques, et les résultats de l'appréciation des risques.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit inclure dans le programme d'audit un audit qualifié par an réalisé par un prestataire d'audit de la sécurité des systèmes d'information (PASSI) qualifié. L'ensemble du programme d'audit doit notamment couvrir:\n- l'audit de la configuration des serveurs et équipements réseau inclus dans le périmètre du service. Cet audit est réalisé par échantillonnage et doit inclure tous types d'équipements et de serveurs présents dans le système d'information du service;\n- le test d'intrusion des accès externes au service;\n- si le service bénéficie de développements internes, l'audit de code source portant sur les fonctionnalités de sécurité implémentées.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Conformité avec les politiques et les normes de sécurité",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire via le responsable de la sécurité de l'information doit s'assurer régulièrement de l'exécution correcte de l'ensemble des procédures de sécurité placées sous sa responsabilité en vue de garantir leur conformité avec les politiques et normes de sécurité.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Examen de la conformité technique",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et mettre en oeuvre une politique permettant de vérifier la conformité technique du service aux exigences du présent document. Cette politique doit définir les objectifs, méthodes, fréquences, résultats attendus et mesures correctrices.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "numero": 15,
+    "libelle": "Exigences supplémentaires",
+    "abrege": "Exigences supplémentaires",
+    "subdomains": [
+      {
+        "numero": 1,
+        "libelle": "Convention de service",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit établir une convention de service avec chacun des commanditaires du service. Toute modification de la convention de service doit être soumise à acceptation du commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit identifier dans la convention de service:\n- les obligations, droits et responsabilités de chacune des parties: prestataire et tiers impliqués dans la fourniture du service, commanditaires, etc.;\n- les éléments explicitement exclus des responsabilités du prestataire dans la limite de ce que prévoient les exigences légales et réglementaires en vigueur, notamment l'article 28 du RGPD;\n- la localisation du service. La localisation du support doit être précisée lorsqu'il est réalisé depuis un État hors l'Union Européenne.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Le prestataire doit proposer une convention de service appliquant le droit d'un État membre de l'Union Européenne. Le droit applicable doit être identifié dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire doit décrire dans la convention de service les moyens techniques et organisationnels qu'il met en oeuvre pour assurer le respect du droit applicable.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 5,
+            "libelle": "Le prestataire doit inclure dans la convention de service une clause de révision de la convention prévoyant notamment une résiliation sans pénalité pour le commanditaire en cas de perte de la qualification octroyée au service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 6,
+            "libelle": "Le prestataire doit inclure dans la convention de service une clause de réversibilité permettant au commanditaire de récupérer l'ensemble de ses données (fournies directement par le commanditaire ou produites dans le cadre du service à partir des données ou des actions du commanditaire).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 7,
+            "libelle": "Le prestataire doit assurer cette réversibilité via l'une des modalités techniques suivantes:\n- la mise à disposition de fichiers suivant un ou plusieurs formats documentés et exploitables en dehors du service fourni par le prestataire;\n- la mise en place d'interfaces techniques permettant l'accès aux données suivant un schéma documenté et exploitable (API, format pivot, etc.).\nLes modalités techniques de la réversibilité figurent dans la convention de service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 8,
+            "libelle": "Le prestataire doit indiquer dans la convention de service le niveau de disponibilité du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 9,
+            "libelle": "Le prestataire doit indiquer dans la convention de service qu'il ne peut disposer des données transmises et générées par le commanditaire, leur disposition étant réservée au commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 10,
+            "libelle": "Le prestataire doit indiquer dans la convention de service qu'il ne divulgue aucune information relative à la prestation à des tiers, sauf autorisation formelle et écrite du commanditaire.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 11,
+            "libelle": "Le prestataire doit indiquer dans la convention de service s'il autorise l'accès distant pour des actions d'administration ou de support au système d'information du service.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 12,
+            "libelle": "Le prestataire doit préciser dans la convention de service que le commanditaire autorise un prestataire d'audit de la sécurité des systèmes d'information (PASSI) qualifié mandaté par le prestataire à auditer le service et son système d'information dans le cadre du plan de contrôle.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 13,
+            "libelle": "Le prestataire doit préciser dans la convention de service qu'il s'engage à mettre à disposition toutes les informations nécessaires à la réalisation d'audits de conformité aux dispositions de l'article 28 du RGPD, menés par le commanditaire ou un tiers mandaté.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 14,
+            "libelle": "Il est recommandé que le tiers mandaté pour les audits soit un prestataire d'audit de la sécurité des systèmes d'information (PASSI) qualifié.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 2,
+        "libelle": "Localisation des données",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit documenter et communiquer au commanditaire la localisation du stockage et du traitement des données.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit stocker et traiter les données du commanditaire au sein de l'Union Européenne.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Les opérations d'administration et de supervision du service doivent être réalisées depuis l'Union Européenne.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 4,
+            "libelle": "Le prestataire peut réaliser des opérations de support aux commanditaires depuis un État hors de l'Union Européenne. Il doit documenter la liste des opérations qui peuvent être effectuées par le support au commanditaire depuis un État hors de l'Union Européenne, et les mécanismes permettant d'en assurer le contrôle d'accès et la supervision depuis l'Union Européenne.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 3,
+        "libelle": "Régionalisation",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit s'assurer que les interfaces du service accessibles au commanditaire soient au moins disponibles en langue française.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit fournir un support de premier niveau en langue française.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 4,
+        "libelle": "Fin de contrat",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "À la fin du contrat liant le prestataire et le commanditaire, que le contrat soit arrivé à son terme ou pour toute autre cause, le prestataire doit assurer un effacement sécurisé de l'intégralité des données du commanditaire. Cet effacement peut être réalisé suivant l'une des méthodes suivantes, et ce dans un délai précisé dans la convention de service:\n- effacement par réécriture complète de tout support ayant hébergé ces données;\n- effacement des clés utilisées pour le chiffrement des espaces de stockage du commanditaire;\n- recyclage sécurisé.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "À la fin du contrat, le prestataire doit supprimer les données techniques relatives au commanditaire (annuaire, certificats, configuration des accès, etc.).",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      },
+      {
+        "numero": 5,
+        "libelle": "Protection des données à caractère personnel",
+        "comment": "",
+        "questions": [
+          {
+            "numero": 1,
+            "libelle": "Le prestataire doit justifier du respect des principes de protection des données pour les traitements de données à caractère personnel mis en oeuvre pour son propre compte. Il doit justifier au minimum les points suivants:\n- les finalités des traitements déterminées, explicites et légitimes;\n- la traçabilité des activités de traitement pour son compte et celui de son commanditaire;\n- le fondement licite des traitements;\n- l'interdiction du détournement de finalité des traitements;\n- les données utilisées respectent le principe du minimum nécessaire et suffisant pour les traitements; ainsi sont adéquates, pertinentes et limitées;\n- la qualité des données utilisées pour les traitements maintenue: données exactes et tenues à jour;\n- les durées de conservation définies et limitées.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 2,
+            "libelle": "Le prestataire doit justifier, pour les traitements de données à caractère personnel mis en oeuvre pour son propre compte, du respect des droits des personnes concernées. Il doit justifier au minimum les points suivants:\n- l'information des usagers via un traitement loyal et transparent;\n- le recueil du consentement des usagers: exprès, démontrable et retirable;\n- la possibilité pour les usagers d'exercer les droits d'accès, de rectification et d'effacement;\n- la possibilité pour les usagers d'exercer les droits de limitation du traitement, de portabilité et d'opposition.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          },
+          {
+            "numero": 3,
+            "libelle": "Lorsqu'il agit en qualité de sous-traitant au sens de l'article 28 de RGPD, le prestataire doit apporter assistance et conseil au commanditaire en l'informant si une instruction de ce dernier constitue une violation des règles de protection des données.",
+            "mesure": "",
+            "poids": 1,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  }
+]
