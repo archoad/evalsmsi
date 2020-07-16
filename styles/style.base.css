@@ -84,6 +84,7 @@ p, ul, ol {
 	font-size:8pt;
 	margin-left:0px;
 	padding-left:14px;
+	white-space:pre-line;
 }
 
 a {

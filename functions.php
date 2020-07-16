@@ -117,7 +117,7 @@ function menuAdmin() {
 	printf("<div class='column left'>");
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
 	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
-	linkMsg("admin.php?action=select_quiz", "Modifications du questionnaire", "eval_continue.png", 'menu');
+	linkMsg("admin.php?action=select_quiz", "Visualiser un questionnaire", "eval_continue.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div><div class='column right'>");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
@@ -892,7 +892,7 @@ function textItem($num){
 			return 'Inexistant et investissement important';
 			break;
 		case 3:
-			return 'Inexistant et investissement faible';
+			return 'Inexistant et investissement peu important';
 			break;
 		case 4:
 			return 'En cours et demande un ajustement';
@@ -904,7 +904,7 @@ function textItem($num){
 			return 'Existant et demande un ajustement';
 			break;
 		case 7:
-			return 'Existant';
+			return 'Opérationnel';
 			break;
 		default:
 			return 'Pas de réponse';
