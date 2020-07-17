@@ -121,7 +121,7 @@ function createUser() {
 function selectUserModif() {
 	genSyslog(__FUNCTION__);
 	$base = dbConnect();
-	$request = "SELECT * FROM users WHERE role<>'1'";
+	$request = "SELECT id,nom,prenom FROM users WHERE role<>'1' ORDER BY nom";
 	$result = mysqli_query($base, $request);
 	printf("<form method='post' id='modif_user' action='admin.php?action=modif_user'>");
 	printf("<fieldset><legend>Modification d'un utilisaeur</legend>");
@@ -129,7 +129,7 @@ function selectUserModif() {
 	printf("Utilisateur:&nbsp;<select name='user' id='user' required>");
 	printf("<option selected='selected' value=''>&nbsp;</option>");
 	while($row=mysqli_fetch_object($result)) {
-		printf("<option value='%s'>%s %s</option>", $row->id, $row->prenom, $row->nom);
+		printf("<option value='%s'>%s %s</option>", $row->id, mb_strtoupper($row->nom), $row->prenom);
 	}
 	printf("</select>");
 	printf("</td></tr></table></fieldset>");
@@ -255,7 +255,7 @@ function createEtablissement($action='') {
 
 function selectEtablissementModif() {
 	genSyslog(__FUNCTION__);
-	$result=getEtablissement();
+	$result = getEtablissement();
 	printf("<form method='post' id='modif_etab' action='admin.php?action=modif_etab' >");
 	printf("<fieldset><legend>Modification d'un établissement</legend>");
 	printf("<table><tr><td>");

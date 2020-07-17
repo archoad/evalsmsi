@@ -80,8 +80,8 @@ ini_set('filter.default', 'full_special_chars');
 ini_set('filter.default_flags', 0);
 
 $noteMax = 7;
-$progVersion = '5.0.0';
-$progDate = '18 avril 2020';
+$progVersion = '5.1.0';
+$progDate = '18 juillet 2020';
 $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
@@ -468,7 +468,7 @@ function headPage($titre, $sousTitre='') {
 	} else {
 		printf("<h2>%s</h2>", uidToEtbs());
 	}
-	if (isset($_SESSION['quiz']) && intval($_SESSION['role'])!=2) {
+	if (isset($_SESSION['quiz']) && !in_array(intval($_SESSION['role']), array(1, 2))) {
 		printf("<h4>%s</h4>", getQuizName());
 	}
 }
@@ -746,9 +746,9 @@ function getEtablissement($id_etab=0, $abrege=0) {
 	} else {
 		$base = dbConnect();
 		if (intval($_SESSION['role']) === 2) {
-			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s)", $_SESSION['audit_etab']);
+			$request = sprintf("SELECT id, nom, abrege FROM etablissement WHERE id IN (%s) ORDER BY nom", $_SESSION['audit_etab']);
 		} else {
-			$request = "SELECT * FROM etablissement";
+			$request = "SELECT * FROM etablissement ORDER BY nom";
 		}
 		$result = mysqli_query($base, $request);
 		dbDisconnect($base);
@@ -1898,9 +1898,9 @@ function createWordDoc() {
 	$phpWord->getSettings()->setDecimalSymbol(',');
 	$phpWord->setDefaultFontName('Calibri');
 	$phpWord->setDefaultFontSize(11);
-	$phpWord->addTitleStyle(1, array('size' => 16, 'bold' => true), array('spaceBefore' => 600, 'spaceAfter' => 100));
-	$phpWord->addTitleStyle(2, array('size' => 14, 'bold' => true), array('spaceBefore' => 400, 'spaceAfter' => 100));
-	$phpWord->addTitleStyle(3, array('size' => 12, 'bold' => true), array('spaceBefore' => 200, 'spaceAfter' => 100));
+	$phpWord->addTitleStyle(1, array('size'=>16, 'color'=>'#406e96', 'smallCaps'=>True), array('spaceBefore'=>600, 'spaceAfter'=>100));
+	$phpWord->addTitleStyle(2, array('size'=>14, 'color'=>'#5b9bd5'), array('spaceBefore'=>400, 'spaceAfter'=>100));
+	$phpWord->addTitleStyle(3, array('size'=>12, 'color'=>'#222222', 'bold'=>True), array('spaceBefore'=>200, 'spaceAfter'=>100));
 	$properties = $phpWord->getDocInfo();
 	$properties->setCreator($appli_titre_short);
 	$properties->setTitle($appli_titre);
@@ -1913,6 +1913,7 @@ function createWordDoc() {
 
 function exportEval() {
 	global $appli_titre, $appli_titre_short;
+	$name_quiz = getQuizName();
 	$dir = dirname($_SERVER['PHP_SELF']);
 	$id_etab = $_SESSION['id_etab'];
 	$id_quiz = $_SESSION['quiz'];
@@ -1982,7 +1983,7 @@ function exportEval() {
 					$reponses[$annee][substr($quest, 8, 14)]=$rep;
 				}
 			}
-			$section->addText($appli_titre, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
+			$section->addText($name_quiz, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
 			if (intval($_SESSION['role']) == 2) {
 				$msg = "Copie de travail de l'auditeur";
 			} else {
@@ -2163,7 +2164,7 @@ function generateExcellRapport($annee) {
 
 
 function exportRules() {
-	global $appli_titre;
+	$name_quiz = getQuizName();
 	$quiz = getJsonFile();
 	$script = dirname($_SERVER['PHP_SELF']);
 	$fileDoc = "rapports/referentiel.docx";
@@ -2173,7 +2174,7 @@ function exportRules() {
 
 	$protection = $phpWord->getSettings()->getDocumentProtection();
 	$protection->setEditing(DocProtect::READ_ONLY);
-	$protection->setPassword('qsldkeazrkjekqdsnvnxblgkjzerktjzretjhzer');
+	$protection->setPassword(base64_encode(random_bytes(16)));
 
 	$sectionStyle = array(
 		'orientation' => 'portrait',
@@ -2185,11 +2186,15 @@ function exportRules() {
 		'footerHeight' => 800,
 	);
 	$section = $phpWord->addSection($sectionStyle);
-	$header = $section->addHeader();
-	$header->addPreserveText($appli_titre, null, array('spaceAfter' => 400, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER));
+
 	$footer = $section->addFooter();
 	$footer->addPreserveText('Page {PAGE}/{NUMPAGES}', null, array('spaceBefore' => 400, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER));
-	$section->addText($appli_titre, array('bold'=>true, 'size'=>20, 'smallCaps'=>true), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
+
+	$section->addText('Référentiel', array('size'=>20), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceBefore'=>1000, 'spaceAfter'=>100));
+	$section->addText($name_quiz, array('size'=>20, 'color'=>'#9e1e1e'), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>400));
+	$section->addText('EvalSMSI', array('size'=>16), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>200));
+	$section->addText(strftime("%d %B %Y", time()), array('size'=>16), array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceAfter'=>500));
+	$section->addPageBreak();
 
 	for ($d=0; $d<count($quiz); $d++) {
 		$num_dom = $quiz[$d]['numero'];
@@ -2206,7 +2211,13 @@ function exportRules() {
 				$num_question = $questions[$q]['numero'];
 				$msg = sprintf("Règle %s.%s.%s ", $num_dom, $num_sub_dom, $num_question);
 				$section->addTitle($msg, 3);
-				$section->addText($questions[$q]['libelle']);
+				$section->addText(str_replace(chr(10), '<w:br/>', $questions[$q]['libelle']));
+				$msg = sprintf("Mesure %s.%s.%s ", $num_dom, $num_sub_dom, $num_question);
+				$section->addTitle($msg, 3);
+				$section->addText(str_replace(chr(10), '<w:br/>', $questions[$q]['mesure']));
+				$line = array('weight'=>1, 'width'=>\PhpOffice\PhpWord\Shared\Converter::cmToPixel(8), 'height'=>0, 'color'=>'red');
+				$section->addLine($line);
+
 			}
 		}
 	}
@@ -2226,12 +2237,7 @@ function exportRules() {
 
 
 function generateReferentiel() {
-	$base = dbConnect();
-	$request = sprintf("SELECT nom FROM quiz WHERE id='%d' LIMIT 1", $_SESSION['quiz']);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	$name_quiz = $row->nom;
+	$name_quiz = getQuizName();
 	$quiz = getJsonFile();
 	$text = "\\begin{filecontents*}{\jobname.xmpdata}\n";
 	$text .= "\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n";
@@ -2262,9 +2268,9 @@ function generateReferentiel() {
 			for ($q=0; $q<count($questions); $q++) {
 				$num_question = $questions[$q]['numero'];
 				$text .= sprintf("\\textbf{Règle %d.%d.%d}\n\n", $num_dom, $num_sub_dom, $num_question);
-				$text .= sprintf("%s\n\n", $questions[$q]['libelle']);
+				$text .= sprintf("%s\n\n", str_replace(chr(10), "\n\n", $questions[$q]['libelle']));
 				$text .= sprintf("\\textbf{Mesure %d.%d.%d}\n\n", $num_dom, $num_sub_dom, $num_question);
-				$text .= sprintf("%s\n\n", $questions[$q]['mesure']);
+				$text .= sprintf("%s\n\n", str_replace(chr(10), "\n\n", $questions[$q]['mesure']));
 				$text .= "\\textcolor{myRed}{\\rule{\\linewidth}{0.4pt}}\n\n";
 			}
 		}
