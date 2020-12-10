@@ -108,7 +108,7 @@ function createUser() {
 	printf("</select>");
 	printf("</td></tr><tr><td colspan='3'>");
 	printf("<input type='text' size='50' maxlength='50' name='login' id='login' placeholder='Identifiant (prenom.nom)' autocomplete='username' required>");
-	printf("<input type='password' size='20' maxlength='20' name='passwd' id='passwd' placeholder='Mot de passe' autocomplete='current-password' required>");
+	printf("<input type='password' size='30' maxlength='30' name='passwd' id='passwd' placeholder='Mot de passe' autocomplete='current-password' required>");
 	printf("</td></tr></table>");
 	chooseEtablissement();
 	printf("</fieldset>");
@@ -161,6 +161,8 @@ function modifUser() {
 	}
 	printf("</select>");
 	printf("</td></tr><tr><td colspan='3'>");
+	printf("Mot de passe:&nbsp;<input type='password' size='30' maxlength='30' name='passwd' id='passwd' autocomplete='current-password'>");
+	printf("</td></tr><tr><td colspan='3'>");
 	printf("Identifiant&nbsp;<input type='text' size='50' maxlength='50' name='login' id='login' value='%s' required>", traiteStringFromBDD($record->login));
 	printf("</td></tr></table>");
 	chooseEtablissement($record);
@@ -180,6 +182,7 @@ function recordUser($action) {
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
 	$login = isset($_POST['login']) ? traiteStringToBDD($_POST['login']) : NULL;
 	$etbs = isset($_POST['result']) ?  implode(",", $_POST['result']) : NULL;
+	$passwd = isset($_POST['password']) ? password_hash($passwd, PASSWORD_BCRYPT);
 	if ($role === 1) { return false; }
 	switch ($action) {
 		case 'add':

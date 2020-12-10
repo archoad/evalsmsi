@@ -4,7 +4,7 @@
 // Description: global functions of EvalSMSI
 // Created:     2009-01-01
 // Licence:     GPL-3.0-or-later
-// Copyright 2009-2019 Michel Dubois
+// Copyright 2009-2020 Michel Dubois
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,63 +21,43 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 
-
-
-// --------------------
-// Définition des variables de base
-// Nom de la machine hébergeant le serveur MySQL
-$servername = 'localhost';
-// Nom de la base de données
-$dbname = 'evalsmsi';
-// Nom de l'utilisateur autorisé à se connecter sur la BDD
-$login = 'web';
-// Mot de passe de connexion
-$passwd = 'webphpsql';
-// Titre de l'application
-$appli_titre = "Evaluation du SMSI";
-$appli_titre_short = "EvalSMSI";
-// Thème CSS
-$cssTheme = 'green'; // glp, beige, blue, green
-// Image accueil
-$auhtPict = 'pict/accueil.png';
-// Image rapport
-$rapportPicts = array("pict/archoad.png", "pict/customer.png");
-// Mode captcha
-$captchaMode = 'num'; // 'txt' or 'num'
-// Webauthn attestation mode
-$attestationMode = 'direct'; // 'none' or 'indirect' or 'direct'
-// --------------------
-
-
-
-
 // --------------------
 // Définition des variables internes à l'application
 // Ne pas modifier ces variables !
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
-ini_set('error_reporting', -1);
+ini_set('error_reporting', E_ALL);
 ini_set('display_error', 1);
+ini_set('session.gc_maxlifetime', 86400); // 24h00
+ini_set('session.gc_probability', 1);
 ini_set('session.name', '__SECURE-PHPSESSID');
-ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.use_trans_sid', 0);
-ini_set('session.cookie_secure', 1);
 ini_set('session.use_strict_mode', 1);
-ini_set('session.cache_limiter', 'nocache');
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.cookie_lifetime', 0);
 ini_set('session.use_cookies', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.gc_probability', 1);
-ini_set('session.gc_maxlifetime', 1800); // 30 min
+ini_set('session.cache_limiter', 'nocache');
 ini_set('session.sid_length', 48);
 ini_set('session.sid_bits_per_character', 6);
-ini_set('session.cookie_httponly', 1);
 ini_set('session.entropy_length', 32);
 ini_set('session.entropy_file', '/dev/urandom');
 ini_set('session.hash_function', 'sha256');
 ini_set('filter.default', 'full_special_chars');
 ini_set('filter.default_flags', 0);
+
+$configs = include('config.php');
+
+$servername = $configs['servername'];
+$dbname = $configs['dbname'];
+$login = $configs['login'];
+$passwd = $configs['passwd'];
+$appli_titre = $configs['appli_titre'];
+$appli_titre_short = $configs['appli_titre_short'];
+$cssTheme = $configs['cssTheme'];
+$auhtPict = $configs['auhtPict'];
+$rapportPicts = $configs['rapportPicts'];
+$captchaMode = $configs['captchaMode'];
+$attestationMode = $configs['attestationMode'];
+$sessionDuration = $configs['sessionDuration'];
 
 $noteMax = 7;
 $progVersion = '5.1.0';
@@ -86,12 +66,6 @@ $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
 $cheminDATA = sprintf("%s/data/", $server_path);
-
-$cookie_timeout = 3600;
-$cookie_domain = "";
-$session_secure = true;
-$cookie_httponly = true;
-$cookie_samesite = "Strict";
 
 require_once ('phpoffice/bootstrap.php');
 
@@ -118,6 +92,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=new_user", "Ajouter un utilisateur", "add_user.png", 'menu');
 	linkMsg("admin.php?action=select_user", "Modifier un utilisateur", "modif_user.png", 'menu');
 	linkMsg("admin.php?action=select_quiz", "Visualiser un questionnaire", "eval_continue.png", 'menu');
+	linkMsg("admin.php?action=authentication", "Gestion de l'authentification", "fingerprint.png", 'menu');
 	linkMsg("admin.php?action=maintenance", "Maintenance de la Base de Données", "bdd.png", 'menu');
 	printf("</div><div class='column right'>");
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
@@ -253,6 +228,19 @@ function getQuizName() {
 }
 
 
+function startSession() {
+	session_set_cookie_params([
+		'lifetime' => 0,
+		'path' => '/',
+		'domain' => "",
+		'secure' => true,
+		'httponly' => true,
+		'samesite' => "Strict"
+	]);
+	session_start();
+}
+
+
 function destroySession() {
 	genSyslog(__FUNCTION__);
 	session_unset();
@@ -265,6 +253,16 @@ function destroySession() {
 
 function isSessionValid($role) {
 	genSyslog(__FUNCTION__);
+	$now = time();
+	if ($now > $_SESSION['expire']) {
+		destroySession();
+		exit();
+	} else {
+		if ($_SESSION['expire'] - $now <= 1800) {
+			// Il reste moins d'une demi-heure
+			$_SESSION['expire'] += 1800;
+		}
+	}
 	if (!isset($_SESSION['uid']) OR (!in_array($_SESSION['role'], $role))) {
 		destroySession();
 		exit();
@@ -281,12 +279,14 @@ function isAuthorized($roles) {
 
 
 function infoSession() {
+	$timeLeft = intdiv($_SESSION['expire'] - time(), 60);
 	$_SESSION['rand'] = genNonce(16);
 	$infoDay = sprintf("%s - %s", $_SESSION['day'], $_SESSION['hour']);
 	$infoNav = sprintf("%s - %s - %s", $_SESSION['os'], $_SESSION['browser'], $_SESSION['ipaddr']);
 	$infoUser = sprintf("Connecté en tant que <b>%s %s</b> (%s)", $_SESSION['prenom'], $_SESSION['nom'], getRole($_SESSION['role']));
+	$infoSession = sprintf("%s minutes restantes", $timeLeft);
 	$logoff = sprintf("<a href='evalsmsi.php?rand=%s&action=disconnect'>Déconnexion&nbsp;<img alt='logoff' src='pict/turnoff.png' width='10'></a>", $_SESSION['rand']);
-	return sprintf("Powered by EvalSMSI - %s - %s - %s - %s", $infoDay, $infoNav, $infoUser, $logoff);
+	return sprintf("Powered by EvalSMSI - %s - %s - %s - %s - %s", $infoDay, $infoNav, $infoUser, $infoSession, $logoff);
 }
 
 
@@ -363,14 +363,6 @@ function detectOS() {
 }
 
 
-function set_var_utf8() {
-	ini_set('mbstring.internal_encoding', 'UTF-8');
-	ini_set('mbstring.http_input', 'UTF-8');
-	ini_set('mbstring.http_output', 'UTF-8');
-	ini_set('mbstring.detect_order', 'auto');
-}
-
-
 function genNonce($length) {
 	$nonce = random_bytes($length);
 	$b64 = base64_encode($nonce);
@@ -424,7 +416,6 @@ function headPage($titre, $sousTitre='') {
 	genSyslog(__FUNCTION__);
 	$cspPolicy = genCspPolicy();
 	$nonce = $_SESSION['nonce'];
-	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
@@ -432,6 +423,7 @@ function headPage($titre, $sousTitre='') {
 	header("X-XSS-Protection: 1; mode=block;");
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
+	ini_set('default_charset', 'UTF-8');
 	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 	printf("<meta name='author' content='Michel Dubois'>");
@@ -460,6 +452,7 @@ function headPage($titre, $sousTitre='') {
 		}
 		if ($script === 'admin.php') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
+			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 		}
 	}
 	printf("</head><body><h1>%s</h1>", $titre);
@@ -1045,19 +1038,19 @@ function afficheNotesExplanation() {
 	printf("<div class='column littleright sticky'>");
 	printf("<div class='event'>");
 	printf("<dl>");
-	printf("<dt>1: Non Applicable</dt>");
+	printf("<dt>1: %s</dt>", textItem(1));
 	printf("<dd>La règle est non applicable ou à fait l'objet d'une dérogation (à préciser dans le commentaire).</dd>");
-	printf("<dt>2: Inexistant et investissement important</dt>");
+	printf("<dt>2: %s</dt>", textItem(2));
 	printf("<dd>La disposition proposée n’est pas appliquée actuellement et ne le sera pas avant un délai important (mesure non planifiée, mesure nécessitant une étude préalable importante, mesure nécessitant un budget important, etc.).</dd>");
-	printf("<dt>3: Inexistant et investissement peu important</dt>");
+	printf("<dt>3: %s</dt>", textItem(3));
 	printf("<dd>La disposition proposée n’est pas appliquée actuellement, mais le sera rapidement, car sa mise en oeuvre est facile et/ou rapide.</dd>");
-	printf("<dt>4: En cours et demande un ajustement</dt>");
-	printf("<dd>La disposition proposée est en cours de réalisation, mais des difficultés sont rencontrées et les plans prévus de réalisation doivent être modifiés.</dd>");
-	printf("<dt>5: En cours</dt>");
-	printf("<dd>La disposition proposée est en cours de réalisation et se déroule sans encombre.</dd>");
-	printf("<dt>6: Existant et demande un ajustement</dt>");
-	printf("<dd>La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle.</dd>");
-	printf("<dt>7: Opérationnel</dt>");
+	printf("<dt>4: %s</dt>", textItem(4));
+	printf("<dd>La disposition proposée est en cours de réalisation (état d'avancement à 30%% au minimum), mais des difficultés sont rencontrées et les plans prévus de réalisation doivent être modifiés.</dd>");
+	printf("<dt>5: %s</dt>", textItem(5));
+	printf("<dd>La disposition proposée est en cours de réalisation (état d'avancement à 60%% au minimum) et se déroule sans encombre.</dd>");
+	printf("<dt>6: %s</dt>", textItem(6));
+	printf("<dd>La disposition est mise en place et il reste quelques ajustements à réaliser pour la rendre totalement opérationnelle (état d'avancement à 90%% au minimum).</dd>");
+	printf("<dt>7: %s</dt>", textItem(7));
 	printf("<dd>La disposition est opérationnelle et remplit entièrement les besoins demandés</dd>");
 	printf("</dl></div>");
 	printf("</div>");

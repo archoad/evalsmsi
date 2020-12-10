@@ -174,9 +174,10 @@ function assessFormValidity(event) {
 	var num_quest_ok = countSetQuestion(form);
 	if (nbr_quests == num_quest_ok) {
 		var final_elt = document.getElementById('final_comment');
-		if (final_elt.value == '') {
-			myAlert("Vous n'avez pas saisi de commentaire final pour l'évaluation.");
-			final_elt.setCustomValidity("Ajout d'un commentaire");
+		if (!final_elt.validity.valid) {
+			final_elt.className = 'block';
+			final_elt.focus();
+			event.preventDefault();
 		}
 	}
 }
@@ -186,6 +187,8 @@ function progresse() {
 	var form = document.getElementById('make_assess');
 	var nbr_quests = document.getElementById('nbr_questions').value;
 	var num_quest_ok = countSetQuestion(form);
+	var final_elt = document.getElementById('final_comment');
+	var final_comment_error = document.getElementById('final_comment_error');
 	controlAssessAnswers(form);
 
 	if (num_quest_ok <= nbr_quests) {
@@ -195,12 +198,20 @@ function progresse() {
 		document.getElementById("b").style.width=parseInt((500*num_quest_ok)/nbr_quests)+"px";
 	}
 	if (nbr_quests == num_quest_ok) {
-		var par = document.getElementById('final_comment');
-		par.className='block';
-		par.required = true;
-		if (document.getElementById("final_comment").value == '' ) {
-			alert("Questionnaire complété à 100%\nVEUILLEZ COMPLETER LE COMMENTAIRE FINAL EN FIN DE FORMULAIRE");
+		final_elt.className='block';
+		final_elt.required = true;
+		if (final_elt.value == '') {
+			final_elt.setCustomValidity('Ajouter un commentaire final');
+			final_comment_error.className = "error active";
+			final_comment_error.innerHTML = "Vous devez spécifier un commentaire final.";
+		} else {
+			final_elt.setCustomValidity('');
+			final_comment_error.innerHTML = "";
+			final_comment_error.className = "error";
 		}
+	} else {
+		final_elt.className='none';
+		final_elt.required = false;
 	}
 }
 

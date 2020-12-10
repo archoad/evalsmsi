@@ -21,21 +21,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 include("functions.php");
-session_set_cookie_params([
-	'lifetime' => $cookie_timeout,
-	'path' => '/',
-	'domain' => $cookie_domain,
-	'secure' => $session_secure,
-	'httponly' => $cookie_httponly,
-	'samesite' => $cookie_samesite
-]);
-session_start();
+startSession();
 
 
 function headPageAuth() {
 	$cspPolicy = genCspPolicy();
 	$_SESSION['rand'] = base64UrlEncode(genNonce(16));
-	set_var_utf8();
 	header("cache-control: no-cache, must-revalidate");
 	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 	header("Content-type: text/html; charset=utf-8");
@@ -43,6 +34,7 @@ function headPageAuth() {
 	header("X-XSS-Protection: 1; mode=block");
 	header("X-Frame-Options: deny");
 	header($cspPolicy);
+	ini_set('default_charset', 'UTF-8');
 	printf("<!DOCTYPE html><html lang='fr-FR'><head>");
 	printf("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>");
 	printf("<link rel='apple-touch-icon' href='pict/logoArchoadApple.png'>");
@@ -89,7 +81,7 @@ function menuPassword($msg='') {
 		printf("<script nonce='%s'>document.body.addEventListener('load', newAuthentication());</script>", $_SESSION['nonce']);
 	} else {
 		printf("<form method='post' id='auth' action='evalsmsi.php?rand=%s&action=connect'>", $_SESSION['rand']);
-		printf("<input type='password' size='20' maxlength='20' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' autofocus required>");
+		printf("<input type='password' size='30' maxlength='30' name='password' id='password' placeholder='Mot de passe' autocomplete='current-password' autofocus required>");
 		printf("<div id='divcaptcha' class='captcha'>");
 		printf("<img src='captcha.php' alt='captcha'/>");
 		printf("<input type='text' size='6' maxlength='6' name='captcha' id='captcha' placeholder='Saisir le code' required>");
@@ -138,7 +130,7 @@ function authentification($password) {
 
 function initiateSession($data) {
 	genSyslog(__FUNCTION__);
-	global $cssTheme, $captchaMode;
+	global $cssTheme, $captchaMode, $sessionDuration;
 	session_regenerate_id();
 	date_default_timezone_set('Europe/Paris');
 	$date = getdate();
@@ -156,6 +148,7 @@ function initiateSession($data) {
 	$_SESSION['role'] = $data->role;
 	$_SESSION['login'] = $data->login;
 	$_SESSION['annee'] = $annee;
+	$_SESSION['expire'] = time() + $sessionDuration;
 	if ($data->role === '2') {
 		$_SESSION['audit_etab']  = $data->etablissement;
 	} else {

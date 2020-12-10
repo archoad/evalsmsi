@@ -23,15 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include("functions.php");
 include("funct_admin.php");
-session_set_cookie_params([
-	'lifetime' => $cookie_timeout,
-	'path' => '/',
-	'domain' => $cookie_domain,
-	'secure' => $session_secure,
-	'httponly' => $cookie_httponly,
-	'samesite' => $cookie_samesite
-]);
-session_start();
+startSession();
 $authorizedRole = array('1');
 isSessionValid($authorizedRole);
 headPage($appli_titre, "Administration");
@@ -149,6 +141,35 @@ if (isset($_GET['action'])) {
 
 	case 'bilan_etab':
 		bilanByEtab();
+		footPage($_SESSION['curr_script'], "Accueil");
+		break;
+
+	case 'authentication':
+		menuAuthentication();
+		footPage($_SESSION['curr_script'], "Accueil");
+		break;
+
+	case 'password':
+		changePassword();
+		footPage();
+		break;
+
+	case 'chg_password':
+		if (recordNewPassword($_POST['new1'])) {
+			linkMsg($_SESSION['curr_script'], "Mot de passe changé avec succès", "ok.png");
+		} else {
+			linkMsg($_SESSION['curr_script'], "Erreur de changement de mot de passe", "alert.png");
+		}
+		footPage();
+		break;
+
+	case 'regwebauthn':
+		registerWebauthnCred();
+		footPage();
+		break;
+
+	case 'authentication':
+		menuAuthentication();
 		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 

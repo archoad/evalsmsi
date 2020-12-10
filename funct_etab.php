@@ -109,8 +109,9 @@ function displayAssessment() {
 			}
 			printf("</dl>");
 		}
-		printf("<table><tr><td><b>Commentaire final - Conclusion</b></td></tr>");
-		printf("<tr><td><textarea name='final_comment' id='final_comment' cols='68' rows='5' class='none'>%s</textarea></td></tr></table>", traiteStringFromBDD($final_c));
+		printf("<textarea placeholder='Commentaire final' name='final_comment' id='final_comment' cols='68' rows='5' class='none'>%s</textarea>", traiteStringFromBDD($final_c));
+		printf("<span class='error' id='final_comment_error'></span>");
+		printf("<script nonce='%s'>document.getElementById('final_comment').addEventListener('keyup', function(){progresse();});</script>", $nonce);
 		validForms('Enregistrer', 'etab.php', $back=False);
 		printf("</form>");
 		printf("</div>");
@@ -126,7 +127,7 @@ function displayAssessment() {
 function writeAssessment() {
 	genSyslog(__FUNCTION__);
 	recordLog();
-	$comment = isset($answer['final_comment']) ? traiteStringToBDD($answer['final_comment']) : NULL;
+	$comment = isset($_POST['final_comment']) ? traiteStringToBDD($_POST['final_comment']) : NULL;
 	$record = controlAssessment($_POST);
 	$request = sprintf("UPDATE assess SET reponses='%s', comments='%s' WHERE etablissement='%d' AND annee='%d' AND quiz='%d' ", $record, $comment, $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	$base = dbConnect();
