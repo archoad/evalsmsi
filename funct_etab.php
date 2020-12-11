@@ -88,14 +88,23 @@ function displayAssessment() {
 				for ($q=0; $q<count($questions); $q++) {
 					$num_question = $questions[$q]['numero'];
 					printf("<p><b>%s.%s.%s</b> %s</p>", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+					$mesure = $questions[$q]['mesure'];
+					printf("<div class='reco_parent'>");
+					printf("<div class='reco_child'>");
 					if (isset($assessment)) {
 						printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
 					} else {
 						printSelect($num_dom, $num_sub_dom, $num_question);
 					}
+					printf("</div><div class='reco_child'>");
+					if ($mesure !== 'Néant') {
+						printf("<span class='reco'>%s</span>", $mesure);
+					} else {
+						printf("<span class='reco'>Pas de recommandation spécifique</span>");
+					}
+					printf("</div></div>");
 					$commentID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 					$errorID = 'error'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
-					printf("<br>");
 					if (isset($assessment)) {
 						printf("<textarea placeholder='Commentaire' name='%s' id='%s' cols='80' rows='4'>%s</textarea>", $commentID, $commentID, traiteStringFromBDD($assessment[$commentID]));
 					} else {

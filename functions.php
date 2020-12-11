@@ -21,13 +21,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
 
+
+
 // --------------------
 // Définition des variables internes à l'application
 // Ne pas modifier ces variables !
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
 ini_set('error_reporting', E_ALL);
-ini_set('display_error', 1);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+ini_set('xdebug.var_display_max_depth', 8);
+ini_set('xdebug.var_display_max_children ', 3);
 ini_set('session.gc_maxlifetime', 86400); // 24h00
 ini_set('session.gc_probability', 1);
 ini_set('session.name', '__SECURE-PHPSESSID');

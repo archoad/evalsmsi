@@ -960,3 +960,23 @@ textarea {
 .width25 {
 	width: 25%;
 }
+
+.reco_parent {
+	padding: 0px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.reco_child {
+	padding: 0px;
+}
+
+.reco {
+	display: block;
+	font-size: 80%;
+	padding: 5px;
+	color: var(--textClearColor);
+	border-left: 8px solid var(--myBlueDark);
+	background-color: var(--myBlueLight);
+	border-radius: 2px;
+}
