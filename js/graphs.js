@@ -177,7 +177,11 @@ function displayYearGraphPolar(datas) {
 			text: 'Résultats par domaine - diagramme polaire'
 		},
 		legend: {
-			display: false,
+			display: true,
+			position: 'right',
+			labels: {
+				padding: 30,
+			}
 		},
 		scales: {
 			ticks: { beginAtZero: true },
