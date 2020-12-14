@@ -1349,12 +1349,19 @@ function displayEtablissmentGraphs() {
 		printf("<canvas id='currentYearGraphBar'></canvas>");
 		printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
 		printf("<p class='separation'>&nbsp;</p>");
+
+		printf("<canvas id='currentYearRadar'></canvas>");
+		printf("<a href='' id='yearGraphradar' class='btnValid' download='yearGraphradar.png' type='image/png'>Télécharger le graphe</a>");
+		printf("<p class='separation'>&nbsp;</p>");
+
 		printf("<canvas id='currentYearGraphPolar'></canvas>");
 		printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
 		printf("<p class='separation'>&nbsp;</p>");
+
 		printf("<canvas id='currentYearGraphScatter'></canvas><br>");
 		printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
 		printf("<p class='separation'>&nbsp;</p>");
+
 		printf("</div>");
 		printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 	} else {

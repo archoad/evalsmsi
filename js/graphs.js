@@ -1,6 +1,6 @@
 Chart.platform.disableCSSInjection = true;
 
-const chartColors = ['#4E79A7', '#A0CBE8', '#F28E2B', '#FFBE7D', '#59A14F', '#8CD17D', '#B6992D', '#F1CE63', '#499894', '#86BCB6', '#E15759', '#FF9D9A', '#79706E', '#BAB0AC', '#D37295', '#FABFD2', '#B07AA1', '#D4A6C8', '#9D7660', '#D7B5A6'];
+const chartColors = ['#A0CBE8', '#FFBE7D', '#8CD17D', '#F1CE63', '#86BCB6', '#FF9D9A', '#BAB0AC', '#FABFD2',  '#D4A6C8', '#D7B5A6', '#4E79A7', '#F28E2B', '#59A14F', '#B6992D', '#499894', '#E15759', '#79706E', '#D37295', '#B07AA1', '#9D7660'];
 
 const namedColors = {
 	red: 'rgba(255, 99, 132, 1)',
@@ -63,6 +63,7 @@ function loadGraphYear() {
 	xhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			displayYearGraphBar(this.responseText);
+			displayYearGraphRadar(this.responseText);
 			displayYearGraphPolar(this.responseText);
 			displayYearGraphScatter(this.responseText);
 		}
@@ -103,7 +104,7 @@ function displayYearGraphBar(datas) {
 			type: 'line',
 			label: 'Objectifs',
 			borderColor: namedColors.red,
-			backgroundColor: color(namedColors.red).alpha(0.5).rgbString(),
+			backgroundColor: color(namedColors.red).alpha(0.8).rgbString(),
 			borderWidth: 2,
 			fill: false,
 			data: goals,
@@ -140,15 +141,92 @@ function displayYearGraphBar(datas) {
 			type: 'bar',
 			label: year,
 			borderColor: chartColors[i],
-			backgroundColor: color(chartColors[i]).alpha(0.5).rgbString(),
+			backgroundColor: color(chartColors[i]).alpha(0.8).rgbString(),
 			borderWidth: 1,
 			data: results[year],
 			hidden: hide,
 		};
 		i++;
 		barData.datasets.push(newDataset);
-		yearChartBar.update();
 	}
+	yearChartBar.update();
+}
+
+
+function displayYearGraphRadar(datas) {
+	var color = Chart.helpers.color;
+	var jsonObj = JSON.parse(datas);
+	var labels = jsonObj.labels;
+	var goals = jsonObj.goals;
+	var results = jsonObj.results;
+	var l = Object.keys(results).length;
+	var currentYear = Object.keys(results)[l-1];
+
+	var radarData = {
+		labels: labels,
+		datasets: [{
+			type: 'radar',
+			label: 'Objectifs',
+			borderColor: namedColors.red,
+			backgroundColor: color(namedColors.red).alpha(0.8).rgbString(),
+			borderWidth: 2,
+			fill: false,
+			data: goals,
+		}]
+	};
+	var radarOption = {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Résultats par domaine - diagramme radar'
+		},
+		legend: {
+			display: true,
+			position: 'right',
+			labels: {
+				padding: 20,
+			}
+		},
+		scale: {
+			ticks: {
+				beginAtZero: true,
+				max: 7,
+				min: 0,
+				stepSize: 1.0,
+			}
+		},
+		animation: {
+			onComplete: function(animation) {
+				var elt = document.getElementById('yearGraphradar');
+				elt.setAttribute('href', this.toBase64Image());
+			}
+		}
+	};
+	var radarConfig = {
+		type: 'radar',
+		data: radarData,
+		options: radarOption
+	};
+	var radarContext = document.getElementById('currentYearRadar').getContext('2d');
+	var yearChartRadar = new Chart(radarContext, radarConfig);
+	var i = 0;
+	for(var year in results) {
+		var hide = true;
+		if (year == currentYear) { hide = false; }
+		var newDataset = {
+			type: 'radar',
+			label: year,
+			borderColor: chartColors[i],
+			backgroundColor: color(chartColors[i]).alpha(0.5).rgbString(),
+			borderWidth: 1,
+			data: results[year],
+			hidden: hide,
+		};
+		i++;
+		radarData.datasets.push(newDataset);
+	}
+	radarData.datasets.reverse();
+	yearChartRadar.update();
 }
 
 
@@ -180,11 +258,16 @@ function displayYearGraphPolar(datas) {
 			display: true,
 			position: 'right',
 			labels: {
-				padding: 30,
+				padding: 20,
 			}
 		},
-		scales: {
-			ticks: { beginAtZero: true },
+		scale: {
+			ticks: {
+				beginAtZero: true,
+				max: 7,
+				min: 0,
+				stepSize: 1.0,
+			}
 		},
 		animation: {
 			onComplete: function(animation) {
@@ -199,7 +282,7 @@ function displayYearGraphPolar(datas) {
 		options: polarOption
 	};
 	var polarContext = document.getElementById('currentYearGraphPolar').getContext('2d');
-	var yearChartRadar = new Chart(polarContext, polarConfig);
+	var yearChartPolar = new Chart(polarContext, polarConfig);
 }
 
 
