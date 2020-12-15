@@ -52,6 +52,7 @@ function displayAssessment() {
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
 	$quiz = getJsonFile();
+	$reponses = getAnswers();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $_SESSION['id_etab'], $annee, $id_quiz);
 	$result = mysqli_query($base, $request);
@@ -76,12 +77,16 @@ function displayAssessment() {
 		printf("<div class='assess'>");
 		printf("<form method='post' id='make_assess' action='etab.php?action=make_assess' novalidate>");
 		printf("<p><input type='hidden' id='nbr_questions' value='%s'></p>", $numQuestion);
+		$notesDom = array_values(calculNotes($reponses[$annee]));
 		$dom_complete = domainComplete($assessment);
 		for ($d=0; $d<count($quiz); $d++) {
 			$num_dom = $quiz[$d]['numero'];
 			$subDom = $quiz[$d]['subdomains'];
 			$fond = getColorButton($dom_complete, $num_dom);
-			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='ti%s'></p>", $fond, $num_dom, $quiz[$d]['libelle'], $num_dom);
+			$table = extractSubDomRep($num_dom, $reponses[$annee]);
+			$notesSubDom = array_values(calculNotesDetail($table, $num_dom.'1'));
+			$note = round($notesDom[$num_dom-1] * 20 / 7, 1);
+			printf("<p>%s<b>%s</b>&nbsp;%s&nbsp;-&nbsp;<b>%s/20</b>&nbsp;<input type='button' value='+' id='ti%s'></p>", $fond, $num_dom, $quiz[$d]['libelle'], $note, $num_dom);
 			printf("<script nonce='%s'>document.getElementById('ti%s').addEventListener('click', function(){display('ti%s');});</script>", $nonce, $num_dom, $num_dom);
 			printf("<dl class='none' id='dl%s'>", $num_dom);
 			for ($sd=0; $sd<count($subDom); $sd++) {
@@ -90,7 +95,8 @@ function displayAssessment() {
 				$id = $num_dom.'-'.$num_sub_dom;
 				$subdom_complete = subDomainComplete($assessment, $num_dom, $num_sub_dom);
 				$fond = getColorButton($subdom_complete, $num_sub_dom);
-				printf("<dt>%s<b>%s.%s</b>&nbsp;%s&nbsp;<input type='button' value='+' id='dt%s'></dt>", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $id);
+				$note = round($notesSubDom[$num_sub_dom-1] * 20 / 7, 1);
+				printf("<dt>%s<b>%s.%s</b>&nbsp;&nbsp;%s&nbsp;-&nbsp;<b>%s/20</b>&nbsp;<input type='button' value='+' id='dt%s'></dt>", $fond, $num_dom, $num_sub_dom, $subDom[$sd]['libelle'], $note, $id);
 				printf("<script nonce='%s'>document.getElementById('dt%s').addEventListener('click', function(){display('dt%s');});</script>", $nonce, $id, $id);
 				if ($subDom[$sd]['comment'] != '') {
 					printf("<dd class='comment'>%s</dd>", $subDom[$sd]['comment']);
