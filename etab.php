@@ -40,8 +40,13 @@ if (isset($_GET['action'])) {
 		if (isThereAssessForEtab()) {
 			displayAssessment();
 		} else {
-			if (createAssessment()) {
-				$msg = sprintf("L'évaluation pour %s a été créée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
+			$result = json_decode(createAssessment(), true);
+			if ($result['successful']) {
+				if ($result['previous']) {
+					$msg = sprintf("Une évaluation a été initialisée pour %s à partir des données d'évaluation de %s. Cliquer pour continuer...", $_SESSION['annee'], $_SESSION['annee']-1);
+				} else {
+					$msg = sprintf("Une évaluation vierge a été initialisée pour %s. Cliquer pour continuer...", $_SESSION['annee']);
+				}
 				linkMsg("etab.php?action=continue_assess", $msg, "ok.png");
 			} else {
 				linkMsg($_SESSION['curr_script'], "Aucune évaluation disponible.", "alert.png");

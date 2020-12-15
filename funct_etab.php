@@ -22,15 +22,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 function createAssessment() {
 	genSyslog(__FUNCTION__);
+	$json = array('previous'=>false, 'successful'=>false);
 	$base = dbConnect();
-	$request = sprintf("INSERT INTO assess (etablissement, annee, quiz) VALUES ('%d', '%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
+	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $_SESSION['id_etab'], $_SESSION['annee']-1, $_SESSION['quiz']);
+	$result = mysqli_query($base, $request);
+	if ($result->num_rows) {
+		$row = mysqli_fetch_object($result);
+		$request = sprintf("INSERT INTO assess (etablissement, annee, quiz, reponses, comments) VALUES ('%d', '%d', '%d', '%s', '%s')", $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz'], $row->reponses, $row->comments);
+		$json['previous'] = true;
+	} else {
+		$request = sprintf("INSERT INTO assess (etablissement, annee, quiz) VALUES ('%d', '%d', '%d')", $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
+		$json['previous'] = false;
+	}
 	if (mysqli_query($base, $request)) {
 		dbDisconnect($base);
-		return true;
+		$json['successful'] = true;
 	} else {
 		dbDisconnect($base);
-		return false;
+		$json['successful'] = false;
 	}
+	return(json_encode($json));
 }
 
 
