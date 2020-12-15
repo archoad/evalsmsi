@@ -26,6 +26,8 @@ $authorizedRole = array('2');
 isSessionValid($authorizedRole);
 header("Content-type: text/html; charset=utf-8");
 
+
+
 $id_etab = $_GET['query'];
 $annee = $_SESSION['annee'];
 $base = dbConnect();

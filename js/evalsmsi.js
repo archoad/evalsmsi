@@ -230,3 +230,12 @@ function xhrequest(input) {
 	xhr.open("GET", url, true);
 	xhr.send();
 }
+
+
+function alertSession() {
+	var currentTime = Math.round(Date.now() / 1000);
+	var elapsedTime = Math.round((timeout - currentTime) / 60);
+	if (elapsedTime <= 5) {
+		myAlert('Votre session va expirer dans 5 minutes.');
+	}
+}

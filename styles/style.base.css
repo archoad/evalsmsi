@@ -939,7 +939,7 @@ textarea {
 
 .notok {
 	text-align: center;
-	color:var(--myRedDark);
+	color: var(--myRedDark);
 }
 
 .error {

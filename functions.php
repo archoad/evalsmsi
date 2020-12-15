@@ -445,6 +445,7 @@ function headPage($titre, $sousTitre='') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/graphs.js'></script>", $nonce);
+			printf("<script nonce='%s'>var timeout=%d; setInterval(alertSession, 10000);</script>", $nonce, $_SESSION['expire']);
 		}
 		if ($script === 'audit.php') {
 			printf("<link nonce='%s' href='js/chart.min.css' rel='stylesheet' type='text/css' media='all'>", $nonce);

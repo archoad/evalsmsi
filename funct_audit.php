@@ -360,7 +360,17 @@ function displayAudit() {
 							$num_question = $questions[$q]['numero'];
 							$textID = 'comment'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							printf("<p><b>%s.%s.%s</b> %s</p>", $num_dom, $num_sub_dom, $num_question, $questions[$q]['libelle']);
+							$mesure = $questions[$q]['mesure'];
+							printf("<div class='reco_parent'>");
+							printf("<div class='reco_child'>");
 							printSelect($num_dom, $num_sub_dom, $num_question, $assessment);
+							printf("</div><div class='reco_child'>");
+							if ($mesure !== 'Néant') {
+								printf("<span class='reco'>%s</span>", $mesure);
+							} else {
+								printf("<span class='reco'>Pas de recommandation spécifique</span>");
+							}
+							printf("</div></div>");
 							printf("<br>Commentaire établissement<br><textarea name='%s' id='%s' cols='80' rows='4' readonly class='protected'>%s</textarea>", $textID, $textID, traiteStringFromBDD($assessment[$textID]));
 							$evalID = 'eval'.$num_dom.'_'.$num_sub_dom.'_'.$num_question;
 							if (isset($assessment[$evalID])) {
