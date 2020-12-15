@@ -182,17 +182,20 @@ function recordUser($action) {
 	$role = isset($_POST['role']) ? intval(trim($_POST['role'])) : NULL;
 	$login = isset($_POST['login']) ? traiteStringToBDD($_POST['login']) : NULL;
 	$etbs = isset($_POST['result']) ?  implode(",", $_POST['result']) : NULL;
-	$passwd = isset($_POST['password']) ? password_hash($passwd, PASSWORD_BCRYPT);
 	if ($role === 1) { return false; }
 	switch ($action) {
 		case 'add':
-			$passwd = isset($_POST['passwd']) ?  traiteStringToBDD($_POST['passwd']) : NULL;
-			$passwd = password_hash($passwd, PASSWORD_BCRYPT);
+			$passwd = password_hash($_POST['passwd'], PASSWORD_BCRYPT);
 			$request = sprintf("INSERT INTO users (prenom, nom, role, login, password, etablissement) VALUES ('%s', '%s', '%d', '%s', '%s', '%s')", $prenom, $nom, $role, $login, $passwd, $etbs);
 			break;
 		case 'update':
 			$id = intval($_SESSION['current_user']);
-			$request = sprintf("UPDATE users SET prenom='%s', nom='%s', role='%d', login='%s', etablissement='%s' WHERE id='%d'", $prenom, $nom, $role, $login, $etbs, $id);
+			if ($_POST['passwd']==='') {
+				$request = sprintf("UPDATE users SET prenom='%s', nom='%s', role='%d', login='%s', etablissement='%s' WHERE id='%d'", $prenom, $nom, $role, $login, $etbs, $id);
+			} else {
+				$passwd = password_hash($_POST['passwd'], PASSWORD_BCRYPT);
+				$request = sprintf("UPDATE users SET prenom='%s', nom='%s', role='%d', login='%s', etablissement='%s', password='%s' WHERE id='%d'", $prenom, $nom, $role, $login, $etbs, $passwd, $id);
+			}
 			break;
 	}
 	if (isset($_SESSION['token'])) {
