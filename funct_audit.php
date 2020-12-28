@@ -657,22 +657,64 @@ function getMeanNote($notes) {
 	}
 	$mean = $sum / $domainNbr;
 	$mean = 20 * $mean / 7;
-	$mean = number_format($mean, 2, ',', ' ');
+	$mean = round($mean, 2);
 	return $mean;
+}
+
+
+function dataSettings($table) {
+	$chartColors = ['#A0CBE8', '#FFBE7D', '#8CD17D', '#F1CE63', '#86BCB6', '#FF9D9A', '#BAB0AC', '#FABFD2',  '#D4A6C8', '#D7B5A6', '#4E79A7', '#F28E2B', '#59A14F', '#B6992D', '#499894', '#E15759', '#79706E', '#D37295', '#B07AA1', '#9D7660'];
+	$quizIdList = array();
+	$result = array();
+	foreach ($table as $key => $value) {
+		foreach ($value['data'] as $id => $val) {
+			if (!in_array($id, $quizIdList)) { $quizIdList[] = $id; }
+		}
+	}
+	$cpt = 0;
+	foreach ($table as $key => $value) {
+		$result[$cpt]['label'] = $value['label'];
+		$result[$cpt]['type'] = 'bar';
+		$result[$cpt]['borderWidth'] = 1;
+		$result[$cpt]['borderColor'] = $chartColors[$cpt];
+		$result[$cpt]['backgroundColor'] = $chartColors[$cpt].'cc';
+		$newdata = array();
+		foreach ($quizIdList as $id) {
+			if (array_key_exists($id, $value['data'])) {
+				$newdata[$id] = $value['data'][$id];
+			} else {
+				$newdata[$id] = floatval(0);
+			}
+		}
+		$temp = array();
+		foreach ($newdata as $key => $value) {
+			$temp[] = $value;
+		}
+		$result[$cpt]['data'] = $temp;
+		$cpt++;
+	}
+	return $result;
 }
 
 
 function displayEtabsReview() {
 	$listEtabs = getEtablissement();
+	$data = array();
+	$etabs = array();
+	$quiz = array();
 	printf("<h4>Bilan de la complétion des évaluations au %s</h4>", $_SESSION['day']);
 	printf("<div class='onecolumn'>");
+	printf("<canvas id='progressReviewGraphBar'></canvas>");
+	printf("<a href='' id='reviewGraphBar' class='btnValid' download='reviewGraphBar.png' type='image/png'>Télécharger le graphe</a>");
 	while($row = mysqli_fetch_object($listEtabs)) {
 		if (stripos($row->abrege, "_TEAM") === false) {
 			$base = dbConnect();
-			$request = sprintf("SELECT quiz, reponses FROM assess WHERE annee='%d' AND etablissement='%d' ORDER BY quiz", $_SESSION['annee'], $row->id);
+			$request = sprintf("SELECT id, quiz, reponses FROM assess WHERE annee='%d' AND etablissement='%d' ORDER BY quiz", $_SESSION['annee'], $row->id);
 			$result = mysqli_query($base, $request);
 			dbDisconnect($base);
-			$name_etab = getEtablissement($row->id);
+			$id_etab = $row->id;
+			$name_etab = getEtablissement($id_etab);
+			$etabs[] = $name_etab;
 			printf("<dl>%s", $name_etab);
 			while ($row = mysqli_fetch_object($result)) {
 				if (!empty($row->reponses)) {
@@ -688,16 +730,22 @@ function displayEtabsReview() {
 					$nbrQuestionOK = getNbrQuestionOK($answers);
 					$nbrQuestion = questionsCount();
 					$percent = 100 * intval($nbrQuestionOK) / intval($nbrQuestion);
-					$percent = number_format($percent, 2, ',', ' ');
+					$percent = round($percent, 2);
 					$notes = calculNotes($answers);
 					$mean = getMeanNote($notes);
 					printf("<dd>Le questionnaire est complété à %s %% - La note actuelle est de %s/20</dd>", $percent, $mean);
+					$quiz[$row->quiz]['label'] = $quiz_name;
+					$quiz[$row->quiz]['data'][$id_etab] = $percent;
 				}
 			}
-			printf("</dl>", $name_etab);
+			printf("</dl>");
 		}
 	}
+	$quiz = dataSettings($quiz);
+	$data['labels'] = $etabs;
+	$data['quiz'] = $quiz;
 	printf("</div>");
+	printf("<script nonce='%s'>document.body.addEventListener('load', displayProgressReviewGraphBar(%s));</script>", $_SESSION['nonce'], json_encode($data));
 }
 
 

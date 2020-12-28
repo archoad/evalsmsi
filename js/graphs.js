@@ -41,8 +41,8 @@ function stringifyArray(data) {
 }
 
 
-function generateLogsGraph(datas) {
-	var result = JSON.parse(datas);
+function generateLogsGraph(data) {
+	var result = JSON.parse(data);
 	var container = document.getElementById('visualization');
 	var items = new vis.DataSet(result);
 	var options = {
@@ -353,4 +353,40 @@ function displayYearGraphScatter(datas) {
 	};
 	var scatterContext = document.getElementById('currentYearGraphScatter').getContext('2d');
 	var yearChartScatter = new Chart(scatterContext, scatterConfig);
+}
+
+
+function displayProgressReviewGraphBar(datas) {
+	let d = new Date();
+	let day = d.getDate() + '/' + (1+d.getMonth()) + '/' + d.getFullYear();
+	var color = Chart.helpers.color;
+	var barData = {
+		labels: datas.labels,
+		datasets: datas.quiz
+	};
+	var barOption = {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'Bilan de la complétion des évaluations ' + day,
+		},
+		scales: {
+			yAxes: [{ ticks: { min:0, max:100 } }]
+		},
+		animation: {
+			onComplete: function(animation) {
+				var elt = document.getElementById('reviewGraphBar');
+				elt.setAttribute('href', this.toBase64Image());
+			}
+		}
+	};
+	var barConfig = {
+		type: 'bar',
+		data: barData,
+		options: barOption
+	};
+
+	var barContext = document.getElementById('progressReviewGraphBar').getContext('2d');
+	var reviewGraphBar = new Chart(barContext, barConfig);
+
 }
