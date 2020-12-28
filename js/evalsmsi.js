@@ -235,7 +235,7 @@ function xhrequest(input) {
 function alertSession() {
 	var currentTime = Math.round(Date.now() / 1000);
 	var elapsedTime = Math.round((timeout - currentTime) / 60);
-	if (elapsedTime <= 5) {
+	if (elapsedTime <= 10) {
 		myAlert('Votre session va expirer dans 5 minutes.');
 	}
 }

@@ -146,6 +146,7 @@ function menuAudit() {
 	linkMsg("audit.php?action=office", "Exporter une évaluation", "docx.png", 'menu');
 	linkMsg("audit.php?action=graph", "Graphes par établissement", "piechart.png", 'menu');
 	linkMsg("audit.php?action=objectif", "Gestion des objectifs", "objectifs.png", 'menu');
+	linkMsg("audit.php?action=review", "Bilan des évaluations", "review.png", 'menu');
 	linkMsg("audit.php?action=authentication", "Gestion de l'authentification", "fingerprint.png", 'menu');
 	printf("</div><div class='column right'>");
 	linkMsg("audit.php?action=audit", "Evaluation auditeur", "audit.png", 'menu');
@@ -455,6 +456,7 @@ function headPage($titre, $sousTitre='') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/mfa.js'></script>", $nonce);
 			printf("<script nonce='%s' src='js/graphs.js'></script>", $nonce);
+			printf("<script nonce='%s'>var timeout=%d; setInterval(alertSession, 10000);</script>", $nonce, $_SESSION['expire']);
 		}
 		if ($script === 'admin.php') {
 			printf("<script nonce='%s' src='js/evalsmsi.js'></script>", $nonce);
@@ -1124,6 +1126,7 @@ function calculNotesDetail($table, $mem=11) {
 
 
 function getPoidsQuestion($num) {
+	$weight = 0;
 	$question = explode('_', $num);
 	$quiz = getJsonFile();
 	for ($i=0; $i<count($quiz); $i++) {

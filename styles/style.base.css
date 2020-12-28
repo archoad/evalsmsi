@@ -280,6 +280,29 @@ textarea {
 	margin-right: auto;
 }
 
+.onecolumn dl {
+	background-color: var(--bg2Color);
+	padding: 10px;
+}
+
+.onecolumn dt {
+	background-color: var(--myRedLight);
+	color: var(--textClearColor);
+	margin: 5px 0px 0px 0px;
+	padding: 5px;
+	font-weight: bold;
+	font-size: 10pt;
+}
+
+.onecolumn dd {
+	background-color: var(--myOrangeLight);
+	color: var(--textDarkColor);
+	margin: 0px 0px 5px 0px;
+	padding: 5px 5px 5px 50px;
+	font-weight: bold;
+	font-size: 10pt;
+}
+
 .foot {
 	width: 50%;
 	border-radius: 4px;

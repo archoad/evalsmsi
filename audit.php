@@ -54,7 +54,6 @@ if (isset($_GET['action'])) {
 	case 'do_graph':
 		if (isEtabLegitimate($_POST)) {
 			if (isThereAssessForEtab()) {
-				getObjectives();
 				displayEtablissmentGraphs();
 				footPage($_SESSION['curr_script'], "Accueil");
 			} else {
@@ -66,6 +65,11 @@ if (isset($_GET['action'])) {
 			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 			footPage();
 		}
+		break;
+
+	case 'review':
+		displayEtabsReview();
+		footPage($_SESSION['curr_script'], "Accueil");
 		break;
 
 	case 'audit':

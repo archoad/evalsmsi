@@ -640,4 +640,65 @@ function deleteAssessment() {
 }
 
 
+function getNbrQuestionOK($answers) {
+	$result = 0;
+	foreach ($answers as $key => $value) {
+		if ($value) { $result += 1; }
+	}
+	return $result;
+}
+
+
+function getMeanNote($notes) {
+	$domainNbr = count($notes);
+	$sum = 0;
+	foreach($notes as $dom => $note) {
+		$sum += $note;
+	}
+	$mean = $sum / $domainNbr;
+	$mean = 20 * $mean / 7;
+	$mean = number_format($mean, 2, ',', ' ');
+	return $mean;
+}
+
+
+function displayEtabsReview() {
+	$listEtabs = getEtablissement();
+	printf("<h4>Bilan de la complétion des évaluations au %s</h4>", $_SESSION['day']);
+	printf("<div class='onecolumn'>");
+	while($row = mysqli_fetch_object($listEtabs)) {
+		if (stripos($row->abrege, "_TEAM") === false) {
+			$base = dbConnect();
+			$request = sprintf("SELECT quiz, reponses FROM assess WHERE annee='%d' AND etablissement='%d' ORDER BY quiz", $_SESSION['annee'], $row->id);
+			$result = mysqli_query($base, $request);
+			dbDisconnect($base);
+			$name_etab = getEtablissement($row->id);
+			printf("<dl>%s", $name_etab);
+			while ($row = mysqli_fetch_object($result)) {
+				if (!empty($row->reponses)) {
+					$_SESSION['quiz'] = $row->quiz;
+					$quiz_name = getQuizName();
+					printf("<dt>%s</dt>", $quiz_name);
+					$answers = array();
+					foreach(unserialize($row->reponses) as $quest => $rep) {
+						if (substr($quest, 0, 8) == 'question') {
+							$answers[substr($quest, 8, 14)]=$rep;
+						}
+					}
+					$nbrQuestionOK = getNbrQuestionOK($answers);
+					$nbrQuestion = questionsCount();
+					$percent = 100 * intval($nbrQuestionOK) / intval($nbrQuestion);
+					$percent = number_format($percent, 2, ',', ' ');
+					$notes = calculNotes($answers);
+					$mean = getMeanNote($notes);
+					printf("<dd>Le questionnaire est complété à %s %% - La note actuelle est de %s/20</dd>", $percent, $mean);
+				}
+			}
+			printf("</dl>", $name_etab);
+		}
+	}
+	printf("</div>");
+}
+
+
 ?>
