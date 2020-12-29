@@ -29,6 +29,8 @@ headPage($appli_titre, "Audit");
 purgeRapportsFiles();
 
 
+
+
 if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'office':
@@ -79,23 +81,7 @@ if (isset($_GET['action'])) {
 
 	case 'display_audit':
 		if (isEtabLegitimate($_POST)) {
-			if (isRegroupEtab()) {
-				if (isAssessGroupValidate()) {
-					if (isThereAssessForEtab()) {
-						displayAuditRegroup();
-					} else {
-						if (createAssessmentRegroup()) {
-							$msg = sprintf("L'évaluation pour %s a été crée dans la base. Cliquer pour continuer...", $_SESSION['annee']);
-							linkMsg($_SESSION['curr_script'], $msg, "ok.png");
-						} else {
-							linkMsg($_SESSION['curr_script'], "Aucune évaluation disponible.", "alert.png");
-						}
-					}
-
-				}
-			} else {
-				displayAudit();
-			}
+			displayAudit();
 		} else {
 			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 		}
@@ -118,7 +104,13 @@ if (isset($_GET['action'])) {
 
 	case 'prepare_rapport':
 		if (isEtabLegitimate($_POST)) {
-			getCommentGraphPar();
+			if (isRegroupEtab()) {
+				if (isAssessGroupValidate()) {
+					var_dump($_SESSION);
+				}
+			} else {
+				getCommentGraphPar();
+			}
 		} else {
 			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
 		}

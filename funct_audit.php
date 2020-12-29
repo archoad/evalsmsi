@@ -40,20 +40,6 @@ function isEtabLegitimate($tab) {
 }
 
 
-function createAssessmentRegroup() {
-	genSyslog(__FUNCTION__);
-	$base = dbConnect();
-	$request = sprintf("INSERT INTO assess (etablissement, annee) VALUES ('%d', '%d')", $_SESSION['etablissement'], $_SESSION['annee']);
-	if (mysqli_query($base, $request)){
-		dbDisconnect($base);
-		return true;
-	} else {
-		dbDisconnect($base);
-		return false;
-	}
-}
-
-
 function selectEtablissementAudit() {
 	genSyslog(__FUNCTION__);
 	$nonce = $_SESSION['nonce'];
@@ -88,14 +74,9 @@ function selectEtablissementAudit() {
 	printf("<form method='post' id='audit' action='audit.php?action=%s'>", $act);
 	printf("<fieldset><legend>Choix d'un établissement</legend>");
 	printf("<table><tr id='selectEtabRow'><td>");
-	if ($action === 'objectif') {
-		printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
-	} else {
-		printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
-		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>", $nonce);
-	}
+	printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
 	printf("<option selected='selected' value=''>&nbsp;</option>");
-	if (in_array($action, ['audit', 'rap_etab', 'delete'])) {
+	if ($action === 'rap_etab') {
 		while($row = mysqli_fetch_object($result)) {
 			if (stripos($row->abrege, "_TEAM") === false) {
 				printf("<option value='%s'>%s</option>", $row->id, $row->nom);
@@ -114,22 +95,8 @@ function selectEtablissementAudit() {
 	printf("</tr></table></fieldset>");
 	validForms('Continuer', 'audit.php', $back=False);
 	printf("</form>");
-}
-
-
-function getAssessment() {
-	genSyslog(__FUNCTION__);
-	$id_etab = $_SESSION['id_etab'];
-	$annee = $_SESSION['annee'];
-	$id_quiz = $_SESSION['quiz'];
-	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
-	$result=mysqli_query($base, $request);
-	dbDisconnect($base);
-	if (mysqli_num_rows($result)) {
-		return $result;
-	} else {
-		linkMsg("evalsmsi.php", "Aucune évaluation disponible", "alert.png");
+	if ($action !== 'objectif') {
+		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>", $nonce);
 	}
 }
 
@@ -137,12 +104,8 @@ function getAssessment() {
 function writeAudit() {
 	genSyslog(__FUNCTION__);
 	recordLog();
-	$id_etab = $_SESSION['id_etab'];
-	$annee = $_SESSION['annee'];
-	$id_quiz = $_SESSION['quiz'];
-	$assessment = getAssessment();
 	$record = controlAssessment($_POST);
-	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE (etablissement='%d' AND annee='%d')", $record, $id_etab, $annee);
+	$request = sprintf("UPDATE assess SET reponses='%s', valide=1 WHERE etablissement='%d' AND annee='%d' AND quiz='%d' ", $record, $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	$base = dbConnect();
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
@@ -302,6 +265,9 @@ function isAssessGroupValidate() {
 				$isOk = false;
 				$msg = sprintf("L' évaluation de %s pour l'année %d n'est pas validée par un auditeur", $name_etab, $annee);
 				linkMsg("audit.php", $msg, "alert.png");
+			} else {
+				$msg = sprintf("L' évaluation de %s pour l'année %d est validée par un auditeur", $name_etab, $annee);
+				linkMsg("#", $msg, "ok.png");
 			}
 		}
 	}
