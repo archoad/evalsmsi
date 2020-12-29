@@ -223,8 +223,10 @@ function xhrequest(input) {
 		if (this.readyState == 4 && this.status == 200) {
 			var row = document.getElementById('selectEtabRow');
 			if (row.cells.length > 1) { row.deleteCell(-1); }
-			var newCell = row.insertCell(-1);
-			newCell.innerHTML = xhr.responseText;
+			if (xhr.responseText) {
+				var newCell = row.insertCell(-1);
+				newCell.innerHTML = xhr.responseText;
+			}
 		}
 	};
 	xhr.open("GET", url, true);

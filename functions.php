@@ -689,6 +689,16 @@ function getRole($id) {
 }
 
 
+function getRSSI($id_etab) {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom,prenom FROM users WHERE role='4' AND etablissement='%d' LIMIT 1", intval($id_etab));
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	dbDisconnect($base);
+	return $row->prenom . ' ' . strtoupper($row->nom);
+}
+
+
 function getDomLibelle($id_quiz) {
 	global $cheminDATA;
 	$base = dbConnect();
@@ -760,6 +770,20 @@ function getEtablissement($id_etab=0, $abrege=0) {
 
 function isRegroupEtab() {
 	$id_etab = $_SESSION['id_etab'];
+	$base = dbConnect();
+	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	$row = mysqli_fetch_object($result);
+	if (stripos($row->abrege, "_TEAM") === false) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+
+function isRegroupEtabbyId($id_etab) {
 	$base = dbConnect();
 	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
 	$result = mysqli_query($base, $request);

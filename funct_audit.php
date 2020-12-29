@@ -95,11 +95,19 @@ function selectEtablissementAudit() {
 		printf("<script nonce='%s'>var id=document.getElementById('id_etab'); id.addEventListener('change', function(){xhrequest(id.value);});</script>", $nonce);
 	}
 	printf("<option selected='selected' value=''>&nbsp;</option>");
-	while($row = mysqli_fetch_object($result)) {
-		if (stripos($row->abrege, "_TEAM") === false) {
-			printf("<option value='%s'>%s</option>", $row->id, $row->nom);
-		} else {
-			printf("<option value='%s'>%s (regroupement)</option>", $row->id, $row->nom);
+	if (in_array($action, ['audit', 'rap_etab', 'delete'])) {
+		while($row = mysqli_fetch_object($result)) {
+			if (stripos($row->abrege, "_TEAM") === false) {
+				printf("<option value='%s'>%s</option>", $row->id, $row->nom);
+			} else {
+				printf("<option value='%s'>%s (regroupement)</option>", $row->id, $row->nom);
+			}
+		}
+	} else {
+		while($row = mysqli_fetch_object($result)) {
+			if (stripos($row->abrege, "_TEAM") === false) {
+				printf("<option value='%s'>%s</option>", $row->id, $row->nom);
+			}
 		}
 	}
 	printf("</select></td>");
@@ -714,8 +722,9 @@ function displayEtabsReview() {
 			dbDisconnect($base);
 			$id_etab = $row->id;
 			$name_etab = getEtablissement($id_etab);
+			$name_rssi =  getRSSI($id_etab);
 			$etabs[] = $name_etab;
-			printf("<dl>%s", $name_etab);
+			printf("<dl>%s <i>(RSSI: %s)</i>", $name_etab, $name_rssi);
 			while ($row = mysqli_fetch_object($result)) {
 				if (!empty($row->reponses)) {
 					$_SESSION['quiz'] = $row->quiz;
