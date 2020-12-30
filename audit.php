@@ -107,6 +107,7 @@ if (isset($_GET['action'])) {
 			if (isRegroupEtab()) {
 				if (isAssessGroupValidate()) {
 					var_dump($_SESSION);
+					getCommentGraphPar();
 				}
 			} else {
 				getCommentGraphPar();

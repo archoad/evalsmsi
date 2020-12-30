@@ -222,9 +222,8 @@ function journalisation() {
 function recordCommentGraph() {
 	genSyslog(__FUNCTION__);
 	$base = dbConnect();
-	$id_assess = isset($_POST['id_assess']) ? intval(trim($_POST['id_assess'])) : NULL;
 	$comment = isset($_POST['comments']) ? traiteStringToBDD($_POST['comments']) : NULL;
-	$request = sprintf("UPDATE assess SET comment_graph_par='%s' WHERE id='%d'", $comment, $id_assess);
+	$request = sprintf("UPDATE assess SET comment_graph_par='%s' WHERE etablissement='%d' AND annee='%d' AND quiz='%d' ", $comment, $_SESSION['id_etab'], $_SESSION['annee'], $_SESSION['quiz']);
 	if (isset($_SESSION['token'])) {
 		unset($_SESSION['token']);
 		if (mysqli_query($base, $request)) {
@@ -544,20 +543,25 @@ function getCommentGraphPar() {
 						dbDisconnect($base);
 						$record = mysqli_fetch_object($result);
 						printf("<div class='onecolumn'>");
+
 						printf("<div id='graphs'>");
 						printf("<canvas id='currentYearGraphBar'></canvas>");
 						printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
+
+						printf("<canvas id='currentYearRadar'></canvas>");
+						printf("<a href='' id='yearGraphradar' class='btnValid' download='yearGraphradar.png' type='image/png'>Télécharger le graphe</a>");
+						printf("<p class='separation'>&nbsp;</p>");
+
 						printf("<canvas id='currentYearGraphPolar'></canvas>");
 						printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
-						printf("<canvas id='currentYearGraphScatter'></canvas><br>");
-						printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
 						printf("</div>");
+
 						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' >");
-						printf("<input type='hidden' name='id_assess' id='id_assess' value='%s'/>", $record->id);
 						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10' required>%s</textarea>", traiteStringFromBDD($record->comment_graph_par));
 						validForms('Continuer', 'audit.php', $back=False);
 						printf("</form>");
 						printf("</div>");
+						printf("<br />");
 					} else {
 						linkMsg("audit.php", "L'évaluation pour ".$annee." n'a pas été revue par les auditeurs", "alert.png");
 					}
