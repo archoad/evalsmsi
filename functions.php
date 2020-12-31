@@ -689,16 +689,6 @@ function getRole($id) {
 }
 
 
-function getRSSI($id_etab) {
-	$base = dbConnect();
-	$request = sprintf("SELECT nom,prenom FROM users WHERE role='4' AND etablissement='%d' LIMIT 1", intval($id_etab));
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	return $row->prenom . ' ' . strtoupper($row->nom);
-}
-
-
 function getDomLibelle($id_quiz) {
 	global $cheminDATA;
 	$base = dbConnect();
@@ -879,11 +869,41 @@ function getAuditor() {
 	while($row=mysqli_fetch_object($result)) {
 		$etabs = explode(',', $row->etablissement);
 		if (in_array($id_etab, $etabs)) {
-			$auditor = sprintf("%s %s", htmlLatexParser($row->prenom), htmlLatexParser($row->nom));
+			$auditor = sprintf("%s %s", traiteStringFromBDD($row->prenom), traiteStringFromBDD($row->nom));
 		}
 	}
 	dbDisconnect($base);
 	return $auditor;
+}
+
+
+function getRSSI($id_etab) {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom,prenom FROM users WHERE role='4' AND etablissement='%d' LIMIT 1", intval($id_etab));
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	if (mysqli_num_rows($result)) {
+		$row = mysqli_fetch_object($result);
+		$name = traiteStringFromBDD($row->prenom). ' ' . strtoupper(traiteStringFromBDD($row->nom));
+	} else {
+		$name = '';
+	}
+	return $name;
+}
+
+
+function getDirector($id_etab) {
+	$base = dbConnect();
+	$request = sprintf("SELECT nom,prenom FROM users WHERE role='3' AND etablissement='%d' LIMIT 1", intval($id_etab));
+	$result = mysqli_query($base, $request);
+	dbDisconnect($base);
+	if (mysqli_num_rows($result)) {
+		$row = mysqli_fetch_object($result);
+		$name = traiteStringFromBDD($row->prenom). ' ' . strtoupper(traiteStringFromBDD($row->nom));
+	} else {
+		$name = '';
+	}
+	return $name;
 }
 
 
@@ -1210,12 +1230,85 @@ function getAnswers() {
 			$an = $row->annee;
 			foreach(unserialize($row->reponses) as $quest => $rep) {
 				if (substr($quest, 0, 8) == 'question') {
-					$answers[$an][substr($quest, 8, 14)]=$rep;
+					$answers[$an][substr($quest, 8, 14)] = $rep;
 				}
 			}
 		}
 	}
 	dbDisconnect($base);
+	return $answers;
+}
+
+
+function getRegroupAssessment() {
+	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
+	$annee = $_SESSION['annee'];
+	$abrege_etab = getEtablissement($id_etab, $abrege=1);
+	$base = dbConnect();
+	$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	$etabs = explode(',', $row->regroupement);
+	$num_etabs = count($etabs);
+	$answers = array();
+	$allAssessments = array();
+	foreach ($etabs as $id) {
+		$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id, $annee, $id_quiz);
+		$result = mysqli_query($base, $request);
+		$row = mysqli_fetch_object($result);
+		$assessment = unserialize($row->reponses);
+		foreach($assessment as $quest => $rep) {
+			if (array_key_exists($quest, $answers)) {
+				if (substr($quest, 0, 8) == 'question') {
+					$answers[$quest] += intval($rep);
+				} else {
+					if (!empty($rep)) {
+						$answers[$quest] .= "\r".traiteStringFromBDD($rep);
+					}
+				}
+			} else {
+				if (substr($quest, 0, 8) == 'question') {
+					$answers[$quest] = intval($rep);
+				} else {
+					$answers[$quest] = traiteStringFromBDD($rep);
+				}
+			}
+		}
+		if (array_key_exists('final_etab_comment', $allAssessments)) {
+			$allAssessments['final_etab_comment'] .= "\r".traiteStringFromBDD($row->comments);
+		} else {
+			$allAssessments['final_etab_comment'] = traiteStringFromBDD($row->comments);
+		}
+		if (array_key_exists('auditor_comment', $allAssessments)) {
+			$allAssessments['auditor_comment'] .= "\r".traiteStringFromBDD($row->comment_graph_par);
+		} else {
+			$allAssessments['auditor_comment'] = traiteStringFromBDD($row->comment_graph_par);
+		}
+	}
+	foreach ($answers as $quest => $rep) {
+		if (substr($quest, 0, 8) == 'question') {
+			$rep = $rep / $num_etabs;
+			$answers[$quest] = $rep;
+		}
+	}
+	$allAssessments['assessment'] = $answers;
+	dbDisconnect($base);
+	return $allAssessments;
+}
+
+
+function getRegroupAnswers() {
+	$assessment = getRegroupAssessment();
+	$annee = $_SESSION['annee'];
+	$answers = array();
+	foreach($assessment['assessment'] as $quest => $rep) {
+		if (substr($quest, 0, 8) == 'question') {
+			$answers[$annee][substr($quest, 8, 14)] = $rep;
+		}
+	}
+	$answers['final_etab_comment'] = $assessment['final_etab_comment'];
+	$answers['auditor_comment'] = $assessment['auditor_comment'];
 	return $answers;
 }
 
@@ -1362,6 +1455,27 @@ function cumulatedGraph($cumulNotes, $annee, $titles_par) {
 }
 
 
+function displayGraphs() {
+	printf("<div id='graphs'>");
+	printf("<canvas id='currentYearGraphBar'></canvas>");
+	printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
+	printf("<p class='separation'>&nbsp;</p>");
+
+	printf("<canvas id='currentYearRadar'></canvas>");
+	printf("<a href='' id='yearGraphradar' class='btnValid' download='yearGraphradar.png' type='image/png'>Télécharger le graphe</a>");
+	printf("<p class='separation'>&nbsp;</p>");
+
+	printf("<canvas id='currentYearGraphPolar'></canvas>");
+	printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
+	printf("<p class='separation'>&nbsp;</p>");
+
+	printf("<canvas id='currentYearGraphScatter'></canvas><br>");
+	printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
+	printf("<p class='separation'>&nbsp;</p>");
+	printf("</div>");
+}
+
+
 function displayEtablissmentGraphs() {
 	$annee = $_SESSION['annee'];
 	$nonce = $_SESSION['nonce'];
@@ -1372,24 +1486,9 @@ function displayEtablissmentGraphs() {
 		} else {
 			linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
 		}
-		printf("<div class='onecolumn' id='graphs'>");
+		printf("<div class='onecolumn'>");
 		assessSynthese();
-		printf("<canvas id='currentYearGraphBar'></canvas>");
-		printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
-		printf("<p class='separation'>&nbsp;</p>");
-
-		printf("<canvas id='currentYearRadar'></canvas>");
-		printf("<a href='' id='yearGraphradar' class='btnValid' download='yearGraphradar.png' type='image/png'>Télécharger le graphe</a>");
-		printf("<p class='separation'>&nbsp;</p>");
-
-		printf("<canvas id='currentYearGraphPolar'></canvas>");
-		printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
-		printf("<p class='separation'>&nbsp;</p>");
-
-		printf("<canvas id='currentYearGraphScatter'></canvas><br>");
-		printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
-		printf("<p class='separation'>&nbsp;</p>");
-
+		displayGraphs();
 		printf("</div>");
 		printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 	} else {
@@ -1540,57 +1639,12 @@ function isValidateRapport($id_etab, $annee=0) {
 function parserLatex($text) {
 	$patternList = array(
 		"\\" => "$\\backslash$", // a laisser en premier
-		chr(13) => "\n\\mbox{}\\\\", // Carriage Return (\r)
+		chr(13) => "\n\\\\", // Carriage Return (\r)
 		chr(10) => "", // Line Feed (\n)
 		"%" => "\\%",
 		"_" => "\\_",
 		"&" => "\\&",
 		"°" => "\\textsuperscript{o}"
-	);
-	return(str_replace(array_keys($patternList), array_values($patternList), $text));
-}
-
-
-function htmlLatexParser($text) {
-	$patternList = array(
-		"<p>" => "",
-		"</p>" => "\\par\n",
-		"<ol>" => "\\begin{enumerate}\n",
-		"</ol>" => "\\end{enumerate}\n",
-		"<ul>" => "\\begin{itemize}\n",
-		"</ul>" => "\\end{itemize}\n",
-		"<li>" => "\\item ",
-		"</li>" => "",
-		"<strong>" => "\\textbf{",
-		"</strong>" => "}",
-		"<em>" => "\\textsl{",
-		"</em>" => "}",
-		"&nbsp;" => " ",
-		"&#39;" => "\\textquotesingle{}",
-		"&quot;" => "\"",
-		"&agrave;" => "à",
-		"&Agrave;" => "\`A",
-		"&acirc;" => "â",
-		"&Acirc;" => "\^A",
-		"&auml;" => "ä",
-		"&egrave;" => "è",
-		"&Egrave;" => "\`E",
-		"&eacute;" => "é",
-		"&Eacute;" => "\'E",
-		"&ecirc;" => "ê",
-		"&Ecirc;" => "\^E",
-		"&euml;" => "ë",
-		"&icirc;" => "î",
-		"&Icirc;" => "\^I",
-		"&iuml;" => "ï",
-		"&ocirc;" => "ô",
-		"&ouml;" => "ö",
-		"&ugrave;" => "ù",
-		"&Ugrave;" => "\`U",
-		"&ucirc;" => "û",
-		"&uuml;" => "ü",
-		"&ccedil;" => "ç",
-		"&Ccedil;" => "\c C"
 	);
 	return(str_replace(array_keys($patternList), array_values($patternList), $text));
 }
@@ -1608,20 +1662,15 @@ function disclaimer() {
 
 function latexHead($annee=0) {
 	global $rapportPicts;
+	$regroup = isRegroupEtab();
 	$id_etab = $_SESSION['id_etab'];
+	$name_etab = getEtablissement($id_etab);
 	$auditor = getAuditor();
+	$rssi = getRSSI($id_etab);
+	$director = getDirector($id_etab);
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
-	$name_etab = getEtablissement($id_etab);
-	$base = dbConnect();
-	$req_dir = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='3') LIMIT 1", $id_etab);
-	$res_dir = mysqli_query($base, $req_dir);
-	$row_dir = mysqli_fetch_object($res_dir);
-	$req_rssi = sprintf("SELECT prenom, nom FROM users WHERE (etablissement='%d' AND role='4') LIMIT 1", $id_etab);
-	$res_rssi = mysqli_query($base, $req_rssi);
-	$row_rssi = mysqli_fetch_object($res_rssi);
-	dbDisconnect($base);
 
 	$en_tete = "\\begin{filecontents*}{\jobname.xmpdata}\n";
 	$en_tete .= "\\Title{EvalSMSI}\n\\Author{Michel Dubois}\n";
@@ -1630,28 +1679,38 @@ function latexHead($annee=0) {
 	$en_tete .= "\\documentclass[a4paper,11pt]{article}\n\n";
 	$en_tete .= "\\input{header}\n\n";
 	$pictures = sprintf("\\includegraphics[width=0.30\\textwidth]{%s}\\hfill\\includegraphics[width=0.30\\textwidth]{%s}\\\\\\bigskip\\bigskip\n", $rapportPicts[0], $rapportPicts[1]);
-	//$en_tete .= sprintf("\\title{%s Rapport d'évaluation du\\\\Système de Management de la Sécurité de l'Information\\\\ \\textcolor{myRed}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\title{%s Rapport d'évaluation\\\\de la\\\\maturité numérique\\\\ \\textcolor{myBlue}{%s}}\n\n", $pictures, $name_etab);
 	$en_tete .= sprintf("\\author{%s -- \\textcolor{myBlue}{Auditeur}}\n\n", $auditor);
 	$en_tete .= "\\date{\\today}\n\n";
 	$en_tete .= "\\begin{document}\n\n";
 	$en_tete .= "\\maketitle\n\n";
 	$en_tete .= "\\bigskip\\bigskip\n\n";
-	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n\\begin{itemize}\n", $name_etab, $annee, $auditor);
-	if (isset($row_dir)) {
-		$en_tete .= sprintf("\\item Directeur de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_dir->prenom)), htmlLatexParser(traiteStringFromBDD($row_dir->nom)));
+	$en_tete .= sprintf("\\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \\textsl{%s} en %s. L'évaluation initiale a été contrôlée le \\today{} par %s. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}\n\n\\bigskip\\bigskip\n\n", $name_etab, $annee, $auditor);
+
+	if (!empty($director) or (!empty($rssi))) {
+		$en_tete .= sprintf("\\begin{itemize}\n");
 	}
-	$en_tete .= sprintf("\\item RSSI de l'établissement: \\textsl{%s %s}\n", htmlLatexParser(traiteStringFromBDD($row_rssi->prenom)), htmlLatexParser(traiteStringFromBDD($row_rssi->nom)));
-	$en_tete .= "\\end{itemize}\n\n\\bigskip\\bigskip\n\n";
-	$en_tete .= "\\begin{center}\n";
-	if (isValidateRapport($id_etab, $annee)) {
-		$en_tete .= "\\Large{\\textcolor{myRed}{Rapport validé}}\n";
-	} else {
-		$en_tete .= "\\Large{\\textcolor{myRed}{Rapport NON validé !}}\n";
+	if (!empty($director)) {
+		$en_tete .= sprintf("\\item Directeur de l'établissement: \\textsl{%s}\n", $director);
 	}
-	$en_tete .= "\\end{center}\n\n";
-	if (isValidateRapport($id_etab, $annee)) {
-		$en_tete .= "\\bigskip\\bigskip\n\n\\begin{flushright}\n\\textcolor{myRed}{Original signé}\n\\end{flushright}\n\n";
+	if (!empty($rssi)) {
+		$en_tete .= sprintf("\\item RSSI de l'établissement: \\textsl{%s}\n", $rssi);
+	}
+	if (!empty($director) or (!empty($rssi))) {
+		$en_tete .= "\\end{itemize}\n\n\\bigskip\\bigskip\n\n";
+	}
+
+	if (!$regroup) {
+		$en_tete .= "\\begin{center}\n";
+		if (isValidateRapport($id_etab, $annee)) {
+			$en_tete .= "\\Large{\\textcolor{myRed}{Rapport validé}}\n";
+		} else {
+			$en_tete .= "\\Large{\\textcolor{myRed}{Rapport NON validé !}}\n";
+		}
+		$en_tete .= "\\end{center}\n\n";
+		if (isValidateRapport($id_etab, $annee)) {
+			$en_tete .= "\\bigskip\\bigskip\n\n\\begin{flushright}\n\\textcolor{myRed}{Original signé}\n\\end{flushright}\n\n";
+		}
 	}
 	$en_tete .= disclaimer();
 	$en_tete .= "\\clearpage\n\n";
@@ -1661,8 +1720,6 @@ function latexHead($annee=0) {
 	$en_tete .= "\\clearpage\n\n";
 	return $en_tete;
 }
-
-
 
 
 function latexFoot() {
@@ -1677,17 +1734,7 @@ function printAssessment($assessment, $annee=0) {
 	if (!$annee) {
 		$annee = $_SESSION['annee'];
 	}
-	$base = dbConnect();
-	$request = sprintf("SELECT abrege FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
-	$result = mysqli_query($base, $request);
-	dbDisconnect($base);
-	$row_regroup = mysqli_fetch_object($result);
-	if (stripos($row_regroup->abrege, "_TEAM") === false) {
-		$regroup = false;
-	} else {
-		$regroup = true;
-	}
-	$text .= sprintf("\\section{Résultats de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
+	$text .= sprintf("\\section{Résultats de l'audit pour l'année %s}\n\n", $annee);
 	for ($d=0; $d<count($quiz); $d++) {
 		$num_dom = $quiz[$d]['numero'];
 		$subDom = $quiz[$d]['subdomains'];
@@ -1706,18 +1753,19 @@ function printAssessment($assessment, $annee=0) {
 				$text .= "\\begin{tabular}{ | >{\\centering}m{0.05\\textwidth} >{\\centering}m{0.25\\textwidth} | m{0.50\\textwidth} | }\n\\hline\n";
 				$text .= "\\multicolumn{2}{|c|}{\\textbf{\\'Evaluation de l'établissement}} & \\centering\\textbf{Commentaire} \\tabularnewline\n";
 				if ($assessment[$questID]) {
-					if ($assessment[$questID] == 1) { $color = "gray"; }
-					if (($assessment[$questID] == 2) || ($assessment[$questID] == 3)) { $color = "red"; }
-					if (($assessment[$questID] == 4) || ($assessment[$questID] == 5)) { $color = "orange"; }
-					if (($assessment[$questID] == 6) || ($assessment[$questID] == 7)) { $color = "green"; }
+					$note = $assessment[$questID];
+					if (($note >= 0) || ($note < 2)) { $color = "gray"; }
+					if (($note >= 2) || ($note < 4)) { $color = "red"; }
+					if (($note >= 4) || ($note < 6)) { $color = "orange"; }
+					if ($note >= 6) { $color = "green"; }
 					$text .= sprintf("\\tikz{\\node [rectangle, fill=%s, inner sep=10pt] {};} & ", $color);
-					$text .= sprintf("\\textcolor{myRed}{%s (%s/7)} & ", textItem($assessment[$questID]), $assessment[$questID]);
+					$text .= sprintf("\\textcolor{myRed}{%s (%s/7)} & ", textItem(intval(round($note, 0, PHP_ROUND_HALF_UP))), $note);
 				} else {
 					$text .= sprintf(" & \\textcolor{myRed}{Néant} & ");
 				}
 				if ($assessment[$commID]<>"") {
 					$commEtab = parserLatex(traiteStringFromBDD($assessment[$commID]));
-					$text .= sprintf("%s\\tabularnewline\n", $commEtab);
+					$text .= sprintf("\\makecell{%s}\\tabularnewline\n", $commEtab);
 				} else {
 					$text .= sprintf("Néant\\tabularnewline\n");
 				}
@@ -1754,21 +1802,26 @@ function printGraphsAndNotes($annee) {
 	$nbr_par = domainCount();
 	$titles_par = getAllDomAbstract();
 	$name_etab = getEtablissement($id_etab);
-	$reponses = getAnswers();
-	$notes = calculNotes($reponses[$annee]);
-	$noteSum = 0;
-	$base = dbConnect();
-	$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
-	$result = mysqli_query($base, $request);
-	$row = mysqli_fetch_object($result);
-	dbDisconnect($base);
-	foreach (array_keys($reponses) as $year){
-		if (isValidateRapport($id_etab, $year) && $year<=$annee) {
-			$cumulNotes[$year] = calculNotes($reponses[$year]);
+	$regroup = isRegroupEtab();
+	if ($regroup) {
+		$reponses = getRegroupAnswers();
+		$cumulNotes[$_SESSION['annee']] = calculNotes($reponses[$_SESSION['annee']]);
+		$notes = calculNotes($reponses[$_SESSION['annee']]);
+	} else {
+		$reponses = getAnswers();
+		$base = dbConnect();
+		$request = sprintf("SELECT comment_graph_par, comments FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
+		$result = mysqli_query($base, $request);
+		$row = mysqli_fetch_object($result);
+		dbDisconnect($base);
+		foreach (array_keys($reponses) as $year){
+			if (isValidateRapport($id_etab, $year) && $year<=$annee) {
+				$cumulNotes[$year] = calculNotes($reponses[$year]);
+			}
 		}
+		$notes = calculNotes($reponses[$annee]);
 	}
-
-	//$text = sprintf("\\section{Analyse de l'évaluation du SMSI pour l'année %s}\n\n", $annee);
+	$noteSum = 0;
 	$text = sprintf("\\section{Analyse de l'évaluation pour l'année %s}\n\n", $annee);
 	$text .= "\\input{intro}\n\n";
 	$text .= "\\subsection{Notes obtenues par l'établissement}\n\n";
@@ -1806,10 +1859,18 @@ function printGraphsAndNotes($annee) {
 
 	$text .= "\\subsection{Commentaires et conclusion}\n\n";
 	$text .= "\\subsubsection{Commentaires de l'établissement}\n\n";
-	$commEtab = htmlLatexParser(traiteStringFromBDD($row->comments));
+	if ($regroup) {
+		$commEtab = parserLatex(traiteStringFromBDD($reponses['final_etab_comment']));
+	} else {
+		$commEtab = parserLatex(traiteStringFromBDD($row->comments));
+	}
 	$text .= sprintf("\\par\n%s\n\\par", $commEtab);
 	$text .= "\\subsubsection{Conclusion des évaluateurs}\n\n";
-	$commEvals = htmlLatexParser(traiteStringFromBDD($row->comment_graph_par));
+	if ($regroup) {
+		$commEvals = parserLatex(traiteStringFromBDD($reponses['auditor_comment']));
+	} else {
+		$commEvals = parserLatex(traiteStringFromBDD($row->comment_graph_par));
+	}
 	$text .= sprintf("\\par\n%s\n\\par", $commEvals);
 	return $text."\\clearpage\n\n";
 }
@@ -1877,7 +1938,6 @@ function generateRapport($annee=0) {
 		$annee = $_SESSION['annee'];
 		$printByEtablissement = false;
 	}
-	$name_etab = getEtablissement($id_etab);
 	$abrege_etab = getEtablissement($id_etab, $abrege=1);
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);

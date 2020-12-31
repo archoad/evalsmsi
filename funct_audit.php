@@ -543,19 +543,7 @@ function getCommentGraphPar() {
 						dbDisconnect($base);
 						$record = mysqli_fetch_object($result);
 						printf("<div class='onecolumn'>");
-
-						printf("<div id='graphs'>");
-						printf("<canvas id='currentYearGraphBar'></canvas>");
-						printf("<a href='' id='yearGraphBar' class='btnValid' download='yearGraphBar.png' type='image/png'>Télécharger le graphe</a>");
-
-						printf("<canvas id='currentYearRadar'></canvas>");
-						printf("<a href='' id='yearGraphradar' class='btnValid' download='yearGraphradar.png' type='image/png'>Télécharger le graphe</a>");
-						printf("<p class='separation'>&nbsp;</p>");
-
-						printf("<canvas id='currentYearGraphPolar'></canvas>");
-						printf("<a href='' id='yearGraphPolar' class='btnValid' download='yearGraphPolar.png' type='image/png'>Télécharger le graphe</a>");
-						printf("</div>");
-
+						displayGraphs();
 						printf("<form method='post' id='comment_graph' action='audit.php?action=record_comment' >");
 						printf("<textarea placeholder='Commentaire auditeur' name='comments' id='comments' cols='100' rows='10' required>%s</textarea>", traiteStringFromBDD($record->comment_graph_par));
 						validForms('Continuer', 'audit.php', $back=False);
@@ -580,6 +568,12 @@ function getCommentGraphPar() {
 		$msg = sprintf("Il n'y a pas d'évaluation pour cet établissement");
 		linkMsg("audit.php", $msg, "alert.png");
 	}
+}
+
+
+function getGroupCommentGraphPar() {
+	genSyslog(__FUNCTION__);
+	var_dump($_SESSION);
 }
 
 
@@ -725,6 +719,20 @@ function displayEtabsReview() {
 	$data['quiz'] = $quiz;
 	printf("</div>");
 	printf("<script nonce='%s'>document.body.addEventListener('load', displayProgressReviewGraphBar(%s));</script>", $_SESSION['nonce'], json_encode($data));
+}
+
+
+function generateGroupRapport() {
+	$abrege_etab = getEtablissement($_SESSION['id_etab'], $abrege=1);
+	$annee = $_SESSION['annee'];
+	$assessment = getRegroupAssessment();
+	$head = latexHead($annee);
+	$first_section = printGraphsAndNotes($annee);
+	$second_section = printAssessment($assessment['assessment'], $annee);
+	$annexes = printAnnexes();
+	$foot = latexFoot();
+	$rapport = $head."\n".$first_section."\n".$second_section."\n".$annexes."\n".$foot;
+	makeRapport($abrege_etab, $rapport, $annee);
 }
 
 

@@ -106,16 +106,17 @@ if (isset($_GET['action'])) {
 		if (isEtabLegitimate($_POST)) {
 			if (isRegroupEtab()) {
 				if (isAssessGroupValidate()) {
-					var_dump($_SESSION);
-					getCommentGraphPar();
+					generateGroupRapport();
+					footPage($_SESSION['curr_script'], "Accueil");
 				}
 			} else {
 				getCommentGraphPar();
+				footPage();
 			}
 		} else {
 			linkMsg($_SESSION['curr_script'], "Etablissement invalide", "alert.png");
+			footPage();
 		}
-		footPage();
 		break;
 
 	case 'record_comment':
