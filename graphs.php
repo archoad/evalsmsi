@@ -31,13 +31,21 @@ header('Content-Type: application/json');
 $annee = $_SESSION['annee'];
 $name_etab = getEtablissement($_SESSION['id_etab']);
 $labels = getAllDomAbstract();
-$reponses = getAnswers();
-$first_year = key($reponses);
+$regroup = isRegroupEtab();
 $scores = [];
-for ($i=0; $i<count($reponses); $i++) {
-	$current_year = $i + $first_year;
-	$scores[$current_year] = array_values(calculNotes($reponses[$current_year]));
+
+if ($regroup) {
+	$reponses = getRegroupAnswers();
+	$scores[$annee] = array_values(calculNotes($reponses[$annee]));
+} else {
+	$reponses = getAnswers();
+	$first_year = key($reponses);
+	for ($i=0; $i<count($reponses); $i++) {
+		$current_year = $i + $first_year;
+		$scores[$current_year] = array_values(calculNotes($reponses[$current_year]));
+	}
 }
+
 $goal = getObjectives();
 
 $rawdata = [];
@@ -51,9 +59,6 @@ for ($i=0; $i<count($labels); $i++) {
 	$temp['notes'] = $notes;
 	$rawdata[] = $temp;
 }
-
-
-
 
 $results = [];
 $results['etablissement'] = $name_etab;

@@ -912,14 +912,38 @@ function isThereAssessForEtab() {
 	$annee = $_SESSION['annee'];
 	if (isset($_SESSION['quiz'])) {
 		$id_quiz = $_SESSION['quiz'];
-		$base = dbConnect();
-		$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
-		$result=mysqli_query($base, $request);
-		dbDisconnect($base);
-		if ($result->num_rows) {
-			return true;
+		if (isRegroupEtab()) {
+			$base = dbConnect();
+			$temp = array();
+			$request = sprintf("SELECT regroupement FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+			$result = mysqli_query($base, $request);
+			$row = mysqli_fetch_object($result);
+			$etabs = explode(',', $row->regroupement);
+			foreach ($etabs as $id) {
+				$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id, $annee, $id_quiz);
+				$result = mysqli_query($base, $request);
+				if ($result->num_rows) {
+					$temp[$id] = true;
+				} else {
+					$temp[$id] = false;
+				}
+			}
+			dbDisconnect($base);
+			if (in_array(false, $temp)) {
+				return false;
+			} else {
+				return true;
+			}
 		} else {
-			return false;
+			$base = dbConnect();
+			$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $id_etab, $annee, $id_quiz);
+			$result=mysqli_query($base, $request);
+			dbDisconnect($base);
+			if ($result->num_rows) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	} else {
 		return false;
@@ -1276,12 +1300,16 @@ function getRegroupAssessment() {
 			}
 		}
 		if (array_key_exists('final_etab_comment', $allAssessments)) {
-			$allAssessments['final_etab_comment'] .= "\r".traiteStringFromBDD($row->comments);
+			if (!empty($row->comments)) {
+				$allAssessments['final_etab_comment'] .= "\r".traiteStringFromBDD($row->comments);
+			}
 		} else {
 			$allAssessments['final_etab_comment'] = traiteStringFromBDD($row->comments);
 		}
 		if (array_key_exists('auditor_comment', $allAssessments)) {
-			$allAssessments['auditor_comment'] .= "\r".traiteStringFromBDD($row->comment_graph_par);
+			if (!empty($row->comment_graph_par)) {
+				$allAssessments['auditor_comment'] .= "\r".traiteStringFromBDD($row->comment_graph_par);
+			}
 		} else {
 			$allAssessments['auditor_comment'] = traiteStringFromBDD($row->comment_graph_par);
 		}
@@ -1473,13 +1501,18 @@ function displayGraphs() {
 	printf("<a href='' id='yearGraphScatter' class='btnValid' download='yearGraphScatter.png' type='image/png'>Télécharger le graphe</a>");
 	printf("<p class='separation'>&nbsp;</p>");
 	printf("</div>");
+	printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $_SESSION['nonce']);
 }
 
 
 function displayEtablissmentGraphs() {
 	$annee = $_SESSION['annee'];
-	$nonce = $_SESSION['nonce'];
-	$reponses = getAnswers();
+	$regroup = isRegroupEtab();
+	if ($regroup) {
+		$reponses = getRegroupAnswers();
+	} else {
+		$reponses = getAnswers();
+	}
 	if (sizeof(array_keys($reponses))) {
 		if (isAssessComplete($reponses[$annee])) {
 			linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
@@ -1487,10 +1520,9 @@ function displayEtablissmentGraphs() {
 			linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
 		}
 		printf("<div class='onecolumn'>");
-		assessSynthese();
+		assessSynthese($reponses[$annee]);
 		displayGraphs();
 		printf("</div>");
-		printf("<script nonce='%s'>document.body.addEventListener('load', loadGraphYear());</script>", $nonce);
 	} else {
 		$msg = sprintf("L'évaluation %d est vide.", $annee);
 		linkMsg("#", $msg, "alert.png");
@@ -1498,26 +1530,11 @@ function displayEtablissmentGraphs() {
 }
 
 
-function assessSynthese() {
+function assessSynthese($reponses) {
 	$id_etab = $_SESSION['id_etab'];
 	$annee = $_SESSION['annee'];
 	$id_quiz = $_SESSION['quiz'];
 	$titles_par = getAllDomAbstract();
-
-	$base = dbConnect();
-	$request = sprintf("SELECT * FROM assess WHERE annee='%d' AND etablissement='%d' AND quiz='%d'", $annee, $id_etab, $id_quiz);
-	$result = mysqli_query($base, $request);
-	dbDisconnect($base);
-	$reponses = array();
-	while ($row = mysqli_fetch_object($result)) {
-		if (!empty($row->reponses)) {
-			foreach(unserialize($row->reponses) as $quest => $rep) {
-				if (substr($quest, 0, 8) == 'question') {
-					$reponses[substr($quest, 8, 14)]=$rep;
-				}
-			}
-		}
-	}
 
 	printf("<table><tr><th colspan='3'>Notes finale des établissements</th></tr>");
 	printf("<tr><th>Etablissement</th><th>Détail des notes</th><th>Note finale</th></tr>");

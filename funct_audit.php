@@ -76,7 +76,7 @@ function selectEtablissementAudit() {
 	printf("<table><tr id='selectEtabRow'><td>");
 	printf("Etablissement:&nbsp;<select name='id_etab' id='id_etab' required>");
 	printf("<option selected='selected' value=''>&nbsp;</option>");
-	if ($action === 'rap_etab') {
+	if (in_array($action, ['rap_etab', 'graph', 'objectif'])) {
 		while($row = mysqli_fetch_object($result)) {
 			if (stripos($row->abrege, "_TEAM") === false) {
 				printf("<option value='%s'>%s</option>", $row->id, $row->nom);

@@ -107,8 +107,8 @@ if (isset($_GET['action'])) {
 			if (isRegroupEtab()) {
 				if (isAssessGroupValidate()) {
 					generateGroupRapport();
-					footPage($_SESSION['curr_script'], "Accueil");
 				}
+				footPage($_SESSION['curr_script'], "Accueil");
 			} else {
 				getCommentGraphPar();
 				footPage();
