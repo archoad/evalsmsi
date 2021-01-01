@@ -1514,10 +1514,12 @@ function displayEtablissmentGraphs() {
 		$reponses = getAnswers();
 	}
 	if (sizeof(array_keys($reponses))) {
-		if (isAssessComplete($reponses[$annee])) {
-			linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
-		} else {
-			linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
+		if (!$regroup) {
+			if (isAssessComplete($reponses[$annee])) {
+				linkMsg("#", "L'évaluation pour ".$annee." est complète.", "ok.png");
+			} else {
+				linkMsg("#", "L'évaluation pour ".$annee." est incomplète, les graphes sont donc partiellement justes.", "alert.png");
+			}
 		}
 		printf("<div class='onecolumn'>");
 		assessSynthese($reponses[$annee]);

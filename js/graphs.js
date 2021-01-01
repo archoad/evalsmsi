@@ -14,6 +14,9 @@ const namedColors = {
 
 const scoreColors = ['#FF6384', '#F6845F', '#EDC25C', '#CDE458', '#87DB55', '#51D25C', '#4EC990', '#4BC0C0'];
 
+const d = new Date();
+const day = ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
+
 
 function getSum(total, num) {
 	return total + num;
@@ -114,7 +117,7 @@ function displayYearGraphBar(datas) {
 		responsive: true,
 		title: {
 			display: true,
-			text: 'Résultats par domaine - diagramme à barres'
+			text: 'Résultats par domaine - diagramme à barres (' + day + ')',
 		},
 		scales: {
 			yAxes: [{ ticks: { min:0, max:8 } }]
@@ -178,7 +181,7 @@ function displayYearGraphRadar(datas) {
 		responsive: true,
 		title: {
 			display: true,
-			text: 'Résultats par domaine - diagramme radar'
+			text: 'Résultats par domaine - diagramme radar (' + day + ')',
 		},
 		legend: {
 			display: true,
@@ -252,7 +255,7 @@ function displayYearGraphPolar(datas) {
 		responsive: true,
 		title: {
 			display: true,
-			text: 'Résultats par domaine - diagramme polaire'
+			text: 'Résultats par domaine - diagramme polaire (' + day + ')',
 		},
 		legend: {
 			display: true,
@@ -306,7 +309,7 @@ function displayYearGraphScatter(datas) {
 		tooltips: false,
 		title: {
 			display: true,
-			text: 'Résultats par domaine - diagramme matriciel'
+			text: 'Résultats par domaine - diagramme matriciel (' + day + ')',
 		},
 		elements: {
 			point: {
@@ -357,8 +360,6 @@ function displayYearGraphScatter(datas) {
 
 
 function displayProgressReviewGraphBar(datas) {
-	let d = new Date();
-	let day = d.getDate() + '/' + (1+d.getMonth()) + '/' + d.getFullYear();
 	var color = Chart.helpers.color;
 	var barData = {
 		labels: datas.labels,
@@ -368,7 +369,7 @@ function displayProgressReviewGraphBar(datas) {
 		responsive: true,
 		title: {
 			display: true,
-			text: 'Bilan de la complétion des évaluations ' + day,
+			text: 'Bilan de la complétion des évaluations (' + day + ')',
 		},
 		scales: {
 			yAxes: [{ ticks: { min:0, max:100 } }]
