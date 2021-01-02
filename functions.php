@@ -65,8 +65,8 @@ $attestationMode = $configs['attestationMode'];
 $sessionDuration = $configs['sessionDuration'];
 
 $noteMax = 7;
-$progVersion = '5.1.0';
-$progDate = '18 juillet 2020';
+$progVersion = '5.2.0';
+$progDate = '02 janvier 2021';
 $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
@@ -153,6 +153,7 @@ function menuAudit() {
 	linkMsg("audit.php?action=rap_etab", "Rapport par établissement", "rapport.png", 'menu');
 	linkMsg("audit.php?action=delete", "Supprimer une évaluation", "remove.png", 'menu');
 	linkMsg("audit.php?action=journal", "Journalisation", "journal.png", 'menu');
+	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
 	printf("</div></div>");
 }
 

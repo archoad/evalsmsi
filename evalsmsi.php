@@ -158,7 +158,7 @@ function initiateSession($data) {
 
 
 function initiateNullSession() {
-	global $cssTheme, $captchaMode;
+	global $cssTheme, $captchaMode, $sessionDuration;
 	session_regenerate_id();
 	unset($_SESSION['uid']);
 	unset($_SESSION['login']);
@@ -170,6 +170,7 @@ function initiateNullSession() {
 	$_SESSION['role'] = '100';
 	$_SESSION['uid'] = 'null';
 	$_SESSION['curr_script'] = 'evalsmsi.php';
+	$_SESSION['expire'] = time() + $sessionDuration;
 }
 
 

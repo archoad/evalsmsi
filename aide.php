@@ -52,28 +52,63 @@ function about() {
 }
 
 
-function docSoftware() {
-	genSyslog(__FUNCTION__);
-	printf("<div class='onecolumn'>");
-	printf("<h2>Fonctionnement du logiciel</h2>");
+function doc_global() {
 	printf("<h3>Fonctionnement global</h3>");
 	printf("<p>Le principe de fonctionnement d'EvalSMSI est le suivant:</p>");
 	printf("<ol>");
-	printf("<li>Information de l'entité du déroulement d'un audit de son SMSI</li>");
 	printf("<li>Autoévaluation de l'entité</li>");
 	printf("<li>Audit de l'entité, l'auditeur annote l'évaluation réalisée par l'entité</li>");
 	printf("<li>Validation de l'audit et émission du rapport</li>");
 	printf("</ol>");
-	printf("<h3>Utilisateur (RSSI)</h3>");
-	printf("<p>Une fois en possession de son login et de son mot de passe, le RSSI peut se connecter à l'application en cliquant sur le cartouche \"Accès établissement\".</p><p>La page qui s'affiche alors présente 4 cartouches:</p>");
-	printf("<ul>");
-	printf("<li>Réaliser une évaluation: Ce menu affiche le formulaire du questionnaire d'autoévaluation.</li>");
-	printf("<li>Imprimer les rapports: Ce menu permet d'imprimer les rapports validés des années précédentes.</li>");
-	printf("<li>Graphes établissement: Ce menu affiche les graphes de notation avec superposition des années précédentes.</li>");
-	printf("<li>Export OpenOffice: Menu d'export du formulaire en cours.</li>");
-	printf("</ul>");
-	printf("<h3>Administrateur (Auditeur)</h3>");
+	printf("<p>Ces étapes se déroulent sur une période de 1 an (du 1er janvier au 31 décembre).</p>");
+}
+
+
+function doc_connexion() {
+	printf("<div class='onecolumn'>");
 	printf("</div>");
+}
+
+
+function doc_etab() {
+	printf("<div class='onecolumn'>");
+	doc_global();
+	printf("<img src='pict/docpict/etab1.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/etab2.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/etab3.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/etab4.png' alt='etab1'><br />");
+	printf("</div>");
+}
+
+
+function doc_audit() {
+	printf("<div class='onecolumn'>");
+	doc_global();
+	printf("<img src='pict/docpict/audit1.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/audit2.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/audit3.png' alt='etab1'><br />");
+	printf("</div>");
+}
+
+
+function docSoftware() {
+	genSyslog(__FUNCTION__);
+	switch ($_SESSION['role']) {
+		case '100':
+			doc_connexion();
+			break;
+		case '3':
+		case '4':
+		case '5':
+			doc_etab();
+			break;
+		case '2':
+			doc_audit();
+			break;
+		default:
+			menu();
+			break;
+	}
 }
 
 
@@ -94,7 +129,6 @@ function docISMSeval() {
 	printf("<ol><li><b>Plan</b>: Préparer, Planifier (ce que l'on va réaliser)</li><li><b>Do</b>: Développer, réaliser, mettre en œuvre</li><li><b>Check</b>: Contrôler, vérifier</li><li><b>Act</b>: Agir, réagir</li></ol>");
 	printf("<h2>Le modèle PDCA appliqué au SMSI</h2>");
 	printf("<p>Appliqué au Système de Management de la Sécurité de l'Information, le PDCA se traduit selon le schéma suivant:</p>");
-	printf("<img src='pict/pdca.png' alt='PDCA'>");
 	printf("<p><b>Planifier</b>: Etablir la politique, les objectifs, les processus et les procédures du SMSI relatives à la gestion du risque et à l'amélioration de la sécurité de l'information de manière à fournir des résultats conformément aux politiques et aux objectifs globaux de l'organisme.</p>");
 	printf("<p><b>Déployer</b>: Mettre en oeuvre et exploiter la politique, les mesures, les processus et les procédures du SMSI.</p>");
 	printf("<p><b>Contrôler</b>: Evaluer et, le cas échéant, mesurer les performances des processus par rapport à la politique, aux objectifs et à l'expérience pratique et rendre compte des résultats à la direction pour réexamen.</p>");
