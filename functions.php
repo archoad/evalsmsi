@@ -505,9 +505,7 @@ function validForms($msg, $url, $back=True) {
 	if ($back) {
 		printf("<input type='reset' value='Effacer'>");
 	}
-	if (isset($_SESSION['quiz'])) {
-		printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
-	}
+	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
 	printf("</td></tr></table></fieldset>");
 }
 

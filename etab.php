@@ -143,8 +143,13 @@ if (isset($_GET['action'])) {
 		if (isset($_SESSION['token'])) {
 			unset($_SESSION['token']);
 		}
-		menuEtab();
-		footPage();
+		if (isset($_SESSION['quiz'])) {
+			menuEtab();
+			footPage();
+		} else {
+			destroySession();
+			header('Location: evalsmsi.php');
+		}
 		break;
 
 	default:
