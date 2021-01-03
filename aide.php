@@ -159,7 +159,7 @@ function menu() {
 	printf("<div class='row'>");
 	printf("<div class='column left'>");
 	linkMsg("aide.php?action=h_logiciel", "Aide sur le logiciel", "help.png", "menu");
-	linkMsg("aide.php?action=h_eval", "L'évaluation du SMSI", "eval_ssi.png", "menu");
+	linkMsg("aide.php?action=h_eval", "L'évaluation du SMSI", "rapport.png", "menu");
 	printf("</div><div class='column right'>");
 	linkMsg("aide.php?action=lexique", "Lexique", "lexique.png", "menu");
 	linkMsg("aide.php?action=about", "A propos", "about.png", "menu");
@@ -189,22 +189,22 @@ if (isset($_GET['action'])) {
 	switch ($_GET['action']) {
 	case 'h_logiciel':
 		docSoftware();
-		footPage($script, "Retour");
+		footPage('aide.php', "Retour");
 		break;
 
 	case 'h_eval':
 		docISMSeval();
-		footPage($script, "Retour");
+		footPage('aide.php', "Retour");
 		break;
 
 	case 'lexique':
 		afficheLexique();
-		footPage($script, "Retour");
+		footPage('aide.php', "Retour");
 		break;
 
 	case 'about':
 		about();
-		footPage($script, "Retour");
+		footPage('aide.php', "Retour");
 		break;
 
 	default:
