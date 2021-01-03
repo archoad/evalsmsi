@@ -113,13 +113,11 @@ function menuEtab() {
 	$_SESSION['curr_script'] = 'etab.php';
 	printf("<div class='row'>");
 	printf("<div class='column left'>");
-	if (isset($_SESSION['quiz'])) {
-		if (in_array($_SESSION['role'], array('4', '5'))) {
-			linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
-		}
-		if (in_array($_SESSION['role'], array('3', '4'))) {
-			linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
-		}
+	if (in_array($_SESSION['role'], array('4', '5'))) {
+		linkMsg("etab.php?action=continue_assess", "Compléter l'évaluation", "eval_continue.png", 'menu');
+	}
+	if (in_array($_SESSION['role'], array('3', '4'))) {
+		linkMsg("etab.php?action=print", "Imprimer les rapports et plans d'actions", "print.png", 'menu');
 	}
 	linkMsg("etab.php?action=authentication", "Gestion de l'authentification", "fingerprint.png", 'menu');
 	linkMsg("aide.php", "Aide et documentation", "help.png", 'menu');
@@ -507,7 +505,9 @@ function validForms($msg, $url, $back=True) {
 	if ($back) {
 		printf("<input type='reset' value='Effacer'>");
 	}
-	printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
+	if (isset($_SESSION['quiz'])) {
+		printf("<a class='valid' href='%s?action=rm_token'>Revenir</a>", $url);
+	}
 	printf("</td></tr></table></fieldset>");
 }
 

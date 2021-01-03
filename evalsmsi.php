@@ -192,15 +192,18 @@ function redirectUser($data) {
 	}
 	switch ($_SESSION['role']) {
 		case '1': // Administrateur
+			$_SESSION['curr_script'] = 'admin.php';
 			header('Location: admin.php');
 			break;
 		case '2': // Auditeur
+			$_SESSION['curr_script'] = 'audit.php';
 			header('Location: audit.php');
 			break;
 		case '3': // Directeur
 		case '4': // RSSI
 		case '5': // Opérateur SSI
-			header('Location: etab.php');
+			$_SESSION['curr_script'] = 'etab.php';
+			header('Location: etab.php?action=choose_quiz');
 			break;
 		default:
 			destroySession();
