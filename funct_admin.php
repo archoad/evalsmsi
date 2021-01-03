@@ -404,7 +404,7 @@ function selectQuizModification() {
 	}
 	printf("</select>");
 	printf("</td></tr></table></fieldset>");
-	validForms('Modifier', 'admin.php', $back=False);
+	validForms('Consulter', 'admin.php', $back=False);
 	printf("</form>");
 }
 

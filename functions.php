@@ -103,7 +103,7 @@ function menuAdmin() {
 	linkMsg("admin.php?action=new_etab", "Créer un établissement", "add_etab.png", 'menu');
 	linkMsg("admin.php?action=select_etab", "Modifier un établissement", "modif_etab.png", 'menu');
 	linkMsg("admin.php?action=new_regroup", "Créer un établissement de regroupement", "add_regroup.png", 'menu');
-	linkMsg("admin.php?action=bilan_etab", "Bilan global", "bilan.png", 'menu');
+	linkMsg("admin.php?action=bilan_etab", "Bilan global des établissements", "bilan.png", 'menu');
 	printf("</div></div>");
 }
 
