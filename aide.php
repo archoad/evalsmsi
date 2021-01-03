@@ -4,7 +4,7 @@
 // Description: Help page of EvalSMSI
 // Created:	 2009-01-01
 // Licence:	 GPL-3.0-or-later
-// Copyright 2009-2019 Michel Dubois
+// Copyright 2009-2021 Michel Dubois
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,41 +52,32 @@ function about() {
 }
 
 
-function doc_global() {
-	printf("<h3>Fonctionnement global</h3>");
-	printf("<p>Le principe de fonctionnement d'EvalSMSI est le suivant:</p>");
-	printf("<ol>");
-	printf("<li>Autoévaluation de l'entité</li>");
-	printf("<li>Audit de l'entité, l'auditeur annote l'évaluation réalisée par l'entité</li>");
-	printf("<li>Validation de l'audit et émission du rapport</li>");
-	printf("</ol>");
-	printf("<p>Ces étapes se déroulent sur une période de 1 an (du 1er janvier au 31 décembre).</p>");
-}
-
-
 function doc_connexion() {
 	printf("<div class='onecolumn'>");
+	printf("<img src='pict/docpict/aide01.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide02.png' alt='aide'><br /><br />");
 	printf("</div>");
 }
 
 
 function doc_etab() {
 	printf("<div class='onecolumn'>");
-	doc_global();
-	printf("<img src='pict/docpict/etab1.png' alt='etab1'><br />");
-	printf("<img src='pict/docpict/etab2.png' alt='etab1'><br />");
-	printf("<img src='pict/docpict/etab3.png' alt='etab1'><br />");
-	printf("<img src='pict/docpict/etab4.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/aide03.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide04.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide05.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide06.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide07.png' alt='aide'><br /><br />");
 	printf("</div>");
 }
 
 
 function doc_audit() {
 	printf("<div class='onecolumn'>");
-	doc_global();
-	printf("<img src='pict/docpict/audit1.png' alt='etab1'><br />");
-	printf("<img src='pict/docpict/audit2.png' alt='etab1'><br />");
-	printf("<img src='pict/docpict/audit3.png' alt='etab1'><br />");
+	printf("<img src='pict/docpict/aide08.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide09.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide10.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide06.png' alt='aide'><br /><br />");
+	printf("<img src='pict/docpict/aide07.png' alt='aide'><br /><br />");
 	printf("</div>");
 }
 
@@ -115,6 +106,14 @@ function docSoftware() {
 function docISMSeval() {
 	genSyslog(__FUNCTION__);
 	printf("<div class='onecolumn'>");
+	printf("<h2>Fonctionnement global</h2>");
+	printf("<p>Le principe de fonctionnement d'EvalSMSI est le suivant:</p>");
+	printf("<ol>");
+	printf("<li>Autoévaluation de l'entité</li>");
+	printf("<li>Audit de l'entité, l'auditeur annote l'évaluation réalisée par l'entité</li>");
+	printf("<li>Validation de l'audit et émission du rapport</li>");
+	printf("</ol>");
+	printf("<p>Ces étapes se déroulent sur une période de 1 an (du 1er janvier au 31 décembre).</p>");
 	printf("<h2>EvalSMSI</h2>");
 	printf("<p>L'objectif de ce questionnaire est d'évaluer, par rapport à un référentiel précis, le système de management de la sécurité de l'information (SMSI).</p>");
 	printf("<p>L'approche processus pour le management de la sécurité de l'information incite ses utilisateurs à souligner l'importance de:</p>");
