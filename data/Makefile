@@ -1,4 +1,5 @@
-LATEX = pdflatex
+
+LATEX = $(shell which pdflatex)
 IMPORT = header.tex intro.tex methode.tex
 SRC = $(wildcard *.tex)
 TEX = $(filter-out $(IMPORT),$(SRC))
