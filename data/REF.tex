@@ -1,0 +1,3455 @@
+\begin{filecontents*}{\jobname.xmpdata}
+\Title{EvalSMSI}
+\Author{Michel Dubois}
+\Subject{Evaluation du SMSI}
+\Publisher{Michel Dubois}
+\end{filecontents*}
+
+\documentclass[a4paper,11pt]{article}
+
+\input{header}
+
+\title{\includegraphics[width=0.30\textwidth]{pict/archoad.png}\hfill\includegraphics[width=0.30\textwidth]{pict/customer.png}\\\bigskip\bigskip
+ Rapport d'évaluation\\de la\\maturité numérique\\ \textcolor{myBlue}{Etablissement de référence}}
+
+\author{Bruce Banner -- \textcolor{myBlue}{Auditeur}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\bigskip\bigskip
+
+\abstract{Ce rapport décrit le résultat de l'évaluation réalisée à \textsl{Etablissement de référence} en 2020. L'évaluation initiale a été contrôlée le \today{} par Bruce Banner. Cette évaluation repose sur un questionnaire établit conformément aux règles d'hygiène de l'ANSSI.}
+
+\bigskip\bigskip
+
+\begin{itemize}
+\item Directeur de l'établissement: \textsl{Benjamin GRIMM}
+\item RSSI de l'établissement: \textsl{Donald BLAKE}
+\end{itemize}
+
+\bigskip\bigskip
+
+\begin{center}
+\Large{\textcolor{myRed}{Rapport validé}}
+\end{center}
+
+\bigskip\bigskip
+
+\begin{flushright}
+\textcolor{myRed}{Original signé}
+\end{flushright}
+
+\bigskip
+\begin{center}
+\begin{tikzpicture}
+\tikzstyle{every node} = [draw=myRed, rounded corners=4pt, fill=myRed!20, text width=300pt, inner sep=5pt]
+\node {Ce document, réservé à votre seul usage interne, est émis en application du contrat convenu entre nous. Il a été établi sur la base des informations que vous nous avez préalablement communiquées, par référence à votre contexte et en tenant compte de vos éléments d'analyse. L'émetteur du présent document apporte tout le soin possible à la préparation des informations et des conclusions qui y sont présentées, à partir de notre méthodologie et de nos expertises. La décision de mettre en oeuvre ou non ces conclusions, ainsi que les modalités de mise en oeuvre relèvent de la seule responsabilité du lecteur.};
+\end{tikzpicture}
+\end{center}
+\clearpage
+
+\begin{small}
+\setlength{\parskip}{0pt}
+\textcolor{myRed}{\tableofcontents}
+\end{small}
+
+\clearpage
+
+
+
+\begin{center}
+
+{\Large{\textcolor{myRed}{Rapport imprimé par l'établissement le \today.}}}
+
+\end{center}
+
+\clearpage
+
+
+\section{Analyse de l'évaluation pour l'année 2020}
+
+\input{intro}
+
+\subsection{Notes obtenues par l'établissement}
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.20\textwidth} | >{\raggedright}m{0.30\textwidth} @{$\quad\rightarrow\quad$} >{\raggedright}m{0.10\textwidth} | >{\centering}m{0.15\textwidth} | }
+\hline
+\multicolumn{4}{| c |}{Notes finales de l'établissement}\tabularnewline
+\hline
+\'Etablissement & \multicolumn{2}{ c |}{\centering{Détail des notes}} & Note finale \tabularnewline
+\hline
+\multirow{12}{0.20\textwidth}{Etablissement de référence} & \multicolumn{2}{ c |}{} & \tabularnewline
+& Sensibilisation & $12,43 / 20$ & \tabularnewline
+& Connaître le SI & $11,63 / 20$ & \tabularnewline
+& Authentifier & $13,03 / 20$ & \tabularnewline
+& Sécuriser les postes & $16,80 / 20$ & \tabularnewline
+& Sécuriser le réseau & $18,20 / 20$ & \tabularnewline
+& Sécuriser l'administration & \textcolor{myRed}{$9,71 / 20$} & \tabularnewline
+& Nomadisme & $16,54 / 20$ & \tabularnewline
+& Update du SI & \textcolor{myRed}{$7,34 / 20$} & \tabularnewline
+& Superviser & $18,57 / 20$ & \tabularnewline
+& Risques & $16,20 / 20$ & \tabularnewline
+ & \multicolumn{2}{ c |}{} & \multirow{-12}{*}{$14,05 / 20$} \tabularnewline
+\hline
+\end{tabular}
+\end{center}
+
+\clearpage
+
+\subsection{Graphes de synthèses de l'établissement}
+
+\newcommand{\dimension}{10}
+\newcommand{\unit}{7}
+\newcommand{\axisAngle}{360/\dimension}
+\newdimen\radiusMax \setlength{\radiusMax}{130pt}
+\newdimen\labelDist \setlength{\labelDist}{\radiusMax + 15pt}
+\definecolor{year1}{RGB}{255,205,86}
+\definecolor{year2}{RGB}{75,192,192}
+\definecolor{year3}{RGB}{153,102,255}
+\definecolor{objectiv}{RGB}{255,99,132}
+
+\tikzstyle{myShape} = [line width=1.5pt, opacity=0.9]
+\tikzstyle{myShapeFill} = [opacity=0.5]
+\tikzstyle{myLabel} = [font=\scriptsize, text width=45pt, text badly centered, inner sep=0pt]
+\tikzstyle{myLegend} = [font=\scriptsize, anchor=west]
+\tikzstyle{myTitle} = [font=\bfseries, fill=myBeige, text width=90pt, text badly centered, inner sep=5pt, rounded corners=2pt]
+\tikzstyle{myMatrix} = [fill=myBeige, inner sep=5pt, rounded corners=2pt]
+\begin{center}
+\begin{tikzpicture}[background rectangle/.style={fill=myBeige!45, draw=myBeige, rounded corners=4pt, inner sep=5pt}, show background rectangle]
+\foreach \x in {1,...,\dimension}{ \draw [color=black!80] (\x*\axisAngle:0) -- (\x*\axisAngle:\radiusMax); }
+\foreach \y in {0,...,\unit}{
+\draw [color=black!40] (0:\y*\radiusMax/\unit) \foreach \x in {1,...,\dimension}{-- (\x*\axisAngle:\y*\radiusMax/\unit)} -- cycle;
+\foreach \x in {1,...,\dimension}{
+\path (\x*\axisAngle:\y*\radiusMax/\unit) coordinate (D\x-\y);
+\fill [color=black!80] (D\x-\y) circle (1.2pt);
+}
+}
+\path (1*\axisAngle:\labelDist) node [myLabel] {Sensibilisation};
+\path (2*\axisAngle:\labelDist) node [myLabel] {Connaître le SI};
+\path (3*\axisAngle:\labelDist) node [myLabel] {Authentifier};
+\path (4*\axisAngle:\labelDist) node [myLabel] {Sécuriser les postes};
+\path (5*\axisAngle:\labelDist) node [myLabel] {Sécuriser le réseau};
+\path (6*\axisAngle:\labelDist) node [myLabel] {Sécuriser l'administration};
+\path (7*\axisAngle:\labelDist) node [myLabel] {Nomadisme};
+\path (8*\axisAngle:\labelDist) node [myLabel] {Update du SI};
+\path (9*\axisAngle:\labelDist) node [myLabel] {Superviser};
+\path (10*\axisAngle:\labelDist) node [myLabel] {Risques};
+
+\draw [myShape, color=year1] (D1-4) -- (D2-4) -- (D3-5) -- (D4-6) -- (D5-6) -- (D6-3) -- (D7-6) -- (D8-3) -- (D9-7) -- (D10-6) -- cycle;
+
+\fill [myShapeFill, color=year1!20] (D1-4) -- (D2-4) -- (D3-5) -- (D4-6) -- (D5-6) -- (D6-3) -- (D7-6) -- (D8-3) -- (D9-7) -- (D10-6) -- cycle;
+
+\draw [myShape, color=objectiv] (D1-4) -- (D2-7) -- (D3-3) -- (D4-4) -- (D5-5) -- (D6-6) -- (D7-7) -- (D8-6) -- (D9-5) -- (D10-4) -- cycle;
+
+\matrix [myMatrix, xshift=180pt, yshift=-100pt] {
+\node [rectangle, fill=objectiv] {}; & \node [myLegend] {Objectifs}; \\
+\node [rectangle, fill=year1] {};  & \node [myLegend] {Année 2020}; \\
+};
+\node [myTitle, xshift=180pt, yshift=40pt] {Résultats par domaines};
+\end{tikzpicture}
+\end{center}
+
+\bigskip
+
+\bigskip
+
+\begin{center}
+\begin{tikzpicture}[background rectangle/.style={fill=myBeige!45, draw=myBeige, rounded corners=4pt, inner sep=5pt}, show background rectangle]
+\foreach \x in {1,...,\dimension}{ \draw [color=black!80] (\x*\axisAngle:0) -- (\x*\axisAngle:\radiusMax); }
+\foreach \y in {0,...,\unit}{
+\draw [color=black!40] (0:\y*\radiusMax/\unit) \foreach \x in {1,...,\dimension}{-- (\x*\axisAngle:\y*\radiusMax/\unit)} -- cycle;
+\foreach \x in {1,...,\dimension}{
+\path (\x*\axisAngle:\y*\radiusMax/\unit) coordinate (D\x-\y);
+\fill [color=black!80] (D\x-\y) circle (1.2pt);
+}
+}
+\path (1*\axisAngle:\labelDist) node [myLabel] {Sensibilisation};
+\path (2*\axisAngle:\labelDist) node [myLabel] {Connaître le SI};
+\path (3*\axisAngle:\labelDist) node [myLabel] {Authentifier};
+\path (4*\axisAngle:\labelDist) node [myLabel] {Sécuriser les postes};
+\path (5*\axisAngle:\labelDist) node [myLabel] {Sécuriser le réseau};
+\path (6*\axisAngle:\labelDist) node [myLabel] {Sécuriser l'administration};
+\path (7*\axisAngle:\labelDist) node [myLabel] {Nomadisme};
+\path (8*\axisAngle:\labelDist) node [myLabel] {Update du SI};
+\path (9*\axisAngle:\labelDist) node [myLabel] {Superviser};
+\path (10*\axisAngle:\labelDist) node [myLabel] {Risques};
+
+\draw [myShape, color=year3] (D1-2) -- (D2-6) -- (D3-2) -- (D4-6) -- (D5-5) -- (D6-7) -- (D7-2) -- (D8-3) -- (D9-5) -- (D10-7) -- cycle;
+
+\fill [myShapeFill, color=year3!20] (D1-2) -- (D2-6) -- (D3-2) -- (D4-6) -- (D5-5) -- (D6-7) -- (D7-2) -- (D8-3) -- (D9-5) -- (D10-7) -- cycle;
+
+\draw [myShape, color=year2] (D1-5) -- (D2-6) -- (D3-4) -- (D4-6) -- (D5-5) -- (D6-6) -- (D7-4) -- (D8-5) -- (D9-6) -- (D10-7) -- cycle;
+
+\fill [myShapeFill, color=year2!20] (D1-5) -- (D2-6) -- (D3-4) -- (D4-6) -- (D5-5) -- (D6-6) -- (D7-4) -- (D8-5) -- (D9-6) -- (D10-7) -- cycle;
+
+\draw [myShape, color=year1] (D1-4) -- (D2-4) -- (D3-5) -- (D4-6) -- (D5-6) -- (D6-3) -- (D7-6) -- (D8-3) -- (D9-7) -- (D10-6) -- cycle;
+
+\fill [myShapeFill, color=year1!20] (D1-4) -- (D2-4) -- (D3-5) -- (D4-6) -- (D5-6) -- (D6-3) -- (D7-6) -- (D8-3) -- (D9-7) -- (D10-6) -- cycle;
+
+\draw [myShape, color=objectiv] (D1-4) -- (D2-7) -- (D3-3) -- (D4-4) -- (D5-5) -- (D6-6) -- (D7-7) -- (D8-6) -- (D9-5) -- (D10-4) -- cycle;
+
+\matrix [myMatrix, xshift=180pt, yshift=-100pt] {
+\node [rectangle, fill=objectiv] {}; & \node [myLegend] {Objectifs}; \\
+\node [rectangle, fill=year3] {};  & \node [myLegend] {Année 2018}; \\
+\node [rectangle, fill=year2] {};  & \node [myLegend] {Année 2019}; \\
+\node [rectangle, fill=year1] {};  & \node [myLegend] {Année 2020}; \\
+};
+\node [myTitle, xshift=180pt, yshift=40pt] {Résultats cumulés par domaines};
+\end{tikzpicture}
+\end{center}
+
+\clearpage
+
+\subsection{Commentaires et conclusion}
+
+\subsubsection{Commentaires de l'établissement}
+
+\par
+En progression par rapport à 2019.
+\par\subsubsection{Conclusion des évaluateurs}
+
+\par
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\par\clearpage
+
+
+\section{Résultats de l'audit pour l'année 2020}
+
+\subsection{Sensibiliser et former}
+
+\subsubsection{Former les équipes opérationnelles à la cybersécurité}
+
+\textbf{Question n\textdegree 1.1.1} Un plan de formation à la cybersécurité au profit des équipes opérationnelles  existe et est budgétisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & \makecell{Le plan de formation est à l'étude.}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.2} Le plan de formation des équipes opérationnelles est spécifique à chaque métier (administrateur, chef de projet, développeur,...)
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & \makecell{toto\\\\tata}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.3} La formation à la cybersécurité des équipes opérationnelles couvre le volet juridique.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.4} La formation à la cybersécurité des équipes opérationnelles détaille les principaux risques et menaces.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.5} La formation à la cybersécurité des équipes opérationnelles couvre les notions de maintien en condition de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.6} La formation à la cybersécurité des équipes opérationnelles détaille les principes et règles de l'authentification et du contrôle d'accès.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.7} La formation à la cybersécurité des équipes opérationnelle traite du paramétrage et du durcissement des systèmes d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.8} La formation à la cybersécurité des équipes opérationnelle traite de l'architecture sécurisé des systèmes et des réseaux.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.1.9} Les contrats d'externalisation et d'infogérance contiennent une clause garantissant la formation à la cybersécurité du personnel.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Sensibiliser les utilisateurs aux bonnes pratiques élémentaires de sécurité informatique}
+
+\textbf{Question n\textdegree 1.2.1} Un plan de sensibilisation à la cybersécurité au profit des utilisateurs existe et est budgétisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Le plan de sensibilisation des utilisateurs est intégré au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.2.2} La sensibilisation à la cybersécurité des utilisateurs est systématique et renouvelée régulièrement.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Il est recommandé de sensibiliser les utilisateurs lors de leur arrivée dans l'entité et de renouveler cette sensibilisation tous les 3 ans. La liste des agents sensibilisés à la cybersécurité est conservée dans un registre dédié. Ce registre est intégré au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.2.3} La sensibilisation à la cybersécurité des utilisateurs détaille les règles de la politique de sécurité des systèmes d'informations.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.2.4} L'entité a élaboré une charte des moyens informatiques précisant les règles et consignes que doivent respecter les utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{L'entité peut s'inspirer du guide d'élaboration publié par l'ANSSI (https://bit.ly/2sy5N7e).  La charte des moyens informatiques doit être présentée au CHSCT et intégrée au règlement intérieur de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.2.5} Chaque utilisateur signe la charte des moyens informatiques.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{La signature de la charte des moyens informatiques est conservées dans un registre dédié. Ce registre est intégré au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Maîtriser les risques de l'infogérance}
+
+\textbf{Question n\textdegree 1.3.1} Une liste d'exigences précises a été contractualisée avec le prestataires.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & \makecell{Difficile à mettre en oeuvre}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{L'entité peut s'inspirer du guide sur l'externalisation publié par l'ANSSI (https://bit.ly/2V8e4It)}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.3.2} La liste d'exigences fixe les modalités de réversibilités du contrat.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & \makecell{OK}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.3.3} La liste d'exigence détaille les modalités de réalisation d'audits.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & \makecell{Fait pour la majorité des prestataires.}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.3.4} La liste d'exigence détaille les modalités de sauvegarde et de restitution des données dans un format ouvert normalisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.3.5} La liste d'exigence détaille la mise en oeuvre du maintien à niveau de la sécurité dans le temps.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 1.3.6} Pour chaque contrat d'externalisation, le prestataire a fourni un plan d'assurance sécurité (PAS).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Connaître le système d'information}
+
+\subsubsection{Identifier les informations et serveurs les plus sensibles et maintenir un schéma du réseau}
+
+\textbf{Question n\textdegree 2.1.1} La liste des données sensibles existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette liste est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.2} La liste des données sensibles précise sur quels composants elles sont stockées ou traitées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.3} Les composants traitants ou hébergeant des données sensibles sont considérés comme critiques.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.4} Des mesures de sécurité spécifiques sont décrites pour les composants critiques (sauvegarde, mise à jour, contrôle d'accès)
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.5} Un schéma du réseau existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Le schéma du réseau est intégré au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.6} Le schéma du réseau précise le positionnement des équipements réseaux et de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.7} Le schéma du réseau identifie les points d'interconnexion avec Internet et avec les partenaires.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.8} Le schéma du réseau détaille l'emplacement des compsants critiques.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.9} Le schéma du réseau détaille le plan d'adressage IP.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.1.10} Le schéma du réseau est considéré comme une donnée sensible.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Disposer d'un inventaire exhaustif des comptes privilégiés et le maintenir à jour}
+
+\textbf{Question n\textdegree 2.2.1} La liste des comptes à privilèges existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{test}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.2.2} La liste des comptes à privilèges référence les utilisateurs ayant un compte administrateur sur le système d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.2.3} La liste des comptes à privilèges référence les utilisateurs ayant suffisament de droits pour accéder aux données des responsables.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.2.4} La liste des comptes à privilèges référence les utilisateurs utilisant un poste non administré par le service informatique.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.2.5} La revue périodique des droits d'accès au système d'information est effectuée régulièrement.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.2.6} La revue périodique des droits d'accès au système d'information permet de supprimer les comptes obsolètes.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Organiser les procédures d'arrivée, de départ et de changement de fonction des utilisateurs}
+
+\textbf{Question n\textdegree 2.3.1} Une procédure d'arrivée des utilisateurs existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & \makecell{Projet en cours.}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette procédure est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.2} La procédure d'arrivée précise les modalités de création des comptes et des boîtes de messagerie.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.3} La procédure d'arrivée précise les modalités d'affectation  des équipements informatiques (ordinateur, smartphone, tablette,...).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.4} La procédure de d'arrivée est régulièrement mise à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.5} Une procédure de départ des utilisateurs existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.6} La procédure de départ précise les modalités de fermeture des comptes et des boîtes de messagerie.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.7} La procédure de départ précise les modalités de restitution des équipements informatiques (ordinateur, smartphone, tablette,...).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.3.8} La procédure de départ est régulièrement mise à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Autoriser la connexion au réseau de l'entité aux seuls équipements maîtrisés}
+
+\textbf{Question n\textdegree 2.4.1} Une politique fixant les règles d'usage des équipements personnels existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette politique est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.4.2} Une politique fixant les règles d'usage des équipements prestataires et visiteurs externes existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette politique est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.4.3} Un réseau WiFi dédié aux visiteurs existe.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 2.4.4} Des mesures techniques (802.1x) sont en place pour authentifier les postes de travail.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Authentifier et contrôler les accès}
+
+\subsubsection{Identifier nommément chaque personne accédant au système et distinguer les rôles utilisateur/administrateur}
+
+\textbf{Question n\textdegree 3.1.1} Une politique des gestion des comptes existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.1.2} Chaque utilisateur dispose d'un compte d'accès au système d'information personnel et nominatif.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.1.3} Chaque administrateur du système d'information dispose d'un compte d'administration nominatif différent de son compte d'utilisateur.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.1.4} Les comptes d'administration sont exclusivement dédié aux opérations d'administration du système d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.1.5} Les comptes d'administration sont utilisée sur des environnements dédiés à l'administration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.1.6} Les actions d'administrations sont journalisées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Attribuer les bons droits sur les ressources sensibles du système d'information}
+
+\textbf{Question n\textdegree 3.2.1} Une liste des ressources sensibles existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette liste est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.2.2} Pour chaque ressource, la liste des ressources sensibles précise quelle population peut y avoir accès.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.2.3} Les accès aux ressources sensibles sont journalisées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.2.4} Une revue régulière des droits d'accès aux ressources sensibles est effectuée.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Définir et vérifier des règles de choix et de dimensionnement des mots de passe}
+
+\textbf{Question n\textdegree 3.3.1} Une politique des mots de passe existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.2} La longueur minimale des mots de passe est définie.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.3} Le niveau de complexité des mots de passe est défini.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Les mots de passe doivent contenir, au minimum, un mélange de lettres minuscules, majuscules et chiffres.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.4} La durée de validité des mots de passe est définie.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.5} Les modalités de blocage des comptes à l'issue de plusieurs échecs de connexion sont définies.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.6} Les connexions anonymes sont désactivées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.3.7} La robustesse des mots de passe est audité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Pour cela l'entité peut faire appel à un prestataire spécialisé dans la cadre d'un test technique.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Protéger les mots de passe stockés sur les systèmes}
+
+\textbf{Question n\textdegree 3.4.1} L'entité met à disposition de ses utilisateurs un mécanisme de coffre-fort numérique pour protéger leurs mots de passe.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Le logiciel opensource et gratuit KeePass (https://bit.ly/2CmCyVY) est une solution recommandée pour cet usage.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.4.2} Les mots de passe des comptes génériques sont obligatoirement stockés dans un coffre-fort numérique.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Changer les éléments d'authentification par défaut sur les équipements et services}
+
+\textbf{Question n\textdegree 3.5.1} Les éléments d'authentification par défaut des composants du système d'information sont modifiés dès leur installation.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.5.2} Les éléments d'authentification des composants du système d'information sont stockés dans un coffre-fort numérique.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.5.3} Lorsque les éléments d'authentification par défaut des composants du système d'information ne peuvent pas être modifiés, ces composants font l'objet de mesures de sécurité renforcées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Privilégier lorsque c'est possible une authentification forte}
+
+\textbf{Question n\textdegree 3.6.1} L'entité met en oeuvre une authentification forte pour ses systèmes sensibles.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.6.2} L'entité met en oeuvre une authentification forte pour ses comptes d'administration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 3.6.3} L'entité met en oeuvre une authentification forte pour l'ensemble de ses utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Sécuriser les postes de travail}
+
+\subsubsection{Mettre en place un niveau de sécurité minimal sur l'ensemble du parc informatique}
+
+\textbf{Question n\textdegree 4.1.1} Une politique de sécurisation des postes existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & \makecell{OK}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette politique est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.2} Une liste d'applications autorisées sur les postes de travail existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.3} Une liste d'applications autorisées sur les smartphones et tablettes existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette liste est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.4} Une liste des modules autorisés sur les navigateurs web existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette liste est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.5} Les postes utilisateurs sont dotés d'un pare-feu local.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Non applicable (1/7)} & \makecell{toto}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.6} Les postes des utilisateurs sont dotés d'un antivirus à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.7} Les disques durs des postes des utilisateurs sont chiffrés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.8} Les espaces de stockages des smartphones et tablettes sont chifrés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{test}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.1.9} Les fonctions d'exécution automatique (autorun) sont désactivées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Se protéger des menaces relatives à l'utilisation de supports amovibles}
+
+\textbf{Question n\textdegree 4.2.1} Le branchement de périphériques amovibles inconnus est interdit.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.2.2} Une solution permettant d'interdire l'exécution de programme sur les périphériques amovibles est mises en oeuvre.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.2.3} Le rechargement électrique des smartphones et tablettes est interdit sur les postes utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.2.4} Les supports amovibles ayant contenus des informations sensibles sont détruit en fin de vie.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Utiliser un outil de gestion centralisée afin d'homogénéiser les politiques de sécurité}
+
+\textbf{Question n\textdegree 4.3.1} L'entité met en oeuvre un outil de gestion centralisée de type Active Directory.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.3.2} L'ensemble des postes de travail est intégré dans l'outil de gestion centralisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.3.3} L'ensemble des serveur est intégré dans l'outil de gestion centralisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.3.4} Une politique de durcissement des postes de travail est définie et appliquée via l'outils de gestion centralisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.3.5} Une politique de durcissement des serveurs est définie et appliquée via l'outils de gestion centralisé.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Activer et configurer le parefeu local des postes de travail}
+
+\textbf{Question n\textdegree 4.4.1} Un pare-feu est activé sur les postes de travail.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.4.2} La liste des flux réseaux autorisés existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.4.3} Seuls les ports correspondants aux flux autorisés sont ouverst sur les postes de travail.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.4.4} Les tentatives de connexion sur les ports bloqués par les pare-feu des postes de travail sont journalisées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{v}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Chiffrer les données sensibles transmises par voie Internet}
+
+\textbf{Question n\textdegree 4.5.1} Les emails transitant via Internet sont transmis en utilisant des protocoles assurant le chiffrement (IMPAS, POPS, SMTPS).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.5.2} Les données transitant via Internet sont transmises en utilisant des protocoles assurant le chiffrement (HTTPS).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 4.5.3} Les données sensibles sont chiffrées avant transmission via Internet.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Sécuriser le réseau}
+
+\subsubsection{Segmenter le réseau et mettre en place un cloisonnement entre ces zones}
+
+\textbf{Question n\textdegree 5.1.1} Le réseau de l'entité est segmenté en plusieurs zones matérialisées par des VLAN spécifiques.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.1.2} Un pare-feu assure le filtrage des flux entre les différentes zones du réseau.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.1.3} Un segment du réseau est spécifiquement dédié aux tâches d'administration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{S'assurer de la sécurité des réseaux d'accès Wi-Fi et de la séparation des usages}
+
+\textbf{Question n\textdegree 5.2.1} Le réseau Wi-Fi met en oeuvre un chiffrement des flux robuste (mode WPA2 avec AES CCMP).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.2.2} Le mot de passe par défaut des points d'accès Wi-Fi est changé lors de l'installation.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.2.3} L'authentification des équipements au réseau Wi-Fi se fait par certificat délivré par une infrastructure de gestion des clefs centralisée.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.2.4} Si l'authentification des équipements au réseau Wi-Fi se fait par mot de passe, celui-ci est robuste et changé régulièrement.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.2.5} Le réseau Wi-Fi est placé dans un VLAN distinct.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.2.6} Le réseau Wi-Fi dédié aux terminaux personnels ou visiteurs est séparé du réseau Wi-Fi des terminaux de l'entité (SSID et VLAN différents).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Utiliser des protocoles réseaux sécurisés dès qu'ils existent}
+
+\textbf{Question n\textdegree 5.3.1} Sur les serveurs Web de l'entité, le protocole HTTP est désactivé au profit de HTTPS.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.3.2} Sur les serveurs de messagerie de l'entité, les protocoles IMAP, POP3 et SMTP sont désactivés au profit de IMAPS, POP3S et SMTPS.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.3.3} Sur les serveurs de transfert de fichiers de l'entité, le protocole FTP est désactivé au profit de FTPS ou SFTP.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.3.4} Les protocoles TELNET et RLOGIN sont désactivés au profit de SSH.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.3.5} L'implémentation de TLS sur les serveurs de l'entité n'autorise que les versions 1.2 et 1.3 du protocole.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Mettre en place une passerelle d'accès sécurisé à Internet}
+
+\textbf{Question n\textdegree 5.4.1} L'accès à Internet se fait au travers d'un proxy authentifiant (type Alcasar - www.alcasar.net)
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.4.2} Le proxy d'accès à Internet comporte une fonctionnalité de filtrages des flux réseaux (pare-feu).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.4.3} Le proxy d'accès à Internet comporte une fonctionnalité d'analyse antivirale.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.4.4} Le proxy d'accès à Internet comporte une fonctionnalité de filtrages des URLs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.4.5} Le proxy d'accès à Internet conserve les journaux d'activité des usagers conformément à la loi française.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.4.6} Un équipement de détection d'intrusion est déployé au point d'interconnexion entre le réseau de l'entité et internet.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Cloisonner les services visibles depuis Internet du reste du système d'information}
+
+\textbf{Question n\textdegree 5.5.1} Dans le cas d'un hébergement interne de services accessibles sur internet, ces services sont isolés des autres systèmes d'information de l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.5.2} Dans le cas d'un hébergement interne de services accessibles sur internet, les flux liés à ces services sont filtrés (pare-feu).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.5.3} Dans le cas d'un hébergement interne de services accessibles sur internet, les flux entrants passent par un serveur mandataire (proxy).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.5.4} Dans le cas d'un hébergement externe, l'entité s'assure que son prestataire est conforme à ses exigences de sécurité (plan d'assurance sécurité).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Protéger sa messagerie professionnelle}
+
+\textbf{Question n\textdegree 5.6.1} La redirection de messages professionnels vers une messagerie personnelle est interdite.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.6.2} Afin de se prémunir des escroqueries aux faux ordres de virement, des mesures organisationnelles sont décrites et appliquées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.6.3} L'entité dispose d'un système d'analyse antivirus des boîtes de messagerie des utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.6.4} L'entité dispose d'un service anti-spam.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Sécuriser les interconnexions réseau dédiées avec les partenaires}
+
+\textbf{Question n\textdegree 5.7.1} Les interconnexions réseaux avec une entité externe se font au travers d'un réseau privé virtuel de site à site (VPN).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.7.2} Les réseaux privés virtuels (VPN) mis en oeuvre utilisent le standard IPSEC.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.7.3} Un filtrage IP à l'aide d'un pare-feu est mis place au plus près de l'entrée des flux VPN sur le réseau de l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.7.4} La matrice des flux (entrants et sortants) circulant au travers du VPN existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.7.5} Un point de contact à jour chez le partenaire est identifié pour pouvoir réagir en cas d'incident de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Contrôler et protéger l'accès aux salles serveurs et aux locaux techniques}
+
+\textbf{Question n\textdegree 5.8.1} Les accès aux salles serveurs et aux locaux techniques sont contrôlés à l'aide de serrures ou de mécanismes de contrôle d'accès par badge.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.8.2} Les accès non accompagnés des prestataires extérieurs aux salles serveurs et aux locaux techniques sont interdit.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.8.3} Une revue des droits d'accès est réalisée régulièrement afin d'identifier les accès non autorisés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.8.4} Lors du départ d'un collaborateur ou d'un changement de prestataire ses droits d'accès sont supprimés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 5.8.5} Les prises réseau se trouvant dans des zones ouvertes au public (salle de réunion, hall d'accueil, couloirs, placards, etc.) sont désactivées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Sécuriser l'administration}
+
+\subsubsection{Interdire l'accès à Internet depuis les postes ou serveurs utilisés pour l'administration du système d'information}
+
+\textbf{Question n\textdegree 6.1.1} Les postes utilisés pour l'administration des systèmes d'information de l'entité sont physiquement déconnecté d'internet.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{L'entité peut s'inspirer des recommandations de l'ANSSI (https://bit.ly/2vPE8O8).}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.1.2} Les administrateurs de l'entité disposent d'un deuxième poste de travail pour les activités hors administration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.1.3} Les mises à jour des équipements administrés se font via une zone d'échange sécurisée ou en mode déconnecté (via un support amovible).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Utiliser un réseau dédié et cloisonné pour l'administration du système d'information}
+
+\textbf{Question n\textdegree 6.2.1} L'entité utilise un réseau dédié aux activités d'administration de ses systèmes d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{L'entité peut s'inspirer des recommandations de l'ANSSI (https://bit.ly/2vPE8O8).}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.2.2} L'entité met en oeuvre un cloisonnement logique ou physique de son réseau d'administration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.2.3} Dans le cas d'un cloisonnement logique, un filtrage IP (pare-feu) contrôle les flux réseaux.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Limiter au strict besoin opérationnel les droits d'administration sur les postes de travail}
+
+\textbf{Question n\textdegree 6.3.1} Par défaut, les utilisateurs ne dispose pas de privilèges d'administration sur leur poste de travail.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.3.2} L'entité met en oeuvre un magasin d'applications validées du point de vue de la sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.3.3} Seuls les agent chargés de l'administration des postes disposent de ces droits lors de leurs interventions.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours et demande un ajustement (4/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 6.3.4} Si une délégation de privilèges sur un poste de travail est nécessaire  elle est tracée, limitée dans le temps et retirée à échéance.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Gérer le nomadisme}
+
+\subsubsection{Prendre des mesures de sécurisation physique des terminaux nomades}
+
+\textbf{Question n\textdegree 7.1.1} Les utilisateurs sont sensibilisés aux risques spécifiques liés aux équipements informatiques lors d'un déplacement.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.1.2} Les terminaux nomades de l'entité sont équipés d'un filtre de confidentialité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.1.3} Les terminaux nomades de l'entité ne portent pas de signe distinctifs liés à l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Chiffrer les données sensibles, en particulier sur le matériel potentiellement perdable}
+
+\textbf{Question n\textdegree 7.2.1} Les données stockées sur supports amovibles (disques durs externes, clefs USB) de l'entité sont chiffrées.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.2.2} Les supports de stockages des terminaux nomades (ordinateurs, tablettes, smartphones) de l'entité sont chiffrés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Sécuriser la connexion réseau des postes utilisés en situation de nomadisme}
+
+\textbf{Question n\textdegree 7.3.1} L'entité met en oeuvre un réseau privé virtuel (VPN) entre son système d'information et les terminaux nomades.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.3.2} Le VPN à destination des terminaux nomades utilise le standard IPSEC.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.3.3} Le tunnel VPN est automatiquement activé et non débrayable dès que le terminal est en situation de nomadisme.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.3.4} Une procédure de révocation identificants de connexion en cas de perte de vol existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.3.5} Une plainte est systématiquement déposée en cas de vol d'un terminal nomade.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.3.6} L'entité met en oeuvre un mécanisme d'authentification forte pour les ordinateurs nomades. La démarche est formalisée dans une procédure interne à l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Adopter des politiques de sécurité dédiées aux terminaux mobiles}
+
+\textbf{Question n\textdegree 7.4.1} L'entité met en oeuvre une solution de gestion centralisée de sa flotte de terminaux nomades.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.4.2} La configuration de sécurité des terminaux nomades est homogène.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 7.4.3} L'entité déploie un magasin d'applications limitant l'accès à des applications validées du point de vue de la sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Maintenir le système d'information à jour}
+
+\subsubsection{Définir une politique de mise à jour des composants du système d'information}
+
+\textbf{Question n\textdegree 8.1.1} L'entité dispose d'un dispositif de veille concernant les vulnérabilités et les mises à jours des composants de son système d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Le centre gouvernemental de veille, d'alerte et de réponses aux attaques informatiques fournit gratuitement cette prestation (https://www.cert.ssi.gouv.fr/)}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 8.1.2} Une procédure de mise à jour des composants du système d'information existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Cette procédure est intégrée au dossier de cybersécurité de l'entité.}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 8.1.3} La procédure de mise à jour des composants du SI précise les sources d'information relatives à la publication des mises à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 8.1.4} La procédure de mise à jour des composants du SI précise les outils utilisés pour déployer les correctifs de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Anticiper la fin de la maintenance des logiciels et systèmes et limiter les adhérences logicielles}
+
+\textbf{Question n\textdegree 8.2.1} L'entité assure un suivi des mises à jour et des dates de fin de support des logiciels.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement important (2/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 8.2.2} L'entité dispose d'un plan de renouvellement des composants matériels et logiciels obsolètes.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 8.2.3} Les contrats avec les prestataires et fournisseurs intègrent des clauses garantissant le suivi des correctifs de sécurité et la gestion des obsolescences
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{Inexistant et investissement peu important (3/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\multicolumn{3}{|c|}{\textbf{Recommandations}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{Néant}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Superviser, auditer, réagir}
+
+\subsubsection{Activer et configurer les journaux des composants les plus importants}
+
+\textbf{Question n\textdegree 9.1.1} Les journaux des pare-feu sont activés et intègrent notamment la liste des paquets bloqués.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.1.2} Les journaux des applications métiers sont activés et contiennent notamment les informations d'authentifications et d'autorisations (échecs et succès).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.1.3} Les journaux des systèmes d'exploitation des postes de travail sont activés et contiennent notamment les informations d'authentifications et d'autorisations (échecs et succès).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.1.4} L'entité dispose d'un serveur de temps (NTP) utilisé pour synchroniser les horloges des composants critiques du son système d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.1.5} L'entité dispose d'une collecte centralisée des journaux d'activités des composants critiques de son système d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Définir et appliquer une politique de sauvegarde des composants critiques}
+
+\textbf{Question n\textdegree 9.2.1} Une politique de sauvegarde existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.2.2} La politique de sauvegarde précise la liste des données jugées vitales pour l'entité et les serveurs concernés.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.2.3} La politique de sauvegarde précise le type et le fréquence des sauvegardes.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.2.4} La politique de sauvegarde précise la procédure d'administration et d'exécution des sauvegardes.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.2.5} La politique de sauvegarde précise les procédures de test et de restauration.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.2.6} Un exercice de restauration des données est planifié au moins une fois par an.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Procéder à des contrôles et audits de sécurité réguliers puis appliquer les actions correctives associées}
+
+\textbf{Question n\textdegree 9.3.1} Un audit interne de la sécurité du système d'information est réalisé au moins une fois par an.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.3.2} Un audit externe de la sécurité du système d'information est réalisé régulièrement.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.3.3} Les actions correctives, identifiées lors des audits internes et externes, sont planifiée et des points de suivi organisés à intervalles réguliers.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Désigner un référent en sécurité des systèmes d'information et le faire connaître auprès du personnel}
+
+\textbf{Question n\textdegree 9.4.1} L'entité a formellement désigné un référent en sécurité des systèmes d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.4.2} Le référent en sécurité des systèmes d'information dispose d'une lettre de mission validée par la direction de l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.4.3} Le référent en sécurité des systèmes d'information est connu de tous les utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.4.4} Le référent en sécurité des systèmes d'information est en charge de la définition des règles de sécurité et de la vérification de leur application.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.4.5} Le référent en sécurité des systèmes d'information est en charge de la sensibilisation des utilisateurs.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsubsection{Définir une procédure de gestion des incidents de sécurité}
+
+\textbf{Question n\textdegree 9.5.1} Une procédure de gestion des incidents de sécurité existe et est à jour.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.2} Le référent en sécurité des systèmes d'information centralise et traite les incidents de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.3} La procédure de gestion des incidents de sécurité impose la déconnexion du réseau du composant concerné.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.4} La procédure de gestion des incidents de sécurité impose le maintien sous tension du composant concerné.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.5} La procédure de gestion des incidents de sécurité fixe les modalités d'information de la hiérarchie et du référent en sécurité des systèmes d'information.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.6} La procédure de gestion des incidents de sécurité précise les modalités de collecte des informations sur le composant concerné.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 9.5.7} La procédure de gestion des incidents de sécurité précise les modalités de plainte aurès du service judiciaire compétent.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Opérationnel (7/7)} & \makecell{RAS}\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\subsection{Gérer la sécurité par les risques}
+
+\subsubsection{Mener une analyse de risques formelle}
+
+\textbf{Question n\textdegree 10.1.1} L'entité met en oeuvre une démarche d'analyse des risques informationnels (EBIOS).
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 10.1.2} Une analyse des risques est réalisée pour chaque système d'information critique de l'entité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=orange, inner sep=10pt] {};} & \textcolor{myRed}{En cours (5/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\textbf{Question n\textdegree 10.1.3} L'analyse des risques permet d'exprimer les besoins de sécurité, d'identifier les objectifs de sécurité et de déterminer les exigences de sécurité.
+
+\begin{center}
+\begin{tabular}{ | >{\centering}m{0.05\textwidth} >{\centering}m{0.25\textwidth} | m{0.50\textwidth} | }
+\hline
+\multicolumn{2}{|c|}{\textbf{\'Evaluation de l'établissement}} & \centering\textbf{Commentaire} \tabularnewline
+\tikz{\node [rectangle, fill=green, inner sep=10pt] {};} & \textcolor{myRed}{Existant et demande un ajustement (6/7)} & Néant\tabularnewline
+\hline
+\multicolumn{3}{|>{\centering}p{0.80\textwidth}|}{\textbf{Commentaire évaluateurs}}\tabularnewline
+\multicolumn{3}{|>{\raggedright}p{0.80\textwidth}|}{\textcolor{myBlue}{Avis conforme}}\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\bigskip
+
+\clearpage
+
+
+\appendix
+\input{methode}
+
+
+\end{document}
