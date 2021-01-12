@@ -399,6 +399,9 @@ function genSyslog($caller, $msg='') {
 	$log = array();
 	$log['program'] = 'evalsmsi';
 	$log['version'] = $progVersion;
+	$log['os'] = $_SESSION['os'];
+	$log['ipaddr'] = $_SESSION['ipaddr'];
+	$log['browser'] = $_SESSION['browser'];
 	$log['file'] = basename($_SERVER['PHP_SELF']);
 	$log['function'] = $caller;
 	if (isset($_SESSION['login'])) {
