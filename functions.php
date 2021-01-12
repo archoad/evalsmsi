@@ -397,19 +397,21 @@ function genCspPolicy() {
 function genSyslog($caller, $msg='') {
 	global $progVersion;
 	$log = array();
-	$log[] = array('program' => 'evalsmsi', 'version' => $progVersion);
-	$log[] = array('file' =>basename($_SERVER['PHP_SELF']), 'function' => $caller);
+	$log['program'] = 'evalsmsi';
+	$log['version'] = $progVersion;
+	$log['file'] = basename($_SERVER['PHP_SELF']);
+	$log['function'] = $caller;
 	if (isset($_SESSION['login'])) {
-		$log[] = array('login' => $_SESSION['login']);
+		$log['login'] = $_SESSION['login'];
 	}
 	if (isset($_SESSION['id_etab'])) {
-		$log[] = array('etablissement' => $_SESSION['id_etab']);
+		$log['etablissement'] = $_SESSION['id_etab'];
 	}
 	if (isset($_SESSION['quiz'])) {
-		$log[] = array('quiz' => $_SESSION['quiz']);
+		$log['quiz'] = $_SESSION['quiz'];
 	}
 	if (!empty($msg)) {
-		$log[] = array('message' => $msg);
+		$log['message'] = $msg;
 	}
 	openlog("evalsmsi", LOG_PID, LOG_SYSLOG);
 	syslog(LOG_INFO, json_encode($log));
