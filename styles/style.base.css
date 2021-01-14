@@ -141,12 +141,14 @@ input[type=number] {
 }
 
 input:invalid,
-select:invalid {
+select:invalid,
+textarea:invalid {
 	border-color: var(--myRedDark);
 }
 
 input:valid,
-select:valid {
+select:valid,
+textarea:valid {
 	border-color: var(--bg1Color);
 }
 
@@ -194,6 +196,10 @@ dt {
 dd {
 	color: var(--textDarkColor);
 	padding: 0 0 5px 0;
+}
+
+.center {
+	text-align: center;
 }
 
 .none {
@@ -606,6 +612,27 @@ textarea {
 .btnWarning.active {
 	color: var(--textClearColor);
 	background-color: var(--myOrangeDark);
+}
+
+.btnDanger {
+	border: none;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 10px;
+	cursor:pointer;
+	padding: 2px;
+	border-radius: 2px;
+	color: var(--textClearColor);
+	background-color: var(--myRedLight);
+}
+
+.btnDanger.focus,
+.btnDanger:focus,
+.btnDanger:hover,
+.btnDanger.active {
+	color: var(--textClearColor);
+	background-color: var(--myRedDark);
 }
 
 .valid {
