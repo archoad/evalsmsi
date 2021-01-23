@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le :  sam. 23 jan. 2021 à 18:44
+-- Généré le :  sam. 23 jan. 2021 à 18:52
 -- Version du serveur :  10.3.27-MariaDB-0+deb10u1
 -- Version de PHP :  7.3.19-1~deb10u1
 
@@ -550,7 +550,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role`, `nom`, `prenom`, `etablissement`, `login`, `password`, `credential_id`, `public_key`, `sign_count`) VALUES
-(1, 1, 'Admin', 'Strateur', '0', 'admin', '$2y$10$.DDgRtK2GQf..o9xzkerj.ujt5D/gcvdnSqFLqiS9Iv6jANUymhGK', NULL, NULL, NULL),
+(1, 1, 'Admin', 'Strateur', '0', 'admin', '$2y$10$KCANW0QcQIKmw3QDHagnfeI87ZfdU0NdOO18.enu50IlprDAYHV6O', NULL, NULL, NULL),
 (8, 4, 'Stark', 'Tony', '1', 'ironman', '$2y$10$X87MhxJac6JPIdvaYjr/F.4g.mc9vFvBXju9qWf5r0ZS6grvCnC9O', NULL, NULL, NULL),
 (9, 2, 'Banner', 'Bruce', '1,3,7,10', 'hulk', '$2y$10$NSze9K9qvErYFVlYBvVj0.HQ8SdMOv9TIuwK1zKhKjaU0Gz7.RTdu', NULL, NULL, NULL),
 (10, 4, 'Blake', 'Donald', '3', 'thor', '$2y$10$vzik8RpKltU.uNDKhJb0aukF5W/1YW8f5Gv2xEgRVsK8fflRS7UGy', NULL, NULL, NULL),
