@@ -1227,16 +1227,14 @@ function getPoidsQuestion($num) {
 
 
 function getObjectives() {
-	$id_quiz = $_SESSION['quiz'];
-	$id_etab = $_SESSION['id_etab'];
 	$base = dbConnect();
-	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $_SESSION['id_etab']);
 	$result = mysqli_query($base, $request);
 	$row = mysqli_fetch_object($result);
 	dbDisconnect($base);
 	$objectives = json_decode($row->objectifs, true);
 	$output = array();
-	foreach ($objectives[$id_quiz] as $key => $value) {
+	foreach ($objectives[$_SESSION['quiz']] as $key => $value) {
 		$output[] = $value;
 	}
 	return $output;

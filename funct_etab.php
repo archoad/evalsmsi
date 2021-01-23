@@ -20,9 +20,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 =========================================================*/
 
+
+
+
+function isThereObjectives() {
+	global $cheminDATA;
+	$id_etab = $_SESSION['id_etab'];
+	$id_quiz = $_SESSION['quiz'];
+	$base = dbConnect();
+	$request = sprintf("SELECT objectifs FROM etablissement WHERE id='%d' LIMIT 1", $id_etab);
+	$result = mysqli_query($base, $request);
+	$row = mysqli_fetch_object($result);
+	$objectives = json_decode($row->objectifs, true);
+	if (!array_key_exists($id_quiz, $objectives)) {
+		$notes = array();
+		$request = sprintf("SELECT filename FROM quiz WHERE id='%d' LIMIT 1", $id_quiz);
+		$result = mysqli_query($base, $request);
+		$row = mysqli_fetch_object($result);
+		$jsonFile = sprintf("%s%s", $cheminDATA, $row->filename);
+		$jsonSource = file_get_contents($jsonFile);
+		$jsonQuiz = json_decode($jsonSource, true);
+		for ($i=0; $i<count($jsonQuiz); $i++) {
+			$objCurr = sprintf("obj_%d", $jsonQuiz[$i]['numero']);
+			$notes[$objCurr] = 4;
+		}
+	}
+	$objectives[$id_quiz] = $notes;
+	$output = json_encode($objectives);
+	$request = sprintf("UPDATE etablissement SET objectifs='%s' WHERE id='%d'", $output, $id_etab);
+	mysqli_query($base, $request);
+	dbDisconnect($base);
+}
+
+
 function createAssessment() {
 	genSyslog(__FUNCTION__);
 	$json = array('previous'=>false, 'successful'=>false);
+	isThereObjectives();
 	$base = dbConnect();
 	$request = sprintf("SELECT * FROM assess WHERE etablissement='%d' AND annee='%d' AND quiz='%d' LIMIT 1", $_SESSION['id_etab'], $_SESSION['annee']-1, $_SESSION['quiz']);
 	$result = mysqli_query($base, $request);
