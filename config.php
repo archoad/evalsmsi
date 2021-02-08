@@ -33,7 +33,7 @@ $passwd = 'webphpsql';
 $appli_titre = "Evaluation du SMSI";
 $appli_titre_short = "EvalSMSI";
 // Thème CSS
-$cssTheme = 'green'; // glp, beige, blue, green
+$cssTheme = 'glp'; // glp, beige, blue, green
 // Image accueil
 $auhtPict = 'pict/accueil.png';
 // Image rapport
