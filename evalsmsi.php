@@ -41,6 +41,8 @@ function headPageAuth() {
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png'>");
 	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce'], $_SESSION['theme']);
 	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce']);
+	printf("<script nonce='%s' src='js/trianglify.js'></script>", $_SESSION['nonce']);
+	printf("<script nonce='%s' src='js/triangles.js'></script>", $_SESSION['nonce']);
 	printf("<script nonce='%s' src='js/mfa.js'></script>", $_SESSION['nonce']);
 	printf("<title>Authentification</title>");
 	printf("</head><body>");
@@ -55,6 +57,8 @@ function footPageAuth() {
 function menuLogin() {
 	global $auhtPict;
 	genSyslog(__FUNCTION__);
+	printf("<div class='background' id='trianglesBck'>");
+	printf("<script nonce='%s'>document.getElementById('trianglesBck').addEventListener('load', displayTriangles());</script>", $_SESSION['nonce']);
 	printf("<div class='authcont'>");
 	printf("<div class='auth'>");
 	printf("<img src=%s alt='CyberSécurité'>", $auhtPict);
@@ -63,6 +67,7 @@ function menuLogin() {
 	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' autofocus required>");
 	printf("<input type='submit' id='valid' value='Continuer'>");
 	printf("</form></div></div>");
+	printf("</div>");
 }
 
 
