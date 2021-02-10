@@ -46,6 +46,8 @@ function headPageAuth() {
 	printf("<script nonce='%s' src='js/mfa.js'></script>", $_SESSION['nonce']);
 	printf("<title>Authentification</title>");
 	printf("</head><body>");
+	printf("<svg id='svg_element' />");
+	printf("<script nonce='%s'>document.body.addEventListener('load', displayTriangles());</script>", $_SESSION['nonce']);
 }
 
 
@@ -57,9 +59,7 @@ function footPageAuth() {
 function menuLogin() {
 	global $auhtPict;
 	genSyslog(__FUNCTION__);
-	printf("<div class='background' id='trianglesBck'>");
-	printf("<script nonce='%s'>document.getElementById('trianglesBck').addEventListener('load', displayTriangles());</script>", $_SESSION['nonce']);
-	printf("<div class='authcont'>");
+	printf("<div class='authcontainer'>");
 	printf("<div class='auth'>");
 	printf("<img src=%s alt='CyberSécurité'>", $auhtPict);
 	printf("</div><div class='auth'>");
@@ -67,14 +67,13 @@ function menuLogin() {
 	printf("<input type='text' size='20' maxlength='20' name='login' id='login' placeholder='Identifiant' autocomplete='username' autofocus required>");
 	printf("<input type='submit' id='valid' value='Continuer'>");
 	printf("</form></div></div>");
-	printf("</div>");
 }
 
 
 function menuPassword($msg='') {
 	global $auhtPict;
 	genSyslog(__FUNCTION__);
-	printf("<div class='authcont'>");
+	printf("<div class='authcontainer'>");
 	printf("<div class='auth'><img src=%s alt='CyberSécurité'></div>", $auhtPict);
 	printf("<div class='auth'>");
 	if (isset($_SESSION['registration'])) {

@@ -35,7 +35,7 @@ $appli_titre_short = "EvalSMSI";
 // Thème CSS
 $cssTheme = 'glp'; // glp, beige, blue, green
 // Image accueil
-$auhtPict = 'pict/accueil.png';
+$auhtPict = 'pict/logo_dcg.png'; // 'pict/accueil.png';
 // Image rapport
 $rapportPicts = array("pict/archoad.png", "pict/customer.png");
 // Mode captcha

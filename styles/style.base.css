@@ -54,6 +54,13 @@ body {
 	font-size: 10pt;
 }
 
+svg {
+	top: 0;
+	right: 0;
+	position: absolute;
+	z-index: 0;
+}
+
 h1 {
 	text-align:center;
 	font-size:12pt;
@@ -408,10 +415,17 @@ textarea {
 	text-align: center;
 }
 
-.authcont {
+.authbackground {
+	width: 100vw;
+	height: 100vh;
+}
+
+.authcontainer {
 	position: absolute;
-	top: 5%;
-	left: 20%;
+	top: 8vh;
+	left: 30vh;
+	width: 60%;
+	margin: auto;
 	padding: 12% 0 0 0;
 	display: table;
 }
