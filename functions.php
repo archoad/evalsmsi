@@ -65,8 +65,8 @@ $attestationMode = $configs['attestationMode'];
 $sessionDuration = $configs['sessionDuration'];
 
 $noteMax = 7;
-$progVersion = '5.2.0';
-$progDate = '02 janvier 2021';
+$progVersion = '5.3.0';
+$progDate = '10 février 2021';
 $cspReport = "csp_parser.php";
 $server_path = dirname($_SERVER['SCRIPT_FILENAME']);
 $cheminRAP = sprintf("%s/rapports/", $server_path);
