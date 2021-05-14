@@ -41,13 +41,9 @@ function headPageAuth() {
 	printf("<link rel='icon' type='image/png' href='pict/favicon.png'>");
 	printf("<link nonce='%s' href='styles/style.%s.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce'], $_SESSION['theme']);
 	printf("<link nonce='%s' href='styles/style.base.css' rel='StyleSheet' type='text/css' media='all'>", $_SESSION['nonce']);
-	printf("<script nonce='%s' src='js/trianglify.js'></script>", $_SESSION['nonce']);
-	printf("<script nonce='%s' src='js/triangles.js'></script>", $_SESSION['nonce']);
 	printf("<script nonce='%s' src='js/mfa.js'></script>", $_SESSION['nonce']);
 	printf("<title>Authentification</title>");
 	printf("</head><body>");
-	printf("<svg id='svg_element' />");
-	printf("<script nonce='%s'>document.body.addEventListener('load', displayTriangles());</script>", $_SESSION['nonce']);
 }
 
 
@@ -121,7 +117,7 @@ function authentification($password) {
 	genSyslog(__FUNCTION__);
 	$data = getUserData();
 	if ($data) {
-		if (($_SESSION['login'] === $data->login) and (password_verify($password, $data->password))) {
+		if (($_SESSION['login'] === $data->login) && (password_verify($password, $data->password))) {
 			return $data;
 		} else {
 			return false;

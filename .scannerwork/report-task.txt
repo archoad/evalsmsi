@@ -1,0 +1,6 @@
+projectKey=evalsmsi
+serverUrl=http://192.168.56.50:9000
+serverVersion=8.9.0.43852
+dashboardUrl=http://192.168.56.50:9000/dashboard?id=evalsmsi
+ceTaskId=AXlhc06UDQQA8Ez-V60T
+ceTaskUrl=http://192.168.56.50:9000/api/ce/task?id=AXlhc06UDQQA8Ez-V60T

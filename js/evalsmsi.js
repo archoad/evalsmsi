@@ -114,7 +114,7 @@ function display(eltName) {
 
 function countSetQuestion(form) {
 	var num_quest_ok = 0;
-	for (n=0; n<form.elements.length; n++) {
+	for (let n=0; n<form.elements.length; n++) {
 		if ((form.elements[n].value != 0) && (form.elements[n].id.substring(0,8) == 'question'))
 			num_quest_ok++;
 	}
@@ -123,7 +123,7 @@ function countSetQuestion(form) {
 
 
 function controlAssessAnswers(form) {
-	for(i=1; i<form.elements.length; i++) {
+	for(let i=1; i<form.elements.length; i++) {
 		if (form.elements[i].id.substring(0,8) == 'question') {
 			var q = form.elements[i];
 			var c_id = 'comment'+q.id.substring(8,18);

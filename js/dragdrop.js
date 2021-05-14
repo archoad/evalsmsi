@@ -25,8 +25,8 @@
 			dropper.addEventListener('drop', function(e) {
 				e.preventDefault();
 				var target = e.target;
-				draggedElement = dndHandler.draggedElement;
-				clonedElement = draggedElement.cloneNode(true);
+				var draggedElement = dndHandler.draggedElement;
+				var clonedElement = draggedElement.cloneNode(true);
 				while(target.className.indexOf('dropper') == -1) {
 					target = target.parentNode;
 				}
