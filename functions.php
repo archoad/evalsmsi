@@ -4,7 +4,7 @@
 // Description: global functions of EvalSMSI
 // Created:     2009-01-01
 // Licence:     GPL-3.0-or-later
-// Copyright 2009-2020 Michel Dubois
+// Copyright 2009-2021 Michel Dubois
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
