@@ -98,9 +98,9 @@ function validatePassword() {
 function display(eltName) {
 	var elt = document.getElementById(eltName);
 	if (elt.id.substring(0,2) == 'ti') {
-		var new_elt = document.getElementById('dl'+elt.id.substring(2,4));
+		var new_elt = document.getElementById('dl'+elt.id.substring(2));
 	} else {
-		var new_elt = document.getElementById('dd'+elt.id.substring(2,6));
+		var new_elt = document.getElementById('dd'+elt.id.substring(2));
 	}
 	if (new_elt.className=='none') {
 		elt.value='-';
