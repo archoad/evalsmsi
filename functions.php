@@ -28,7 +28,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // Ne pas modifier ces variables !
 date_default_timezone_set('Europe/Paris');
 setlocale(LC_ALL, 'fr_FR.utf8');
-ini_set('error_reporting', E_ALL);
+#ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', E_ERROR);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 ini_set('xdebug.var_display_max_depth', 8);

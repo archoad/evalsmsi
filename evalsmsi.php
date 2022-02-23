@@ -213,7 +213,6 @@ function redirectUser($data) {
 
 
 
-
 if (isset($_GET['rand']) && ($_GET['rand'] === $_SESSION['rand'])) {
 	if (isset($_GET['action'])) {
 		switch ($_GET['action']) {
